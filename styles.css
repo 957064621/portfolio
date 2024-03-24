@@ -160,7 +160,7 @@ button {
   left: 50%;
   transform: translateX(-50%);
   border: none;
-  font-size: 5vh;
+  font-size: 2.5vw;
   font-family: Helvetica, Arial, sans-serif;
   color: #fff;
   width: 50vw;
@@ -239,6 +239,16 @@ button1 {
   text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 20px #ffffff;
   box-shadow: 0 0 5px #008cff, 0 0 20px #008cff, 0 0 50px #008cff,
     0 0 100px #008cff;
+}
+
+/* 媒体查询，当视窗宽度小于600px时 */
+@media (max-width: 600px) {
+  button {
+    font-size: 5vw; /* 增加字体大小 */
+    width: 50vw; /* 增加按钮宽度 */
+    height: 5vh; /* 增加按钮高度 */
+    bottom: 5vh; /* 调整底部位置 */
+  }
 }
 
 .image-wrapper {
