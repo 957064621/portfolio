@@ -121,6 +121,7 @@ body {
 
 #container {
   width: 100%;
+  height: auto;
   /*height: 100vh;*/
   overflow: auto;
   position: relative;
@@ -131,10 +132,8 @@ body {
 #content {
   display: flex;
   justify-content: center;
-  /*align-items: flex-start;*/
   width:100%;
   position: relative;
-  display: flex;
   flex-direction: column;
   align-items: center;
   /*height: 100%;*/
@@ -241,3 +240,70 @@ button1 {
   box-shadow: 0 0 5px #008cff, 0 0 20px #008cff, 0 0 50px #008cff,
     0 0 100px #008cff;
 }
+
+.image-wrapper {
+  display: flex; /* 使用Flexbox布局 */
+  justify-content: space-around; /* 图片之间平均分配空间 */
+}
+
+.image-container {
+  position: relative; /* 设置相对定位 */
+}
+
+.bw-image,
+.color-image {
+  width: 100%; /* 图片宽度设置为容器的100% */
+  transition: opacity 0.5s ease-in-out; /* 平滑过渡效果 */
+}
+
+.bw-image {
+  opacity: 1; /* 默认黑白图片可见 */
+  filter: grayscale(100%); /* 应用黑白滤镜 */
+}
+
+.color-image {
+  opacity: 0; /* 默认彩色图片不可见 */
+  position: absolute; /* 绝对定位，覆盖黑白图片 */
+  top: 0;
+  left: 0;
+}
+
+/*.image-container:hover .bw-image {
+  opacity: 0; 
+}
+*/
+.image-container:hover .color-image {
+  opacity: 1; /* 鼠标悬浮时彩色图片显示 */
+  transform: scale(1.02);
+}
+/*.bw-image {
+  width: 20%; 
+  transition: filter 0.5s ease; 
+  filter: grayscale(100%); 
+  transition: opacity 0.5s ease-in-out;
+}
+*/
+
+/*.bw-image:hover {
+  filter: grayscale(0);
+  transform: scale(1.02);
+}
+*/
+/*.bw-image, .color-image {
+  position: absolute;
+  top: 0; 
+  left: 0; 
+  width: 100%;
+  height: auto;
+  transition: opacity 0.5s ease-in-out; 
+}*/
+
+/*.color-image {
+  opacity: 0; 
+}
+
+.image-wrapper:hover .color-image {
+  opacity: 1; 
+  transform: scale(1.02);
+}
+*/
