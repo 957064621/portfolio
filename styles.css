@@ -156,15 +156,15 @@ body {
 button {
   text-decoration: none;
   position: fixed;
-  bottom: 100px;
+  bottom: 10vh;
   left: 50%;
   transform: translateX(-50%);
   border: none;
-  font-size: 40px;
+  font-size: 5vh;
   font-family: Helvetica, Arial, sans-serif;
   color: #fff;
-  width: 500px;
-  height: 100px;
+  width: 50vw;
+  height: 10vh;
   line-height: 2em;
   text-align: center;
   background: linear-gradient(90deg,#03a9f4,#f441a5,#ffeb3b,#03a9f4);
@@ -268,42 +268,7 @@ button1 {
   left: 0;
 }
 
-/*.image-container:hover .bw-image {
-  opacity: 0; 
-}
-*/
 .image-container:hover .color-image {
   opacity: 1; /* 鼠标悬浮时彩色图片显示 */
   transform: scale(1.02);
 }
-/*.bw-image {
-  width: 20%; 
-  transition: filter 0.5s ease; 
-  filter: grayscale(100%); 
-  transition: opacity 0.5s ease-in-out;
-}
-*/
-
-/*.bw-image:hover {
-  filter: grayscale(0);
-  transform: scale(1.02);
-}
-*/
-/*.bw-image, .color-image {
-  position: absolute;
-  top: 0; 
-  left: 0; 
-  width: 100%;
-  height: auto;
-  transition: opacity 0.5s ease-in-out; 
-}*/
-
-/*.color-image {
-  opacity: 0; 
-}
-
-.image-wrapper:hover .color-image {
-  opacity: 1; 
-  transform: scale(1.02);
-}
-*/
