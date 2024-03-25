@@ -27,5 +27,5 @@ document.getElementById('delayedLink').addEventListener('click', function(event)
 
   setTimeout(function() {
     window.location.href = destination;
-  }, 600); 
+  }, 1000); 
 });
