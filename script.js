@@ -21,11 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-document.getElementById('delayedLink').addEventListener('click', function(event) {
-  event.preventDefault(); // 阻止链接的默认跳转行为
-  var destination = this.href; // 获取链接的href属性作为目标URL
 
+$('.delayedLink').on('click', function(e) {
+  e.preventDefault(); // 阻止链接的默认行为
+  var url = $(this).attr('href'); // 获取链接的 href 值
   setTimeout(function() {
-    window.location.href = destination;
-  }, 1000); 
+    window.location.href = url; // 在延迟后跳转到链接
+  }, 1000); // 延迟时间，1000 毫秒等于1秒
 });
