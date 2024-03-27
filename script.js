@@ -43,7 +43,7 @@ var myButton = document.querySelector('.buttontop');
 
 // 当用户滚动页面时执行函数
 window.onscroll = function() {
-  if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+  if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
     // 当页面向下滚动超过100px时，显示按钮并添加 'show' 类
     myButton.classList.add('show');
   } else {
@@ -54,7 +54,9 @@ window.onscroll = function() {
 
 // 当用户点击按钮时执行函数
 myButton.onclick = function() {
-  // 滚动到页面顶部
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
+  // 使用平滑滚动效果滚动到页面顶部
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 };

@@ -387,8 +387,8 @@ button1 {
   position: fixed;
   right: 5vw; /* 使用 vw 单位 */
   bottom: 10vh; /* 使用 vh 单位 */
-  width: 10vw; /* 使用 vw 单位 */
-  height: 10vh; /* 使用 vh 单位 */
+  width: 6vw; /* 使用 vw 单位 */
+  height: 6vw; /* 使用 vh 单位 */
   border-radius: 50%;
   background-color: #33333380;
   backdrop-filter: blur(10px);
@@ -399,7 +399,7 @@ button1 {
   justify-content: center;
   box-shadow: 0px 0px 0px 4px #33333380;
   cursor: pointer;
-  overflow: visible;
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.6s, visibility 0s linear 0.6s, width 0.3s, height 0.3s, border-radius 0.3s, background-color 0.3s;
@@ -414,6 +414,7 @@ button1 {
 .svgIcon {
   width: 12px;
   transition-duration: 0.3s;
+  transform: scale(1.5);
 }
 
 .svgIcon path {
@@ -429,7 +430,7 @@ button1 {
 }
 
 .buttontop:hover .svgIcon {
-  transform: translateY(-200%);
+  transform: translateY(-250%);
   transition-duration: 0.3s;
 }
 
@@ -473,11 +474,14 @@ button1 {
   bottom: 5vh; /* 调整底部位置 */
   }
    .buttontop {
-    width: 15vw; /* 增加宽度 */
-    height: 15vh; /* 增加高度 */
+    width: 8vw; /* 增加宽度 */
+    height: 8vw; /* 增加高度 */
     right: 3vw; /* 调整右边距 */
     bottom: 5vh; /* 调整底部距离 */
   }
+  .svgIcon {
+  transform: scale(1.3);
+}
 }
 
 /* 当屏幕宽度小于480px时 */
@@ -500,9 +504,12 @@ button1 {
    bottom: 5vh; /* 调整底部位置 */
   }
   .buttontop {
-    width: 20vw; /* 进一步增加宽度 */
-    height: 20vh; /* 进一步增加高度 */
+    width: 10vw; /* 进一步增加宽度 */
+    height: 10vw; /* 进一步增加高度 */
     right: 2vw; /* 进一步调整右边距 */
     bottom: 3vh; /* 进一步调整底部距离 */
   }
+  .svgIcon {
+  transform: scale(1.1);
+}
 }
