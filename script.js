@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
   const image = document.getElementById('1_1');
   const loadingAnimation = document.getElementById('loading-animation');
@@ -22,11 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 监听点击事件
+// 监听 DOMContentLoaded 事件
 document.addEventListener('DOMContentLoaded', function() {
+
+
   // 监听点击事件
   document.addEventListener('click', function(e) {
-    // 使用 closest 方法查找最近的具有 'delayedLink' 类的祖先元素
+    // 查找最近的具有 'delayedLink' 类的祖先元素
     var delayedLink = e.target.closest('.delayedLink');
     if (delayedLink) {
       e.preventDefault(); // 阻止链接的默认行为
@@ -35,28 +36,52 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = url; // 在延迟后跳转到链接
       }, 1000); // 延迟时间，1000 毫秒等于1秒
     }
+
+    // 查找最近的具有 'animated-button' 类的祖先元素
+    var animatedButton = e.target.closest('.animated-button');
+    if (animatedButton) {
+      e.preventDefault(); // 阻止按钮的默认行为
+      setTimeout(function() {
+        window.history.back(); // 在延迟后执行返回操作
+      }, 1000); // 延迟时间，1000 毫秒等于1秒
+    }
   });
 });
 
-// 获取按钮元素
-var myButton = document.querySelector('.buttontop');
-
-// 当用户滚动页面时执行函数
-window.onscroll = function() {
-  if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
-    // 当页面向下滚动超过100px时，显示按钮并添加 'show' 类
-    myButton.classList.add('show');
-  } else {
-    // 否则隐藏按钮并移除 'show' 类
-    myButton.classList.remove('show');
-  }
-};
-
-// 当用户点击按钮时执行函数
-myButton.onclick = function() {
-  // 使用平滑滚动效果滚动到页面顶部
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
+document.addEventListener('DOMContentLoaded', (event) => {
+  const buttonTop = document.querySelector('.buttontop');
+  
+  // 检测滚动位置并切换按钮的显示状态
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+      buttonTop.classList.add('show');
+      buttonTop.classList.remove('hidden');
+    } else {
+      buttonTop.classList.remove('show');
+      buttonTop.classList.add('hidden');
+    }
   });
-};
+
+  // 定义一个函数来处理滚动至顶部的行为和恢复按钮状态
+  const scrollToTopAndHideButton = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // 设置延时以恢复按钮的初始状态
+    setTimeout(() => {
+      buttonTop.classList.remove('show');
+      buttonTop.classList.add('hidden');
+    }, 600); // 600ms后执行
+  };
+
+  // 监听点击事件
+  buttonTop.addEventListener('click', scrollToTopAndHideButton);
+
+  // 监听触摸结束事件
+  buttonTop.addEventListener('touchend', (event) => {
+    // 防止默认行为和立即触发的点击事件
+    event.preventDefault();
+    
+    // 延迟一段时间后执行滚动至顶部和恢复按钮状态的函数
+    setTimeout(scrollToTopAndHideButton, 1000);
+  });
+});
