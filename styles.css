@@ -250,6 +250,21 @@ button1 {
   position: relative; /* 设置相对定位 */
 }
 
+.xd {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 1080/1920 = 0.5625 */
+    overflow: hidden;
+}
+
+.xd iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .bw-image,
 .color-image {
   width: 100%; /* 图片宽度设置为容器的100% */
@@ -368,6 +383,64 @@ button1 {
   opacity: 1;
 }
 
+.buttontop {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgb(20, 20, 20);
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
+  cursor: pointer;
+  transition-duration: 0.3s;
+  overflow: hidden;
+  position: relative;
+}
+
+.svgIcon {
+  width: 12px;
+  transition-duration: 0.3s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.buttontop:hover {
+  width: 140px;
+  border-radius: 50px;
+  transition-duration: 0.3s;
+  background-color: rgb(181, 160, 255);
+  align-items: center;
+}
+
+.buttontop:hover .svgIcon {
+  /* width: 20px; */
+  transition-duration: 0.3s;
+  transform: translateY(-200%);
+}
+
+.buttontop::before {
+  position: absolute;
+  bottom: -20px;
+  content: "Back to Top";
+  color: white;
+  /* transition-duration: .3s; */
+  font-size: 0px;
+}
+
+.buttontop:hover::before {
+  font-size: 13px;
+  opacity: 1;
+  bottom: unset;
+  /* transform: translateY(-30px); */
+  transition-duration: 0.3s;
+}
+
+
 @media (max-width: 768px) {
   .animated-button {
     padding: 1.5vh 2.5vw; /* 减小填充 */
@@ -380,11 +453,11 @@ button1 {
   .animated-button:hover .arr-2 {
   left: 6%;
   }
-    .ARbutton {
-    font-size: 4vw; /* 增加字体大小 */
-    width: 50vw; /* 增加按钮宽度 */
-    height: 6vh; /* 增加按钮高度 */
-    bottom: 5vh; /* 调整底部位置 */
+  .ARbutton {
+  font-size: 4vw; /* 增加字体大小 */
+  width: 50vw; /* 增加按钮宽度 */
+  height: 9vh; /* 增加按钮高度 */
+  bottom: 5vh; /* 调整底部位置 */
   }
 }
 
@@ -396,15 +469,15 @@ button1 {
     width: auto; /* 调整宽度 */
   }
   .animated-button .arr-2 {
-  left: -200%;
+   left: -200%;
   }
   .animated-button:hover .arr-2 {
-  left: 15%;
+   left: 15%;
   }
-    .ARbutton {
-    font-size: 5vw; /* 增加字体大小 */
-    width: 50vw; /* 增加按钮宽度 */
-    height: 5vh; /* 增加按钮高度 */
-    bottom: 5vh; /* 调整底部位置 */
+  .ARbutton {
+   font-size: 3.6vw; /* 增加字体大小 */
+   width: 40vw; /* 增加按钮宽度 */
+   height: 8vh; /* 增加按钮高度 */
+   bottom: 5vh; /* 调整底部位置 */
   }
 }
