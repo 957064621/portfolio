@@ -160,11 +160,11 @@ body {
   left: 50%;
   transform: translateX(-50%);
   border: none;
-  font-size: 3vw;
+  font-size: 2vw;
   font-family: Helvetica, Arial, sans-serif;
   color: #fff;
-  width: 50vw;
-  height: 10vh;
+  width: 25vw;
+  height: 4vw;
   /*line-height: 2em;*/
   text-align: center;
   background: linear-gradient(90deg,#03a9f4,#f441a5,#ffeb3b,#03a9f4);
@@ -296,7 +296,7 @@ button1 {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 1.5vh 2vw;
+  padding: 2.1vw 3.5vw;
   border: 4px solid;
   border-color: transparent;
   font-size: 1.5vh;
@@ -318,7 +318,7 @@ button1 {
   fill: #ffffff;
   z-index: 9;
   transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-  transform: translateX(10px) rotate(180deg);
+  transform: translateX(10px) rotate(180deg) scale(1.5);
 }
 
 .animated-button .arr-1 {
@@ -457,10 +457,13 @@ button1 {
 
 @media (max-width: 768px) {
   .animated-button {
-    padding: 1.5vh 2.5vw; /* 减小填充 */
+    padding: 2.7w 4.5vw; /* 减小填充 */
     font-size: 1.5vh; /* 减小字体大小 */
     width: auto; /* 调整宽度 */
   }
+  .animated-button svg {
+  transform: translateX(10px) rotate(180deg) scale(1.2);
+}
   .animated-button .arr-2 {
   left: -200%;
   }
@@ -468,9 +471,9 @@ button1 {
   left: 6%;
   }
   .ARbutton {
-  font-size: 4vw; /* 增加字体大小 */
-  width: 50vw; /* 增加按钮宽度 */
-  height: 9vh; /* 增加按钮高度 */
+  font-size: 2.8vw; /* 增加字体大小 */
+  width: 35vw; /* 增加按钮宽度 */
+  height: 5.6vw; /* 增加按钮高度 */
   bottom: 5vh; /* 调整底部位置 */
   }
    .buttontop {
@@ -487,10 +490,13 @@ button1 {
 /* 当屏幕宽度小于480px时 */
 @media (max-width: 480px) {
   .animated-button {
-    padding: 1.5vh 3.5vw; /* 更小的填充 */
+    padding: 3vw 5vw; /* 更小的填充 */
     font-size: 2vh; /* 更小的字体大小 */
     width: auto; /* 调整宽度 */
   }
+  .animated-button svg {
+  transform: translateX(10px) rotate(180deg) scale(1);
+}
   .animated-button .arr-2 {
    left: -200%;
   }
@@ -498,9 +504,9 @@ button1 {
    left: 15%;
   }
   .ARbutton {
-   font-size: 3.6vw; /* 增加字体大小 */
-   width: 40vw; /* 增加按钮宽度 */
-   height: 8vh; /* 增加按钮高度 */
+   font-size: 3.5vw; /* 增加字体大小 */
+   width: 45vw; /* 增加按钮宽度 */
+   height: 7.2vw; /* 增加按钮高度 */
    bottom: 5vh; /* 调整底部位置 */
   }
   .buttontop {
@@ -511,5 +517,5 @@ button1 {
   }
   .svgIcon {
   transform: scale(1.1);
-}
+  }
 }
