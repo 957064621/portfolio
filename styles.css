@@ -5,8 +5,9 @@
 }
 
 .responsive {
-  max-width: 100%;
-  height: auto;
+  max-width: 1290px; /* 设置最大宽度为 960px */
+  width: 100%; /* 在小于最大宽度的视窗中，宽度为视窗的 100% */
+  height: auto; /* 高度自动根据宽度调整 */
 }
 
 .three-body {

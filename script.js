@@ -1,6 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-  const image = document.getElementById('3_1');
+  const image = document.getElementById('1_1');
   const loadingAnimation = document.getElementById('loading-animation');
 
   // 检查图片是否已经加载完成
