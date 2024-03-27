@@ -384,20 +384,31 @@ button1 {
 }
 
 .buttontop {
-  width: 50px;
-  height: 50px;
+  position: fixed;
+  right: 5vw; /* 使用 vw 单位 */
+  bottom: 10vh; /* 使用 vh 单位 */
+  width: 10vw; /* 使用 vw 单位 */
+  height: 10vh; /* 使用 vh 单位 */
   border-radius: 50%;
-  background-color: rgb(20, 20, 20);
+  background-color: #33333380;
+  backdrop-filter: blur(10px);
   border: none;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
+  box-shadow: 0px 0px 0px 4px #33333380;
   cursor: pointer;
-  transition-duration: 0.3s;
-  overflow: hidden;
-  position: relative;
+  overflow: visible;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s, visibility 0s linear 0.6s, width 0.3s, height 0.3s, border-radius 0.3s, background-color 0.3s;
+}
+
+.buttontop.show {
+  opacity: 1; /* 显示时透明度为1 */
+  visibility: visible; /* 显示时可见 */
+  transition-delay: 0s; /* 显示时无延迟 */
 }
 
 .svgIcon {
@@ -410,34 +421,36 @@ button1 {
 }
 
 .buttontop:hover {
-  width: 140px;
+  width: 80px;
   border-radius: 50px;
+  background-color: #21212195;
+  backdrop-filter: blur(10px); /* 高斯模糊效果 */
   transition-duration: 0.3s;
-  background-color: rgb(181, 160, 255);
-  align-items: center;
 }
 
 .buttontop:hover .svgIcon {
-  /* width: 20px; */
-  transition-duration: 0.3s;
   transform: translateY(-200%);
+  transition-duration: 0.3s;
 }
 
 .buttontop::before {
   position: absolute;
-  bottom: -20px;
-  content: "Back to Top";
+  top: 50%;
+  left: 50%;
+  content: "Top";
   color: white;
-  /* transition-duration: .3s; */
   font-size: 0px;
+  opacity: 0;
+  transition: font-size 0.3s, opacity 0.3s, transform 0.3s;
+  transform: translate(-50%, -50%);
+  line-height: normal;
 }
 
 .buttontop:hover::before {
-  font-size: 13px;
+  font-size: 16px;
   opacity: 1;
-  bottom: unset;
-  /* transform: translateY(-30px); */
   transition-duration: 0.3s;
+  /* 移除 bottom 属性 */
 }
 
 
@@ -459,6 +472,12 @@ button1 {
   height: 9vh; /* 增加按钮高度 */
   bottom: 5vh; /* 调整底部位置 */
   }
+   .buttontop {
+    width: 15vw; /* 增加宽度 */
+    height: 15vh; /* 增加高度 */
+    right: 3vw; /* 调整右边距 */
+    bottom: 5vh; /* 调整底部距离 */
+  }
 }
 
 /* 当屏幕宽度小于480px时 */
@@ -479,5 +498,11 @@ button1 {
    width: 40vw; /* 增加按钮宽度 */
    height: 8vh; /* 增加按钮高度 */
    bottom: 5vh; /* 调整底部位置 */
+  }
+  .buttontop {
+    width: 20vw; /* 进一步增加宽度 */
+    height: 20vh; /* 进一步增加高度 */
+    right: 2vw; /* 进一步调整右边距 */
+    bottom: 3vh; /* 进一步调整底部距离 */
   }
 }

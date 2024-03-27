@@ -37,3 +37,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+// 获取按钮元素
+var myButton = document.querySelector('.buttontop');
+
+// 当用户滚动页面时执行函数
+window.onscroll = function() {
+  if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+    // 当页面向下滚动超过100px时，显示按钮并添加 'show' 类
+    myButton.classList.add('show');
+  } else {
+    // 否则隐藏按钮并移除 'show' 类
+    myButton.classList.remove('show');
+  }
+};
+
+// 当用户点击按钮时执行函数
+myButton.onclick = function() {
+  // 滚动到页面顶部
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+};
