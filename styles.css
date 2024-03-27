@@ -213,17 +213,17 @@ body {
 
 
 button1 {
-  padding: 20px 40px;
+  padding: 4vw 8vw;
   text-transform: uppercase;
-  border-radius: 8px;
-  font-size: 30px;
+  border-radius: 1.6vw;
+  font-size: 3vw;
   font-weight: 500;
   color: #ffffff;
   text-shadow: none;
   background: #1a2f6f90;
   cursor: pointer;
   box-shadow: transparent;
-  border: 1px solid #ffffff80;
+  border: 0.2vw solid #ffffff80;
   transition: 0.5s ease;
   user-select: none;
   position: absolute; /* 设置按钮为相对定位 */
@@ -236,10 +236,10 @@ button1 {
 :focus {
   color: #ffffff;
   background: #008cff;
-  border: 1px solid #008cff;
-  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 20px #ffffff;
-  box-shadow: 0 0 5px #008cff, 0 0 20px #008cff, 0 0 50px #008cff,
-    0 0 100px #008cff;
+  border: 0.2vw solid #008cff;
+  text-shadow: 0 0 1vw #ffffff, 0 0 2vw #ffffff, 0 0 4vw #ffffff;
+  box-shadow: 0 0 1vw #008cff, 0 0 4vw #008cff, 0 0 10vw #008cff,
+    0 0 20vw #008cff;
 }
 
 .image-wrapper {
