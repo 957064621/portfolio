@@ -154,7 +154,7 @@ body {
 .ARbutton {
   text-decoration: none;
   position: fixed;
-  bottom: 10vh;
+  bottom: 6vh;
   left: 50%;
   transform: translateX(-50%);
   border: none;
@@ -163,7 +163,7 @@ body {
   color: #fff;
   width: 25vw; /* 视口宽度的 25% */
   height: 4vw; /* 视口宽度的 4% */
-  min-width: 150px; /* 最小宽度 */
+  min-width: 175px; /* 最小宽度 */
   max-width: 400px; /* 最大宽度 */
   min-height: 40px; /* 最小高度 */
   max-height: 60px; /* 最大高度 */
@@ -508,7 +508,7 @@ button1 {
    font-size: 3.5vw; /* 增加字体大小 */
    width: 45vw; /* 增加按钮宽度 */
    height: 7.2vw; /* 增加按钮高度 */
-   bottom: 5vh; /* 调整底部位置 */
+   bottom: 6vh; /* 调整底部位置 */
   }
   .buttontop {
     width: 10vw; /* 进一步增加宽度 */
