@@ -596,14 +596,7 @@ button1 {
 
 /* 新按钮样式，使用命名空间避免冲突 */
 .portfolio-video-button {
-    /* 为打开视频按钮添加样式 */
-    .portfolio-video-button #open-video-btn {
-        /* 假设图片 1_7 的宽度是基于视口宽度的，这里设置按钮宽度和图片保持一定比例 */
-        width: 20vw; /* 可根据实际情况调整比例 */
-        height: auto; /* 保持高度自适应，维持按钮的纵横比 */
-        /* 其他样式可以根据需要添加或修改 */
-    }
-    
+    /* 新按钮样式代码 */
     button { 
         position: relative; 
         display: inline-block; 
@@ -616,6 +609,8 @@ button1 {
         padding: 0; 
         font-size: inherit; 
         font-family: inherit; 
+        width: 100%; /* 设置宽度为 100% */
+        height: auto; /* 保持高度自适应 */
     } 
     
     button.learn-more { 
