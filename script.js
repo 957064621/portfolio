@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     image.addEventListener('error', () => {
       loadingAnimation.style.display = 'none';
-      // 添加加载失败时的处理逻辑
+      // 添加具体的加载失败处理逻辑
+      console.error('图片加载失败');
     });
   }
 
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       setTimeout(() => {
         window.history.back();
-      }, 1000); // 延迟1秒后执行返回操作
+      }, 1000); 
     });
   });
 
@@ -50,16 +51,61 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(scrollToTopAndHideButton, 1000);
   });
 
-// 延迟链接的代码
-// document.addEventListener('click', (e) => {
-//   const delayedLink = e.target.closest('.delayedLink');
-//   if (delayedLink) {
-//     e.preventDefault(); // 阻止链接的默认行为
-//     e.stopPropagation(); // 阻止事件冒泡
-//     const url = delayedLink.getAttribute('href');
-//     setTimeout(() => {
-//       window.location.href = url;
-//     }, 1000); // 延迟1秒后跳转
-//   }
-// });
+  // 延迟链接的代码
+  // document.addEventListener('click', (e) => {
+  //   const delayedLink = e.target.closest('.delayedLink');
+  //   if (delayedLink) {
+  //     e.preventDefault(); 
+  //     e.stopPropagation(); 
+  //     const url = delayedLink.getAttribute('href');
+  //     setTimeout(() => {
+  //       window.location.href = url;
+  //     }, 1000); 
+  //   }
+  // });
 });
+
+
+
+  // 获取模态框、视频和关闭按钮元素
+  const modal = document.getElementById('video-modal');
+  const video = document.getElementById('my-video');
+  const closeBtn = document.querySelector('.close-video-btn');
+
+  // 使用实际的按钮 ID
+  const openVideoBtn = document.getElementById('open-video-btn'); 
+
+  // 打开模态框并播放视频
+  if (openVideoBtn) {
+      openVideoBtn.addEventListener('click', () => {
+          modal.style.display = 'flex';
+          setTimeout(() => {
+              modal.classList.add('show');
+          }, 10);
+          video.play();
+      });
+  }
+
+  // 关闭模态框并暂停视频
+  if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+          modal.classList.remove('show');
+          video.pause();
+          video.currentTime = 0; // 重置视频播放位置
+          setTimeout(() => {
+              modal.style.display = 'none';
+          }, 500);
+      });
+  }
+
+  // 点击模态框背景也可以关闭模态框
+  window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+          modal.classList.remove('show');
+          video.pause();
+          video.currentTime = 0;
+          setTimeout(() => {
+              modal.style.display = 'none';
+          }, 500);
+      }
+  });
