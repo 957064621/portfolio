@@ -1,3 +1,12 @@
+img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
 @media screen and (max-width: 600px) {
   .column {
     width: 100%;
@@ -531,9 +540,10 @@ button1 {
 
 @media (max-width: 768px) {
   .animated-button {
-    padding: 2.7w 4.5vw; /* 减小填充 */
-    font-size: 1.5vh; /* 减小字体大小 */
-    width: auto; /* 调整宽度 */
+    /* 修改拼写错误 */
+    padding: 2.7vw 4.5vw; 
+    font-size: 1.5vh;
+    width: auto;
   }
   .animated-button svg {
   transform: translateX(10px) rotate(180deg) scale(1.2);

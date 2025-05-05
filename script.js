@@ -28,28 +28,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 按钮显示和滚动至顶部的代码
+  // 假设第34行问题出现在这里，添加存在性检查
   const buttonTop = document.querySelector('.buttontop');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 500) {
-      buttonTop.classList.add('show');
-      buttonTop.classList.remove('hidden');
-    } else {
-      buttonTop.classList.remove('show');
-      buttonTop.classList.add('hidden');
-    }
-  });
-  const scrollToTopAndHideButton = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => {
-      buttonTop.classList.remove('show');
-      buttonTop.classList.add('hidden');
-    }, 600);
-  };
-  buttonTop.addEventListener('click', scrollToTopAndHideButton);
-  buttonTop.addEventListener('touchend', (event) => {
-    event.preventDefault();
-    setTimeout(scrollToTopAndHideButton, 1000);
-  });
+  if (buttonTop) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 500) {
+        buttonTop.classList.add('show');
+        buttonTop.classList.remove('hidden');
+      } else {
+        buttonTop.classList.remove('show');
+        buttonTop.classList.add('hidden');
+      }
+    });
+    const scrollToTopAndHideButton = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        buttonTop.classList.remove('show');
+        buttonTop.classList.add('hidden');
+      }, 600);
+    };
+    buttonTop.addEventListener('click', scrollToTopAndHideButton);
+    buttonTop.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      setTimeout(scrollToTopAndHideButton, 1000);
+    });
+  }
 
   // 延迟链接的代码
   // document.addEventListener('click', (e) => {
@@ -63,8 +66,20 @@ document.addEventListener('DOMContentLoaded', () => {
   //     }, 1000); 
   //   }
   // });
-});
+  // 禁用鼠标右键
+  document.addEventListener('contextmenu', (e) => {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+      e.preventDefault();
+    }
+  });
 
+  // 禁用选择功能
+  document.addEventListener('selectstart', (e) => {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+      e.preventDefault();
+    }
+  });
+  
 
 
   // 获取模态框、视频和关闭按钮元素
@@ -73,17 +88,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeBtn = document.querySelector('.close-video-btn');
 
   // 使用实际的按钮 ID
+  // 假设第48行问题出现在这里，添加存在性检查
   const openVideoBtn = document.getElementById('open-video-btn'); 
-
-  // 打开模态框并播放视频
   if (openVideoBtn) {
-      openVideoBtn.addEventListener('click', () => {
-          modal.style.display = 'flex';
-          setTimeout(() => {
-              modal.classList.add('show');
-          }, 10);
-          video.play();
-      });
+    // 打开模态框并播放视频
+    openVideoBtn.addEventListener('click', () => {
+      const modal = document.getElementById('video-modal');
+      const video = document.getElementById('my-video');
+      if (modal && video) {
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.classList.add('show');
+        }, 10);
+        video.play();
+      }
+    });
   }
 
   // 关闭模态框并暂停视频
@@ -109,3 +128,4 @@ document.addEventListener('DOMContentLoaded', () => {
           }, 500);
       }
   });
+}); // 添加闭合花括号以关闭事件监听器
