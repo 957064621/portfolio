@@ -17,13 +17,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 修改返回按钮处理逻辑
   const animatedButtons = document.querySelectorAll('.animated-button');
+  console.log('找到返回按钮数量:', animatedButtons.length); // 调试信息
+  
   animatedButtons.forEach(button => {
     button.addEventListener('click', (e) => {
+      console.log('返回按钮被点击'); // 调试信息
       e.preventDefault();
+      e.stopPropagation(); // 阻止事件冒泡
+      
+      // 如果历史记录中有内容则返回，否则跳转到首页
       setTimeout(() => {
-        window.history.back();
-      }, 1000); 
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = 'index.html';
+        }
+      }, 1000);
+    });
+  });
+  
+  // 为按钮的父元素a标签也添加事件处理
+  const buttonLinks = document.querySelectorAll('a:has(.animated-button)');
+  buttonLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      console.log('按钮链接被点击'); // 调试信息
+      e.preventDefault();
+      e.stopPropagation();
+      
+      setTimeout(() => {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = 'index.html';
+        }
+      }, 1000);
     });
   });
 
@@ -79,8 +108,30 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
     }
   });
-  
 
+  // 增强图片保护 - 防止复制
+  document.addEventListener('copy', (e) => {
+    if (e.target.tagName === 'IMG' || e.target.closest('img')) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  // 增强图片保护 - 防止拖拽（备用方案）
+  document.addEventListener('dragstart', (e) => {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  // 禁用键盘快捷键保存 (Ctrl+S / Command+S)
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+      e.preventDefault();
+      return false;
+    }
+  });
 
   // 获取模态框、视频和关闭按钮元素
   const modal = document.getElementById('video-modal');
