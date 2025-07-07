@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>全球视野下的中国汽车话语体系研究</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  
+  <div id="loading-animation" class="three-body">
+    <div class="three-body__dot"></div>
+    <div class="three-body__dot"></div>
+    <div class="three-body__dot"></div>
+  </div>
+
+  <div id="container">
+    <div id="content">
+      <div class="image-with-button portfolio-video-button">
+        <img id="1_1" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/1/15.png" class="responsive">
+        <!-- 替换为新的按钮 -->
+        <button id="open-video-btn" class="learn-more"> 
+            <span class="circle" aria-hidden="true"> 
+                <span class="icon arrow"></span> 
+            </span> 
+            <span class="button-text">打开视频</span> 
+        </button>
+      </div>
+      <img id="7_2" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/6/2.png" class="responsive" />
+      <img id="7_3" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/6/3.png" class="responsive" />
+      <img id="7_4" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/6/4.png" class="responsive" />
+      <img id="7_5" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/6/5.png" class="responsive" />
+      <img id="7_6" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/6/6.png" class="responsive" />
+      <img id="7_7" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/6/7.png" class="responsive" />
+
+    </div>
+
+    <a href="javascript:void(0);" onclick="setTimeout(() => { window.history.back() || (window.location.href = 'index.html'); }, 1000);">
+      <button class="animated-button">
+        <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+          ></path>
+        </svg>
+        <span class="circle"></span>
+        <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+          ></path>
+        </svg>
+      </button>
+    </a>
+
+     <!-- 弹出视频模态框 -->
+        <div id="video-modal" class="modal">
+          <div class="modal-content">
+                  <!-- 视频播放区域 -->
+                  <video id="my-video" class="portfolio-video" controls style="max-width: 100%; height: auto;">
+                      <source src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/bps.mp4" type="video/mp4">
+                      您的浏览器不支持视频播放。
+                  </video>
+                  <!-- 关闭按钮 -->
+                  <span class="close-video-btn">&times;</span>
+              </div>
+          </div>
+    
+  </div>
+<script src="script.js"></script>
+</body>
+</html>
