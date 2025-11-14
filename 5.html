@@ -15,23 +15,33 @@
   </div>
   <div id="container">
     <div id="content">
-      <img id="1_1" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/5/1.png" class="responsive">
+      <img id="1_1" src="https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/5/1.png" class="responsive">
       </img>
-      <img id="5_7" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/5/6.png" class="responsive">
-      </img>
+
+      <div class="image-with-button portfolio-video-button">
+        <img id="5_7" src="https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/5/6.png" class="responsive">
+        <!-- 替换为新的按钮 -->
+        <button id="open-video-btn" class="learn-more"> 
+            <span class="circle" aria-hidden="true"> 
+                <span class="icon arrow"></span> 
+            </span> 
+            <span class="button-text">打开视频</span> 
+        </button>
+      </div>
+
       <a href="https://www.bilibili.com/video/BV1Tu4m1u7Le" class="delayedLink">
-      <img id="5_2" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/5/2.png" class="responsive">
+      <img id="5_2" src="https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/5/2.png" class="responsive">
       </img>
       </a>
       <a href="https://www.bilibili.com/video/BV1ht421V7hZ" class="delayedLink">
-      <img id="5_3" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/5/3.png" class="responsive">
+      <img id="5_3" src="https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/5/3.png" class="responsive">
       </img>
       </a>
-      <img id="5_4" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/5/4.png" class="responsive">
+      <img id="5_4" src="https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/5/4.png" class="responsive">
       </img>
-      <img id="5_5" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/5/5.png" class="responsive">
+      <img id="5_5" src="https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/5/5.png" class="responsive">
       </img>
-      <img id="5_6" src="https://svg-mychelle.oss-cn-nanjing.aliyuncs.com/5/5_%E5%B0%81%E9%9D%A2.png" class="responsive">
+      <img id="5_6" src="https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/5/5_%E5%B0%81%E9%9D%A2.png" class="responsive">
 
     </div>
 
@@ -51,6 +61,19 @@
         </svg>
       </button>
       </a>
+
+       <!-- 弹出视频模态框 -->
+        <div id="video-modal" class="modal">
+          <div class="modal-content">
+                  <!-- 视频播放区域 -->
+                  <video id="my-video" class="portfolio-video" controls style="max-width: 100%; height: auto;">
+                      <source src="https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/5/sansaverse.mp4" type="video/mp4">
+                      您的浏览器不支持视频播放。
+                  </video>
+                  <!-- 关闭按钮 -->
+                  <span class="close-video-btn">&times;</span>
+              </div>
+          </div>
     
   </div>
   <script src="script.js"></script>
