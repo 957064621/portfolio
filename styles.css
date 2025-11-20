@@ -657,7 +657,7 @@ button1 {
 } 
 
 .portfolio-video-button button.learn-more:hover {
-    transform: translateY(-2px);
+    transform: translate(-50%, -2px); /* 修复：保持水平居中(translateX -50%)的同时上浮 */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 255, 255, 0.4);
     background: rgba(0, 0, 0, 0.6);
@@ -722,7 +722,7 @@ button1 {
 
 .portfolio-video-button button:hover .circle { 
     width: 100%; 
-    background: #5D3FD3; /* 悬浮时变为主题色 */
+    background: #282936; 
 } 
 
 .portfolio-video-button button:hover .circle .icon.arrow { 
