@@ -30,13 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       e.stopPropagation(); // 阻止事件冒泡
       
-      // 如果历史记录中有内容则返回，否则跳转到首页
+      // 总是跳转到首页
+      const link = button.closest('a');
+      const targetUrl = link ? link.getAttribute('href') : 'index.html';
+      
       setTimeout(() => {
-        if (window.history.length > 1) {
-          window.history.back();
-        } else {
-          window.location.href = 'index.html';
-        }
+        window.location.href = targetUrl;
       }, 1000);
     });
   });
@@ -49,12 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       e.stopPropagation();
       
+      const targetUrl = link.getAttribute('href') || 'index.html';
+      
       setTimeout(() => {
-        if (window.history.length > 1) {
-          window.history.back();
-        } else {
-          window.location.href = 'index.html';
-        }
+        window.location.href = targetUrl;
       }, 1000);
     });
   });
