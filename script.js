@@ -1,23 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 图片加载相关的代码
-  const image = document.getElementById('1_1');
+  // 图片加载相关的代码 - 查找页面第一张图片
   const loadingAnimation = document.getElementById('loading-animation');
-  
-  if (image && loadingAnimation) {
-    if (image.complete) {
+  const firstImage = document.querySelector('#content img');
+
+  if (firstImage && loadingAnimation) {
+    if (firstImage.complete) {
       loadingAnimation.style.display = 'none';
-      image.style.visibility = 'visible';
+      firstImage.style.visibility = 'visible';
     } else {
-      image.addEventListener('load', () => {
+      firstImage.addEventListener('load', () => {
         loadingAnimation.style.display = 'none';
-        image.style.visibility = 'visible';
+        firstImage.style.visibility = 'visible';
       });
-      image.addEventListener('error', () => {
+      firstImage.addEventListener('error', () => {
         loadingAnimation.style.display = 'none';
-        // 添加具体的加载失败处理逻辑
         console.error('图片加载失败');
       });
     }
+  } else if (loadingAnimation) {
+    // 如果没有找到图片，直接隐藏加载动画
+    loadingAnimation.style.display = 'none';
   }
 
   // 修改返回按钮处理逻辑

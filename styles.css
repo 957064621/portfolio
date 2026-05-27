@@ -1,3 +1,8 @@
+a {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+
 img {
   pointer-events: none;
   -webkit-user-drag: none;
@@ -262,8 +267,7 @@ button1 {
   transform: translateX(-50%); /* 居中 */
 }
 
-.image-wrapper #btn:hover,
-.image-wrapper :focus {
+.image-wrapper #btn:hover {
   color: #ffffff;
   background: #008cff;
   border: 0.2vw solid #008cff;
@@ -275,10 +279,14 @@ button1 {
 .image-wrapper {
   display: flex; /* 使用Flexbox布局 */
   justify-content: space-around; /* 图片之间平均分配空间 */
+  -webkit-tap-highlight-color: transparent; /* 禁用移动端点击蓝色高亮 */
+  tap-highlight-color: transparent;
 }
 
 .image-container {
   position: relative; /* 设置相对定位 */
+  -webkit-tap-highlight-color: transparent; /* 禁用移动端点击蓝色高亮 */
+  tap-highlight-color: transparent;
 }
 
 .xd {
