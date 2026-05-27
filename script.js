@@ -188,10 +188,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(overlay);
   }
   
-  // 强制重绘以确保过渡效果
-  requestAnimationFrame(() => {
+  const hidePageTransitionOverlay = () => {
     overlay.classList.add('hidden');
-  });
+  };
+
+  // 强制重绘以确保过渡效果
+  requestAnimationFrame(hidePageTransitionOverlay);
+
+  window.addEventListener('pageshow', hidePageTransitionOverlay);
 
   // 拦截点击链接进行过渡动画
   document.addEventListener('click', (e) => {
