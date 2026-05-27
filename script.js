@@ -1,25 +1,52 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 图片加载相关的代码 - 查找页面第一张图片
-  const loadingAnimation = document.getElementById('loading-animation');
+  // 开场加载动画 - 首张图片加载完 + 最短展示 2.5s 后淡出
+  const loaderOverlay = document.getElementById('loader-overlay');
   const firstImage = document.querySelector('#content img');
+  const MIN_LOADER_TIME = 2500;
+  const startTime = Date.now();
+  let loaderHidden = false;
 
-  if (firstImage && loadingAnimation) {
+  function hideLoaderOverlay() {
+    if (loaderHidden) return;
+    loaderHidden = true;
+
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, MIN_LOADER_TIME - elapsed);
+
+    setTimeout(() => {
+      loaderOverlay.classList.add('hidden');
+      setTimeout(() => {
+        if (loaderOverlay && loaderOverlay.parentNode) {
+          loaderOverlay.parentNode.removeChild(loaderOverlay);
+        }
+      }, 900);
+    }, remaining);
+  }
+
+  if (firstImage && loaderOverlay) {
     if (firstImage.complete) {
-      loadingAnimation.style.display = 'none';
-      firstImage.style.visibility = 'visible';
+      hideLoaderOverlay();
     } else {
-      firstImage.addEventListener('load', () => {
-        loadingAnimation.style.display = 'none';
-        firstImage.style.visibility = 'visible';
-      });
-      firstImage.addEventListener('error', () => {
-        loadingAnimation.style.display = 'none';
-        console.error('图片加载失败');
-      });
+      firstImage.addEventListener('load', hideLoaderOverlay);
+      firstImage.addEventListener('error', hideLoaderOverlay);
     }
-  } else if (loadingAnimation) {
-    // 如果没有找到图片，直接隐藏加载动画
-    loadingAnimation.style.display = 'none';
+  } else if (loaderOverlay) {
+    hideLoaderOverlay();
+  }
+
+  // 回退：其他页面的旧加载动画
+  const loadingAnimation = document.getElementById('loading-animation');
+  if (loadingAnimation && !loaderOverlay) {
+    if (firstImage) {
+      if (firstImage.complete) {
+        loadingAnimation.style.display = 'none';
+      } else {
+        firstImage.addEventListener('load', () => { loadingAnimation.style.display = 'none'; });
+        firstImage.addEventListener('error', () => { loadingAnimation.style.display = 'none'; });
+      }
+    } else {
+      loadingAnimation.style.display = 'none';
+    }
   }
 
   // 修改返回按钮处理逻辑

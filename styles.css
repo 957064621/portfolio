@@ -17,6 +17,135 @@ img {
   position: relative; /* 为可能的水印定位做准备 */
 }
 
+/* --- 开场加载动画 --- */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes loader-wrapper-intro {
+  0% {
+    opacity: 0;
+    filter: blur(16px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+.loader-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-overlay.hidden .loader-wrapper {
+  opacity: 0;
+  transform: scale(1.1);
+  filter: blur(8px);
+}
+
+.loader-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Inter", sans-serif;
+  font-size: 1.6em;
+  font-weight: 400;
+  color: white;
+  border-radius: 50%;
+  background-color: transparent;
+  user-select: none;
+  animation: loader-wrapper-intro 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-color: transparent;
+  animation: loader-rotate 2s linear infinite;
+  z-index: 0;
+}
+
+@keyframes loader-rotate {
+  0% {
+    transform: rotate(90deg);
+    box-shadow:
+      0 10px 20px 0 #fff inset,
+      0 20px 30px 0 #ad5fff inset,
+      0 60px 60px 0 #471eec inset;
+  }
+  50% {
+    transform: rotate(270deg);
+    box-shadow:
+      0 10px 20px 0 #fff inset,
+      0 20px 10px 0 #d60a47 inset,
+      0 40px 60px 0 #311e80 inset;
+  }
+  100% {
+    transform: rotate(450deg);
+    box-shadow:
+      0 10px 20px 0 #fff inset,
+      0 20px 30px 0 #ad5fff inset,
+      0 60px 60px 0 #471eec inset;
+  }
+}
+
+.loader-letter {
+  display: inline-block;
+  opacity: 0.4;
+  transform: translateY(0);
+  animation: loader-letter-anim 2s infinite;
+  z-index: 1;
+  border-radius: 50ch;
+  border: none;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.loader-letter:nth-child(1) { animation-delay: 0s; }
+.loader-letter:nth-child(2) { animation-delay: 0.25s; }
+.loader-letter:nth-child(3) { animation-delay: 0.5s; }
+.loader-letter:nth-child(4) { animation-delay: 0.75s; }
+
+@keyframes loader-letter-anim {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: translateY(0);
+    filter: blur(2px);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+  50% {
+    opacity: 0.15;
+    transform: translateY(0);
+    filter: blur(2px);
+  }
+}
+
 #content img::after {
   content: "© YUKO";
   position: absolute;
