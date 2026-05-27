@@ -138,15 +138,20 @@ img {
 }
 
 
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   margin: 0;
   padding: 0;
-  /*overflow: hidden;*/
+  width: 100%;
 }
 
 #container {
   width: 100%; /* 宽度自适应，但不超过最大宽度 */
-  overflow: auto;
+  /* overflow: auto;  Removed to fix double scrollbars */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -173,7 +178,7 @@ body {
   position: fixed;
   top: 50%;
   left: 50%;
-
+  z-index: 200; /* Ensure loading is on top */
 }
 
 .ARbutton {
@@ -196,7 +201,7 @@ body {
   background: linear-gradient(90deg,#03a9f4,#f441a5,#ffeb3b,#03a9f4);
   background-size: 300%;
   border-radius: 30px;
-  z-index: 1;
+  z-index: 9999; /* Increased z-index to avoid being blocked */
 }
 
 .ARbutton:hover {
@@ -307,18 +312,22 @@ button1 {
   position: absolute; /* 绝对定位，覆盖黑白图片 */
   top: 0;
   left: 0;
+  z-index: 2; /* 确保在黑白图片之上 */
 }
 
 .image-container:hover .color-image {
   opacity: 1; /* 鼠标悬浮时彩色图片显示 */
-  transform: scale(1.02);
 }
 
+.image-container:hover .bw-image {
+  opacity: 0; /* 鼠标悬浮时黑白图片隐藏，避免混合 */
+}
 
 .animated-button {
   position: fixed;
   top: 2vh; /* 距离顶部0 */
   left: 2vw; /* 距离左侧0 */
+  z-index: 9999; /* Increased z-index significantly */
   display: flex;
   align-items: center;
   gap: 4px;
@@ -430,7 +439,7 @@ button1 {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.6s, visibility 0s linear 0.6s, width 0.3s, height 0.3s, border-radius 0.3s, background-color 0.3s;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .buttontop.hidden {
@@ -556,34 +565,53 @@ button1 {
 
 @media (max-width: 768px) {
   .animated-button {
-    /* 修改拼写错误 */
     padding: 2.7vw 4.5vw; 
     font-size: 1.5vh;
     width: auto;
+    min-height: 44px; /* 保证最小点击区域 */
+    display: flex;
+    align-items: center;
   }
   .animated-button svg {
-  transform: translateX(10px) rotate(180deg) scale(1.2);
-}
+    transform: translateX(10px) rotate(180deg) scale(1.2);
+  }
   .animated-button .arr-2 {
-  left: -200%;
+    left: -200%;
   }
   .animated-button:hover .arr-2 {
-  left: 6%;
+    left: 6%;
   }
   .ARbutton {
-  font-size: 2.8vw; /* 增加字体大小 */
-  width: 35vw; /* 增加按钮宽度 */
-  height: 5.6vw; /* 增加按钮高度 */
-  bottom: 5vh; /* 调整底部位置 */
+    font-size: 3.5vw; /* 增大字体 */
+    width: 40vw; /* 增大宽度 */
+    height: auto; /* 自适应高度 */
+    min-height: 44px; /* 保证最小点击区域 */
+    padding: 10px 0; /* 增加内边距 */
+    bottom: 5vh; /* 调整底部位置 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
    .buttontop {
-    width: 8vw; /* 增加宽度 */
-    height: 8vw; /* 增加高度 */
+    width: 10vw; /* 增大宽度 */
+    height: 10vw; /* 增大高度 */
+    min-width: 44px; /* 保证最小点击区域 */
+    min-height: 44px;
     right: 3vw; /* 调整右边距 */
     bottom: 5vh; /* 调整底部距离 */
   }
   .svgIcon {
-  transform: scale(1.3);
+    transform: scale(1.3);
+  }
+
+  /* 视频按钮适配 */
+  .portfolio-video-button button.learn-more {
+    width: 11rem;
+    height: 2.8rem;
+  }
+  .portfolio-video-button button.learn-more .circle {
+    width: 2.8rem;
+    height: 2.8rem;
   }
 }
 
@@ -591,12 +619,13 @@ button1 {
 @media (max-width: 480px) {
   .animated-button {
     padding: 3vw 5vw; /* 更小的填充 */
-    font-size: 2vh; /* 更小的字体大小 */
+    font-size: 14px; /* 使用固定字体大小保证可读性 */
     width: auto; /* 调整宽度 */
+    min-height: 40px;
   }
   .animated-button svg {
-  transform: translateX(10px) rotate(180deg) scale(1);
-}
+    transform: translateX(10px) rotate(180deg) scale(1);
+  }
   .animated-button .arr-2 {
    left: -200%;
   }
@@ -604,112 +633,220 @@ button1 {
    left: 15%;
   }
   .ARbutton {
-   font-size: 3.5vw; /* 增加字体大小 */
-   width: 45vw; /* 增加按钮宽度 */
-   height: 7.2vw; /* 增加按钮高度 */
-   bottom: 6vh; /* 调整底部位置 */
+   font-size: 4.5vw; /* 增加字体大小 */
+   width: 50vw; /* 增加按钮宽度 */
+   min-height: 48px; /* 移动端标准点击区域 */
+   bottom: 8vh; /* 调整底部位置 */
   }
   .buttontop {
-    width: 10vw; /* 进一步增加宽度 */
-    height: 10vw; /* 进一步增加高度 */
-    right: 2vw; /* 进一步调整右边距 */
-    bottom: 3vh; /* 进一步调整底部距离 */
+    width: 12vw; /* 进一步增加宽度 */
+    height: 12vw; /* 进一步增加高度 */
+    min-width: 48px; /* 移动端标准点击区域 */
+    min-height: 48px;
+    right: 4vw; /* 进一步调整右边距 */
+    bottom: 4vh; /* 进一步调整底部距离 */
   }
   .svgIcon {
-  transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+  /* 视频按钮适配 */
+  .portfolio-video-button button.learn-more {
+    width: 10rem;
+    height: 2.6rem;
+  }
+  .portfolio-video-button button.learn-more .circle {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+  .portfolio-video-button button.learn-more .button-text {
+    font-size: 0.85rem;
+    margin: 0 0 0 1.2rem;
   }
 }
 
 /* 新按钮样式，使用命名空间避免冲突 */
-.portfolio-video-button {
-    /* 新按钮样式代码 */
-    button { 
-        position: relative; 
-        display: inline-block; 
-        cursor: pointer; 
-        outline: none; 
-        border: 0; 
-        vertical-align: middle; 
-        text-decoration: none; 
-        background: transparent; 
-        padding: 0; 
-        font-size: inherit; 
-        font-family: inherit; 
-        width: 100%; /* 设置宽度为 100% */
-        height: auto; /* 保持高度自适应 */
-    } 
-    
-    button.learn-more { 
-        width: 12rem; 
-        height: auto; 
-    } 
-    
-    button.learn-more .circle { 
-        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1); 
-        position: relative; 
-        display: block; 
-        margin: 0; 
-        width: 3rem; 
-        height: 3rem; 
-        background: #282936; 
-        border-radius: 1.625rem; 
-    } 
-    
-    button.learn-more .circle .icon { 
-        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1); 
-        position: absolute; 
-        top: 0; 
-        bottom: 0; 
-        margin: auto; 
-        background: #fff; 
-    } 
-    
-    button.learn-more .circle .icon.arrow { 
-        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1); 
-        left: 0.625rem; 
-        width: 1.125rem; 
-        height: 0.125rem; 
-        background: none; 
-    } 
-    
-    button.learn-more .circle .icon.arrow::before { 
-        position: absolute; 
-        content: ""; 
-        top: -0.29rem; 
-        right: 0.0625rem; 
-        width: 0.625rem; 
-        height: 0.625rem; 
-        border-top: 0.125rem solid #fff; 
-        border-right: 0.125rem solid #fff; 
-        transform: rotate(45deg); 
-    } 
-    
-    button.learn-more .button-text { 
-        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1); 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        right: 0; 
-        bottom: 0; 
-        padding: 0.75rem 0; 
-        margin: 0 0 0 1.85rem; 
-        color: #ebebeb; 
-        font-weight: 700; 
-        line-height: 1.6; 
-        text-align: center; 
-        text-transform: uppercase; 
-    } 
-    
-    button:hover .circle { 
-        width: 100%; 
-    } 
-    
-    button:hover .circle .icon.arrow { 
-        background: #fff; 
-        transform: translate(1rem, 0); 
-    } 
-    
-    button:hover .button-text { 
-        color: #fff; 
-    }
+/* 新按钮样式，使用命名空间避免冲突 - 扁平化选择器以兼容 Android WebView */
+.portfolio-video-button button { 
+    position: relative; 
+    display: inline-block; 
+    cursor: pointer; 
+    outline: none; 
+    border: 0; 
+    vertical-align: middle; 
+    text-decoration: none; 
+    background: transparent; 
+    padding: 0; 
+    font-size: inherit; 
+    font-family: inherit; 
+    width: 100%; /* 设置宽度为 100% */
+    height: auto; /* 保持高度自适应 */
+} 
+
+.portfolio-video-button button.learn-more { 
+    width: 12rem; 
+    height: 3rem;
+    background: rgba(0, 0, 0, 0.4); /* 半透明深色背景 */
+    backdrop-filter: blur(10px); /* 毛玻璃效果 */
+    -webkit-backdrop-filter: blur(10px); /* 兼容 Safari/iOS/Android */
+    border-radius: 1.625rem; 
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+} 
+
+.portfolio-video-button button.learn-more:hover {
+    transform: translate(-50%, -2px); /* 修复：保持水平居中(translateX -50%)的同时上浮 */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.portfolio-video-button button.learn-more .circle { 
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1); 
+    position: relative; 
+    display: block; 
+    margin: 0; 
+    width: 3rem; 
+    height: 3rem; 
+    background: #282936; 
+    border-radius: 1.625rem; 
+} 
+
+.portfolio-video-button button.learn-more .circle .icon { 
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1); 
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    margin: auto; 
+    background: #fff; 
+} 
+
+.portfolio-video-button button.learn-more .circle .icon.arrow { 
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1); 
+    left: 0.625rem; 
+    width: 1.125rem; 
+    height: 0.125rem; 
+    background: none; 
+} 
+
+.portfolio-video-button button.learn-more .circle .icon.arrow::before { 
+    position: absolute; 
+    content: ""; 
+    top: -0.29rem; 
+    right: 0.0625rem; 
+    width: 0.625rem; 
+    height: 0.625rem; 
+    border-top: 0.125rem solid #fff; 
+    border-right: 0.125rem solid #fff; 
+    transform: rotate(45deg); 
+} 
+
+.portfolio-video-button button.learn-more .button-text { 
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1); 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    padding: 0.75rem 0; 
+    margin: 0 0 0 1.85rem; 
+    color: #fff; 
+    font-weight: 700; 
+    line-height: 1.6; 
+    text-align: center; 
+    text-transform: uppercase; 
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+} 
+
+.portfolio-video-button button:hover .circle { 
+    width: 100%; 
+    background: #282936; 
+} 
+
+.portfolio-video-button button:hover .circle .icon.arrow { 
+    background: #fff; 
+    transform: translate(1rem, 0); 
+} 
+
+.portfolio-video-button button:hover .button-text { 
+    color: #fff; 
+}
+
+/* --- 新增：滚动显现动画 --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- 新增：页面过渡遮罩 --- */
+.page-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  z-index: 9999;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.6s ease-in-out;
+}
+
+.page-transition-overlay.hidden {
+  opacity: 0;
+}
+
+/* --- 新增：物理感倾斜效果样式 --- */
+.tilt-active {
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- 自定义光标样式 --- */
+.cursor-dot,
+.cursor-outline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #333;
+}
+
+.cursor-outline {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+/* --- 统一物理效果基础样式 --- */
+.physics-item {
+  --rotateX: 0deg;
+  --rotateY: 0deg;
+  --translateY: 0px;
+  --scale: 1;
+  transform: perspective(1000px) rotateX(var(--rotateX)) rotateY(var(--rotateY)) translateY(var(--translateY)) scale3d(var(--scale), var(--scale), var(--scale));
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* 默认阴影 */
 }
