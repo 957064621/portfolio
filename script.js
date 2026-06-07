@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- 新增：滚动显现动画 (Intersection Observer) ---
-  const revealElements = document.querySelectorAll('#content img, .image-container, .delayedLink, .image-with-button');
+  const revealElements = document.querySelectorAll('#content > img, #content > .delayedLink, #content > .image-with-button, .image-wrapper > a');
 
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -365,14 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
       particleCanvas.style.width = `${width}px`;
       particleCanvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = Math.min(150, Math.max(72, Math.floor(width * height / 13500)));
+      const count = Math.min(96, Math.max(42, Math.floor(width * height / 24000)));
       particles = Array.from({ length: count }, (_, i) => ({
         x: Math.random() * width,
         y: Math.random() * height,
         z: 0.28 + Math.random() * 1.2,
-        vx: (Math.random() - 0.5) * 0.16,
-        vy: -0.08 - Math.random() * 0.16,
-        size: 0.55 + Math.random() * 1.9,
+        vx: (Math.random() - 0.5) * 0.09,
+        vy: -0.045 - Math.random() * 0.09,
+        size: 0.45 + Math.random() * 1.35,
         phase: Math.random() * Math.PI * 2,
         hue: i % 3
       }));
@@ -389,15 +389,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const dx = p.x - mx;
         const dy = p.y - my;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const influence = Math.max(0, 1 - dist / 260) * 0.8;
-        p.x += p.vx * p.z + (dx / dist) * influence * 0.42;
-        p.y += p.vy * p.z + Math.sin(Date.now() * 0.0007 + p.phase) * 0.035;
+        const influence = Math.max(0, 1 - dist / 260) * 0.46;
+        p.x += p.vx * p.z + (dx / dist) * influence * 0.22;
+        p.y += p.vy * p.z + Math.sin(Date.now() * 0.00058 + p.phase) * 0.026;
 
         if (p.y < -30) p.y = height + 30;
         if (p.x < -30) p.x = width + 30;
         if (p.x > width + 30) p.x = -30;
 
-        const alpha = (0.08 + p.z * 0.07) * (1 - Math.min(0.55, scrollShift / Math.max(height, 1)));
+        const alpha = (0.045 + p.z * 0.038) * (1 - Math.min(0.55, scrollShift / Math.max(height, 1)));
         const radius = p.size * p.z;
         const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius * 8);
         const color = '255,255,255';
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.arc(p.x, p.y, radius * 8, 0, Math.PI * 2);
         ctx.fill();
 
-        if (i % 7 === 0) {
+        if (i % 11 === 0) {
           ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.16})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
@@ -442,10 +442,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const y = e.clientY - rect.top;
         const spotX = (x / rect.width) * 100;
         const spotY = (y / rect.height) * 100;
-        const rotateX = ((y / rect.height) - 0.5) * -8;
-        const rotateY = ((x / rect.width) - 0.5) * 10;
-        const tx = ((x / rect.width) - 0.5) * 10;
-        const ty = ((y / rect.height) - 0.5) * 10;
+        const rotateX = ((y / rect.height) - 0.5) * -4.5;
+        const rotateY = ((x / rect.width) - 0.5) * 5.5;
+        const tx = ((x / rect.width) - 0.5) * 5.5;
+        const ty = ((y / rect.height) - 0.5) * 5.5;
 
         el.style.setProperty('--spot-x', `${spotX}%`);
         el.style.setProperty('--spot-y', `${spotY}%`);
@@ -622,13 +622,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = btn.getBoundingClientRect();
         const x = e.clientX - (rect.left + rect.width / 2);
         const y = e.clientY - (rect.top + rect.height / 2);
-        const strength = btn.classList.contains('buttontop') || btn.classList.contains('animated-button') ? 0.16 : 0.2;
+        const strength = btn.classList.contains('buttontop') || btn.classList.contains('animated-button') ? 0.1 : 0.12;
         const spotX = ((e.clientX - rect.left) / rect.width) * 100;
         const spotY = ((e.clientY - rect.top) / rect.height) * 100;
         btn.style.setProperty('--btn-spot-x', `${spotX}%`);
         btn.style.setProperty('--btn-spot-y', `${spotY}%`);
-        targetX = Math.max(-18, Math.min(18, x * strength));
-        targetY = Math.max(-14, Math.min(14, y * strength));
+        targetX = Math.max(-10, Math.min(10, x * strength));
+        targetY = Math.max(-8, Math.min(8, y * strength));
       });
 
       btn.addEventListener('mouseleave', () => {
