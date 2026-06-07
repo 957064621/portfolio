@@ -481,13 +481,23 @@ document.addEventListener('DOMContentLoaded', () => {
         name: 'brand',
         host: floatingTextHost,
         prop: '--brand-tone',
-        rect: () => ({ left: Math.max(18, window.innerWidth * 0.03), top: 18, width: Math.min(260, window.innerWidth * 0.36), height: 34 })
+        rect: () => ({
+          left: Math.max(18, window.innerWidth * 0.03),
+          top: 20,
+          width: Math.min(220, window.innerWidth * 0.32),
+          height: 18
+        })
       },
       {
         name: 'scroll',
         host: floatingTextHost,
         prop: '--scroll-tone',
-        rect: () => ({ left: window.innerWidth - Math.max(52, window.innerWidth * 0.04), top: window.innerHeight - 132, width: 34, height: 104 })
+        rect: () => ({
+          left: window.innerWidth - Math.max(38, window.innerWidth * 0.032),
+          top: window.innerHeight - 92,
+          width: 18,
+          height: 62
+        })
       }
     ] : []),
     ...workWrappers.map((wrapper, index) => ({
@@ -496,7 +506,12 @@ document.addEventListener('DOMContentLoaded', () => {
       prop: '--works-tone',
       rect: () => {
         const r = wrapper.getBoundingClientRect();
-        return { left: r.left + 16, top: r.top - 40, width: Math.min(260, r.width * 0.45), height: 28 };
+        return {
+          left: r.left + Math.max(12, Math.min(28, r.width * 0.02)),
+          top: r.top - 31,
+          width: Math.min(210, r.width * 0.34),
+          height: 16
+        };
       }
     }))
   ];
@@ -553,8 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
-  function sampleControlLuminance(control, rectOverride = null) {
-    const rect = rectOverride || control.getBoundingClientRect();
+  function sampleRectLuminance(rect, ignoredHost = null) {
     const xs = [0.18, 0.5, 0.82];
     const ys = [0.18, 0.5, 0.82];
     const points = xs.flatMap(px => ys.map(py => [
@@ -563,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]));
 
     const values = points
-      .map(([x, y]) => imageLumAtPoint(x, y) ?? elementLumAtPoint(x, y, control))
+      .map(([x, y]) => imageLumAtPoint(x, y) ?? elementLumAtPoint(x, y, ignoredHost))
       .filter(v => v !== null);
 
     // 没压在作品图上时，默认按暗色背景处理。
@@ -576,6 +590,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 亮底上的浅字最危险，所以局部有明显亮区时优先按亮底处理。
     return mean * 0.45 + high * 0.35 + max * 0.2;
+  }
+
+  function sampleControlLuminance(control) {
+    return sampleRectLuminance(control.getBoundingClientRect(), control);
   }
 
   function toneFromLum(lum) {
@@ -635,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     floatingTextTargets.forEach(target => {
-      const targetLum = sampleControlLuminance(target.host, target.rect());
+      const targetLum = sampleRectLuminance(target.rect());
       const targetTone = toneFromLum(targetLum);
       const currentTone = textToneState.has(target.name) ? textToneState.get(target.name) : targetTone;
       const nextTone = currentTone + (targetTone - currentTone) * 0.12;

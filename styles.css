@@ -165,11 +165,8 @@ button {
   top: 22px;
   left: clamp(18px, 3vw, 42px);
   z-index: 30;
-  color: rgb(
-    calc(255 - (251 * var(--brand-tone, var(--surface-tone, 0))))
-    calc(250 - (245 * var(--brand-tone, var(--surface-tone, 0))))
-    calc(240 - (234 * var(--brand-tone, var(--surface-tone, 0)))) / 0.74
-  );
+  color: rgba(255, 255, 255, 0.82);
+  mix-blend-mode: difference;
   font-size: clamp(11px, 1.1vw, 14px);
   font-weight: 500;
   line-height: 1;
@@ -184,11 +181,8 @@ button {
   right: clamp(16px, 2.6vw, 36px);
   bottom: 28px;
   z-index: 30;
-  color: rgb(
-    calc(255 - (251 * var(--scroll-tone, var(--surface-tone, 0))))
-    calc(250 - (245 * var(--scroll-tone, var(--surface-tone, 0))))
-    calc(240 - (234 * var(--scroll-tone, var(--surface-tone, 0)))) / 0.54
-  );
+  color: rgba(255, 255, 255, 0.68);
+  mix-blend-mode: difference;
   writing-mode: vertical-rl;
   font-size: 11px;
   line-height: 1.2;
@@ -332,11 +326,8 @@ button {
   position: absolute;
   top: -2.1em;
   left: clamp(12px, 2vw, 28px);
-  color: rgb(
-    calc(255 - (251 * var(--works-tone, 0)))
-    calc(250 - (245 * var(--works-tone, 0)))
-    calc(240 - (234 * var(--works-tone, 0))) / 0.68
-  );
+  color: rgba(255, 255, 255, 0.76);
+  mix-blend-mode: difference;
   font-size: clamp(10px, 1vw, 13px);
   font-weight: 600;
   line-height: 1;
