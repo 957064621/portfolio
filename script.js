@@ -1,10 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 开场加载动画 - 首张图片加载完 + 最短展示 2.5s 后淡出
+  // 开场加载动画 - 首张图片加载完 + 最短展示后淡出；站内返回首页时跳过全屏遮罩
   const loaderOverlay = document.getElementById('loader-overlay');
   const firstImage = document.querySelector('#content img');
-  const MIN_LOADER_TIME = 2500;
+  const isIndexPage = /(^|\/)index\.html$/.test(window.location.pathname) || window.location.pathname.endsWith('/');
+  const cameFromInternalPage = (() => {
+    try {
+      if (!document.referrer || !isIndexPage) return false;
+      const ref = new URL(document.referrer);
+      return ref.origin === window.location.origin && ref.pathname !== window.location.pathname;
+    } catch (_) {
+      return false;
+    }
+  })();
+  const skipIndexLoader = (() => {
+    try {
+      const shouldSkip = sessionStorage.getItem('skipIndexLoader') === '1';
+      sessionStorage.removeItem('skipIndexLoader');
+      return shouldSkip || cameFromInternalPage;
+    } catch (_) {
+      return cameFromInternalPage;
+    }
+  })();
+  const MIN_LOADER_TIME = skipIndexLoader ? 0 : 1850;
   const startTime = Date.now();
   let loaderHidden = false;
+
+  if (loaderOverlay && skipIndexLoader) {
+    loaderOverlay.remove();
+  }
 
   function hideLoaderOverlay() {
     if (loaderHidden) return;
@@ -51,18 +74,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 修改返回按钮处理逻辑
   const animatedButtons = document.querySelectorAll('.animated-button');
-  console.log('找到返回按钮数量:', animatedButtons.length); // 调试信息
-  
+
   animatedButtons.forEach(button => {
     button.addEventListener('click', (e) => {
-      console.log('返回按钮被点击'); // 调试信息
       e.preventDefault();
       e.stopPropagation(); // 阻止事件冒泡
       
       // 总是跳转到首页
       const link = button.closest('a');
       const targetUrl = link ? link.getAttribute('href') : 'index.html';
-      
+
+      try {
+        if (/index\.html(?:$|[#?])/.test(targetUrl)) sessionStorage.setItem('skipIndexLoader', '1');
+      } catch (_) {}
+
       setTimeout(() => {
         window.location.href = targetUrl;
       }, 1000);
@@ -73,12 +98,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttonLinks = document.querySelectorAll('a:has(.animated-button)');
   buttonLinks.forEach(link => {
     link.addEventListener('click', (e) => {
-      console.log('按钮链接被点击'); // 调试信息
       e.preventDefault();
       e.stopPropagation();
       
       const targetUrl = link.getAttribute('href') || 'index.html';
-      
+
+      try {
+        if (/index\.html(?:$|[#?])/.test(targetUrl)) sessionStorage.setItem('skipIndexLoader', '1');
+      } catch (_) {}
+
       setTimeout(() => {
         window.location.href = targetUrl;
       }, 1000);
@@ -250,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 新增：滚动显现动画 (Intersection Observer) ---
   const revealElements = document.querySelectorAll('#content img, .image-container, .delayedLink, .image-with-button');
-  
+
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -275,94 +303,342 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
   });
 
-  // --- 新增：物理感倾斜效果 (Tilt Effect) ---
-  // 只对非移动端设备启用，避免触摸冲突
-  if (window.matchMedia("(min-width: 768px)").matches) {
-    const tiltElements = document.querySelectorAll('.image-container, #content img.responsive');
-    
+  // --- Active Theory inspired: ambient cursor, scroll values, restrained card tilt ---
+  const root = document.documentElement;
+  const cursorDot = document.createElement('div');
+  const cursorOutline = document.createElement('div');
+  cursorDot.className = 'cursor-dot';
+  cursorOutline.className = 'cursor-outline';
+  document.body.append(cursorDot, cursorOutline);
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let outlineX = mouseX;
+  let outlineY = mouseY;
+
+  const updatePointerVars = (x, y) => {
+    mouseX = x;
+    mouseY = y;
+    root.style.setProperty('--mx', `${(x / window.innerWidth) * 100}%`);
+    root.style.setProperty('--my', `${(y / window.innerHeight) * 100}%`);
+    cursorDot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+  };
+
+  window.addEventListener('pointermove', (e) => {
+    updatePointerVars(e.clientX, e.clientY);
+  }, { passive: true });
+
+  window.addEventListener('scroll', () => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+    root.style.setProperty('--scroll-progress', progress.toFixed(4));
+  }, { passive: true });
+
+  const animateCursor = () => {
+    outlineX += (mouseX - outlineX) * 0.16;
+    outlineY += (mouseY - outlineY) * 0.16;
+    cursorOutline.style.transform = `translate(${outlineX}px, ${outlineY}px) translate(-50%, -50%)`;
+    requestAnimationFrame(animateCursor);
+  };
+  updatePointerVars(mouseX, mouseY);
+  animateCursor();
+
+  // --- Index cinematic particle field: WebGL-like depth without breaking image layout ---
+  if (isIndexPage) {
+    const particleCanvas = document.createElement('canvas');
+    particleCanvas.className = 'particle-field';
+    particleCanvas.setAttribute('aria-hidden', 'true');
+    document.body.prepend(particleCanvas);
+
+    const ctx = particleCanvas.getContext('2d', { alpha: true });
+    let particles = [];
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+
+    function resizeParticles() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      particleCanvas.width = Math.floor(width * dpr);
+      particleCanvas.height = Math.floor(height * dpr);
+      particleCanvas.style.width = `${width}px`;
+      particleCanvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const count = Math.min(150, Math.max(72, Math.floor(width * height / 13500)));
+      particles = Array.from({ length: count }, (_, i) => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        z: 0.28 + Math.random() * 1.2,
+        vx: (Math.random() - 0.5) * 0.16,
+        vy: -0.08 - Math.random() * 0.16,
+        size: 0.55 + Math.random() * 1.9,
+        phase: Math.random() * Math.PI * 2,
+        hue: i % 3
+      }));
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'lighter';
+      const mx = mouseX || width / 2;
+      const my = mouseY || height / 2;
+      const scrollShift = (parseFloat(getComputedStyle(root).getPropertyValue('--scroll-progress')) || 0) * height * 0.18;
+
+      particles.forEach((p, i) => {
+        const dx = p.x - mx;
+        const dy = p.y - my;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const influence = Math.max(0, 1 - dist / 260) * 0.8;
+        p.x += p.vx * p.z + (dx / dist) * influence * 0.42;
+        p.y += p.vy * p.z + Math.sin(Date.now() * 0.0007 + p.phase) * 0.035;
+
+        if (p.y < -30) p.y = height + 30;
+        if (p.x < -30) p.x = width + 30;
+        if (p.x > width + 30) p.x = -30;
+
+        const alpha = (0.08 + p.z * 0.07) * (1 - Math.min(0.55, scrollShift / Math.max(height, 1)));
+        const radius = p.size * p.z;
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius * 8);
+        const color = '255,255,255';
+        gradient.addColorStop(0, `rgba(${color},${alpha})`);
+        gradient.addColorStop(1, `rgba(${color},0)`);
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius * 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (i % 7 === 0) {
+          ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.16})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mx + (p.x - mx) * 0.16, my + (p.y - my) * 0.16);
+          ctx.stroke();
+        }
+      });
+      requestAnimationFrame(drawParticles);
+    }
+
+    resizeParticles();
+    window.addEventListener('resize', resizeParticles);
+    drawParticles();
+  }
+
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const interactiveElements = document.querySelectorAll('a, button, .image-container');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+
+    const tiltElements = document.querySelectorAll('.image-container');
     tiltElements.forEach(el => {
       el.classList.add('tilt-active');
-      
+
       el.addEventListener('mousemove', (e) => {
         const rect = el.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        // 计算旋转角度
-        const rotateX = ((y - centerY) / centerY) * -5; 
-        const rotateY = ((x - centerX) / centerX) * 5;
-        
-        el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        el.style.transition = 'transform 0.1s ease-out';
-        el.style.zIndex = '10';
-        el.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+        const spotX = (x / rect.width) * 100;
+        const spotY = (y / rect.height) * 100;
+        const rotateX = ((y / rect.height) - 0.5) * -8;
+        const rotateY = ((x / rect.width) - 0.5) * 10;
+        const tx = ((x / rect.width) - 0.5) * 10;
+        const ty = ((y / rect.height) - 0.5) * 10;
+
+        el.style.setProperty('--spot-x', `${spotX}%`);
+        el.style.setProperty('--spot-y', `${spotY}%`);
+        el.style.setProperty('--tilt-x', `${rotateX}deg`);
+        el.style.setProperty('--tilt-y', `${rotateY}deg`);
+        el.style.setProperty('--card-tx', `${tx}px`);
+        el.style.setProperty('--card-ty', `${ty}px`);
+        el.classList.add('is-tilting');
       });
 
       el.addEventListener('mouseleave', () => {
-        el.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-        el.style.transition = 'transform 0.5s ease-out';
-        el.style.zIndex = '1';
-        el.style.boxShadow = 'none';
+        el.style.setProperty('--tilt-x', '0deg');
+        el.style.setProperty('--tilt-y', '0deg');
+        el.style.setProperty('--card-tx', '0px');
+        el.style.setProperty('--card-ty', '0px');
+        el.style.setProperty('--spot-x', '50%');
+        el.style.setProperty('--spot-y', '50%');
+        el.classList.remove('is-tilting');
       });
     });
   }
 
-  // --- 新增：磁性按钮效果 (Magnetic Buttons) ---
-  if (window.matchMedia("(min-width: 768px)").matches) {
-    const magneticButtons = document.querySelectorAll('.animated-button, .ARbutton, .learn-more, .buttontop');
-    
+  // --- 浮动 UI 底色取样：多点采样 + 缓动，避免明暗切换生硬 ---
+  const lumMap = {
+    "1/1.png":211,"1/10.png":214,"1/11.png":219,"1/12.png":249,"1/13.png":19,"1/14.png":248,"1/15.png":107,"1/2.png":182,"1/3.png":224,"1/4.png":250,"1/5.png":142,"1/6.png":246,"1/7.png":248,"1/8.png":244,"1/9.png":242,"2/1.png":174,"2/10.png":243,"2/2.png":249,"2/3.png":244,"2/4.png":240,"2/5.png":243,"2/6.png":244,"2/7.png":246,"2/8.png":180,"2/9.png":239,"3/1.png":218,"3/2.png":234,"3/3.png":232,"3/4.png":225,"3/5.png":225,"4/1.png":149,"4/2.png":237,"4/3.png":240,"4/4.png":226,"4/5.png":244,"4/6.png":241,"4/7.png":200,"4/8.png":252,"5/1.png":143,"5/2.png":32,"5/3.png":111,"5/4.png":235,"5/5.png":166,"5/6.png":63,"5/7.png":21,"5/8.png":250,"6/2.png":76,"6/3.png":23,"6/4.png":35,"6/5.png":25,"6/6.png":27,"6/7.png":31,"Cover/01.png":18,"Cover/02.png":107,"Cover/03.png":88,"Cover/04.png":37,"Cover/05.png":38,"Cover/06.png":18,"Cover/07.png":107,"Cover/08.png":189,"Cover/09.png":38,"Cover/10.png":28,"iPhone%2014%20Pro%20Max%20-%205.png":219
+  };
+  const floatingControls = [...document.querySelectorAll('.ARbutton, .animated-button, .buttontop, .portfolio-video-button button.learn-more')];
+  const floatingTextHost = document.querySelector('#container');
+  const workWrappers = [...document.querySelectorAll('.image-wrapper')];
+  const floatingTextTargets = [
+    ...(floatingTextHost ? [
+      {
+        name: 'brand',
+        host: floatingTextHost,
+        prop: '--brand-tone',
+        rect: () => ({ left: Math.max(18, window.innerWidth * 0.03), top: 18, width: Math.min(260, window.innerWidth * 0.36), height: 34 })
+      },
+      {
+        name: 'scroll',
+        host: floatingTextHost,
+        prop: '--scroll-tone',
+        rect: () => ({ left: window.innerWidth - Math.max(52, window.innerWidth * 0.04), top: window.innerHeight - 132, width: 34, height: 104 })
+      }
+    ] : []),
+    ...workWrappers.map((wrapper, index) => ({
+      name: `works-${index}`,
+      host: wrapper,
+      prop: '--works-tone',
+      rect: () => {
+        const r = wrapper.getBoundingClientRect();
+        return { left: r.left + 16, top: r.top - 40, width: Math.min(260, r.width * 0.45), height: 28 };
+      }
+    }))
+  ];
+  const pageImages = [...document.querySelectorAll('#content img')].map(img => {
+    let key = '';
+    try { key = new URL(img.currentSrc || img.src).pathname.replace(/^\//, ''); } catch (_) {}
+    return { img, key, lum: lumMap[key] ?? 80 };
+  });
+
+  function imageLumAtPoint(x, y) {
+    for (const item of pageImages) {
+      const r = item.img.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return item.lum;
+    }
+    return null;
+  }
+
+  function sampleControlLuminance(control, rectOverride = null) {
+    const rect = rectOverride || control.getBoundingClientRect();
+    const points = [
+      [rect.left + rect.width * 0.5, rect.top + rect.height * 0.5],
+      [rect.left + rect.width * 0.22, rect.top + rect.height * 0.5],
+      [rect.left + rect.width * 0.78, rect.top + rect.height * 0.5],
+      [rect.left + rect.width * 0.5, rect.top + rect.height * 0.22],
+      [rect.left + rect.width * 0.5, rect.top + rect.height * 0.78]
+    ];
+
+    const values = points
+      .map(([x, y]) => imageLumAtPoint(x, y))
+      .filter(v => v !== null);
+
+    // 没压在作品图上时，默认按暗色背景处理。
+    if (!values.length) return 24;
+    return values.reduce((sum, v) => sum + v, 0) / values.length;
+  }
+
+  const controlToneState = new WeakMap();
+  const textToneState = new Map();
+
+  function applyTone(target, nextTone) {
+    target.style.setProperty('--surface-tone', nextTone.toFixed(4));
+
+    // 对应关系：底部越亮，按钮越深；底部越暗，按钮越浅。文字始终反向，保证可读性。
+    const mix = (a, b) => Math.round(a + (b - a) * nextTone);
+    const fg = `rgba(${mix(10, 255)}, ${mix(12, 250)}, ${mix(14, 240)}, 0.96)`;
+    const bgAlpha = (0.34 + 0.22 * nextTone).toFixed(3);
+    const bg = `rgba(${mix(255, 5)}, ${mix(255, 7)}, ${mix(255, 9)}, ${bgAlpha})`;
+    const border = `rgba(255, 255, 255, ${(0.3 + 0.18 * Math.abs(nextTone - 0.5)).toFixed(3)})`;
+    const topGlint = `rgba(255, 255, 255, ${(0.5 - 0.18 * nextTone).toFixed(3)})`;
+    const midGlint = `rgba(255, 255, 255, ${(0.22 - 0.12 * nextTone).toFixed(3)})`;
+    const lowGlint = `rgba(255, 255, 255, ${(0.1 - 0.045 * nextTone).toFixed(3)})`;
+    const shadow = `rgba(0, 0, 0, ${(0.22 + 0.24 * nextTone).toFixed(3)})`;
+    target.style.setProperty('--control-fg', fg);
+    target.style.setProperty('--control-bg', bg);
+    target.style.setProperty('--control-border', border);
+    target.style.setProperty('--control-glint-top', topGlint);
+    target.style.setProperty('--control-glint-mid', midGlint);
+    target.style.setProperty('--control-glint-low', lowGlint);
+    target.style.setProperty('--control-shadow', shadow);
+  }
+
+  function animateFloatingTone() {
+    floatingControls.forEach(control => {
+      const targetLum = sampleControlLuminance(control);
+      const targetTone = Math.max(0, Math.min(1, (targetLum - 72) / 120));
+      const currentTone = controlToneState.has(control) ? controlToneState.get(control) : targetTone;
+      const nextTone = currentTone + (targetTone - currentTone) * 0.085;
+      controlToneState.set(control, nextTone);
+      applyTone(control, nextTone);
+
+      // 类名只作为旧浏览器 fallback，加入滞后阈值避免来回闪。
+      const isLightNow = control.classList.contains('on-light-surface');
+      if (!isLightNow && nextTone > 0.62) {
+        control.classList.add('on-light-surface');
+        control.classList.remove('on-dark-surface');
+      } else if (isLightNow && nextTone < 0.42) {
+        control.classList.remove('on-light-surface');
+        control.classList.add('on-dark-surface');
+      } else if (!control.classList.contains('on-light-surface') && !control.classList.contains('on-dark-surface')) {
+        control.classList.add(nextTone > 0.52 ? 'on-light-surface' : 'on-dark-surface');
+      }
+    });
+
+    floatingTextTargets.forEach(target => {
+      const targetLum = sampleControlLuminance(target.host, target.rect());
+      const targetTone = Math.max(0, Math.min(1, (targetLum - 72) / 120));
+      const currentTone = textToneState.has(target.name) ? textToneState.get(target.name) : targetTone;
+      const nextTone = currentTone + (targetTone - currentTone) * 0.085;
+      textToneState.set(target.name, nextTone);
+      target.host.style.setProperty(target.prop, nextTone.toFixed(4));
+    });
+
+    requestAnimationFrame(animateFloatingTone);
+  }
+  animateFloatingTone();
+
+  // --- 灵动磁吸：只更新变量，不覆盖 CSS transition ---
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const magneticButtons = [...document.querySelectorAll('.ARbutton, .portfolio-video-button button.learn-more, .animated-button, .buttontop')];
+
     magneticButtons.forEach(btn => {
-      // 初始化自定义属性用于存储当前的磁力偏移
-      btn.dataset.tx = 0;
-      btn.dataset.ty = 0;
+      let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+      let active = false;
+
+      const renderMagnet = () => {
+        currentX += (targetX - currentX) * 0.18;
+        currentY += (targetY - currentY) * 0.18;
+        btn.style.setProperty('--mag-x', `${currentX.toFixed(2)}px`);
+        btn.style.setProperty('--mag-y', `${currentY.toFixed(2)}px`);
+
+        if (active || Math.abs(currentX) > 0.05 || Math.abs(currentY) > 0.05) {
+          requestAnimationFrame(renderMagnet);
+        }
+      };
+
+      btn.addEventListener('mouseenter', () => {
+        active = true;
+        btn.classList.add('is-magnetic');
+        requestAnimationFrame(renderMagnet);
+      });
 
       btn.addEventListener('mousemove', (e) => {
         const rect = btn.getBoundingClientRect();
-        
-        // 读取当前的磁力偏移
-        const currentTx = parseFloat(btn.dataset.tx) || 0;
-        const currentTy = parseFloat(btn.dataset.ty) || 0;
-        
-        // 计算元素的原始中心点（去除磁力偏移的影响）
-        // 注意：rect.left 包含了 currentTx
-        const centerX = rect.left - currentTx + rect.width / 2;
-        const centerY = rect.top - currentTy + rect.height / 2;
-        
-        // 计算鼠标相对于原始中心点的偏移
-        const x = e.clientX - centerX;
-        const y = e.clientY - centerY;
-        
-        const strength = 0.3;
-        const newTx = x * strength;
-        const newTy = y * strength;
-        
-        // 更新存储的偏移量
-        btn.dataset.tx = newTx;
-        btn.dataset.ty = newTy;
-        
-        // 应用变换
-        if (btn.classList.contains('ARbutton') || btn.classList.contains('learn-more')) {
-           btn.style.transform = `translateX(calc(-50% + ${newTx}px)) translateY(${newTy}px)`;
-        } else {
-           btn.style.transform = `translate(${newTx}px, ${newTy}px)`;
-        }
-        btn.style.transition = 'transform 0.1s ease-out';
+        const x = e.clientX - (rect.left + rect.width / 2);
+        const y = e.clientY - (rect.top + rect.height / 2);
+        const strength = btn.classList.contains('buttontop') || btn.classList.contains('animated-button') ? 0.16 : 0.2;
+        const spotX = ((e.clientX - rect.left) / rect.width) * 100;
+        const spotY = ((e.clientY - rect.top) / rect.height) * 100;
+        btn.style.setProperty('--btn-spot-x', `${spotX}%`);
+        btn.style.setProperty('--btn-spot-y', `${spotY}%`);
+        targetX = Math.max(-18, Math.min(18, x * strength));
+        targetY = Math.max(-14, Math.min(14, y * strength));
       });
-      
+
       btn.addEventListener('mouseleave', () => {
-        // 重置
-        btn.dataset.tx = 0;
-        btn.dataset.ty = 0;
-        
-        if (btn.classList.contains('ARbutton') || btn.classList.contains('learn-more')) {
-           btn.style.transform = 'translateX(-50%)';
-        } else {
-           btn.style.transform = 'translate(0, 0)';
-        }
-        btn.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+        active = false;
+        targetX = 0;
+        targetY = 0;
+        btn.style.setProperty('--btn-spot-x', '22%');
+        btn.style.setProperty('--btn-spot-y', '18%');
+        btn.classList.remove('is-magnetic');
+        requestAnimationFrame(renderMagnet);
       });
     });
   }
