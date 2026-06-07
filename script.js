@@ -514,23 +514,75 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
+  function colorToLum(color) {
+    const match = color && color.match(/rgba?\(([^)]+)\)/);
+    if (!match) return null;
+    const parts = match[1].split(',').map(part => Number.parseFloat(part.trim()));
+    if (parts.length < 3 || parts.slice(0, 3).some(Number.isNaN)) return null;
+    const alpha = parts.length >= 4 && !Number.isNaN(parts[3]) ? parts[3] : 1;
+    if (alpha <= 0.05) return null;
+    return parts[0] * 0.2126 + parts[1] * 0.7152 + parts[2] * 0.0722;
+  }
+
+  function elementLumAtPoint(x, y, ignoredHost = null) {
+    const stack = document.elementsFromPoint(x, y);
+    for (const stackEl of stack) {
+      if (
+        ignoredHost &&
+        stackEl instanceof Element &&
+        (stackEl === ignoredHost || ignoredHost.contains(stackEl) || stackEl.closest('.ARbutton, .animated-button, .buttontop, .portfolio-video-button'))
+      ) {
+        continue;
+      }
+
+      let el = stackEl;
+      while (el && el !== document.documentElement) {
+        if (
+          ignoredHost &&
+          el instanceof Element &&
+          (el === ignoredHost || ignoredHost.contains(el) || el.closest('.ARbutton, .animated-button, .buttontop, .portfolio-video-button'))
+        ) {
+          break;
+        }
+
+        const lum = colorToLum(getComputedStyle(el).backgroundColor);
+        if (lum !== null) return lum;
+        el = el.parentElement;
+      }
+    }
+    return null;
+  }
+
   function sampleControlLuminance(control, rectOverride = null) {
     const rect = rectOverride || control.getBoundingClientRect();
-    const points = [
-      [rect.left + rect.width * 0.5, rect.top + rect.height * 0.5],
-      [rect.left + rect.width * 0.22, rect.top + rect.height * 0.5],
-      [rect.left + rect.width * 0.78, rect.top + rect.height * 0.5],
-      [rect.left + rect.width * 0.5, rect.top + rect.height * 0.22],
-      [rect.left + rect.width * 0.5, rect.top + rect.height * 0.78]
-    ];
+    const xs = [0.18, 0.5, 0.82];
+    const ys = [0.18, 0.5, 0.82];
+    const points = xs.flatMap(px => ys.map(py => [
+      rect.left + rect.width * px,
+      rect.top + rect.height * py
+    ]));
 
     const values = points
-      .map(([x, y]) => imageLumAtPoint(x, y))
+      .map(([x, y]) => imageLumAtPoint(x, y) ?? elementLumAtPoint(x, y, control))
       .filter(v => v !== null);
 
     // 没压在作品图上时，默认按暗色背景处理。
     if (!values.length) return 24;
-    return values.reduce((sum, v) => sum + v, 0) / values.length;
+
+    values.sort((a, b) => a - b);
+    const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+    const high = values[Math.floor(values.length * 0.78)] ?? values[values.length - 1];
+    const max = values[values.length - 1];
+
+    // 亮底上的浅字最危险，所以局部有明显亮区时优先按亮底处理。
+    return mean * 0.45 + high * 0.35 + max * 0.2;
+  }
+
+  function toneFromLum(lum) {
+    const clamped = Math.max(0, Math.min(1, (lum - 88) / 104));
+    if (lum >= 136) return Math.max(clamped, 0.84);
+    if (lum <= 68) return Math.min(clamped, 0.08);
+    return clamped;
   }
 
   const controlToneState = new WeakMap();
@@ -541,14 +593,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 对应关系：底部越亮，按钮越深；底部越暗，按钮越浅。文字始终反向，保证可读性。
     const mix = (a, b) => Math.round(a + (b - a) * nextTone);
-    const fg = `rgba(${mix(10, 255)}, ${mix(12, 250)}, ${mix(14, 240)}, 0.96)`;
-    const bgAlpha = (0.34 + 0.22 * nextTone).toFixed(3);
-    const bg = `rgba(${mix(255, 5)}, ${mix(255, 7)}, ${mix(255, 9)}, ${bgAlpha})`;
-    const border = `rgba(255, 255, 255, ${(0.3 + 0.18 * Math.abs(nextTone - 0.5)).toFixed(3)})`;
-    const topGlint = `rgba(255, 255, 255, ${(0.5 - 0.18 * nextTone).toFixed(3)})`;
-    const midGlint = `rgba(255, 255, 255, ${(0.22 - 0.12 * nextTone).toFixed(3)})`;
-    const lowGlint = `rgba(255, 255, 255, ${(0.1 - 0.045 * nextTone).toFixed(3)})`;
-    const shadow = `rgba(0, 0, 0, ${(0.22 + 0.24 * nextTone).toFixed(3)})`;
+    const fg = `rgba(${mix(8, 255)}, ${mix(10, 250)}, ${mix(12, 240)}, 0.98)`;
+    const bgAlpha = (0.38 + 0.34 * nextTone).toFixed(3);
+    const bg = `rgba(${mix(255, 6)}, ${mix(255, 7)}, ${mix(255, 9)}, ${bgAlpha})`;
+    const border = nextTone > 0.58
+      ? `rgba(255, 255, 255, ${(0.22 + 0.1 * nextTone).toFixed(3)})`
+      : `rgba(255, 255, 255, ${(0.28 + 0.16 * (1 - nextTone)).toFixed(3)})`;
+    const topGlint = `rgba(255, 255, 255, ${(0.46 - 0.2 * nextTone).toFixed(3)})`;
+    const midGlint = `rgba(255, 255, 255, ${(0.2 - 0.1 * nextTone).toFixed(3)})`;
+    const lowGlint = `rgba(255, 255, 255, ${(0.09 - 0.04 * nextTone).toFixed(3)})`;
+    const shadow = `rgba(0, 0, 0, ${(0.18 + 0.34 * nextTone).toFixed(3)})`;
     target.style.setProperty('--control-fg', fg);
     target.style.setProperty('--control-bg', bg);
     target.style.setProperty('--control-border', border);
@@ -561,9 +615,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function animateFloatingTone() {
     floatingControls.forEach(control => {
       const targetLum = sampleControlLuminance(control);
-      const targetTone = Math.max(0, Math.min(1, (targetLum - 72) / 120));
+      const targetTone = toneFromLum(targetLum);
       const currentTone = controlToneState.has(control) ? controlToneState.get(control) : targetTone;
-      const nextTone = currentTone + (targetTone - currentTone) * 0.085;
+      const nextTone = currentTone + (targetTone - currentTone) * 0.12;
       controlToneState.set(control, nextTone);
       applyTone(control, nextTone);
 
@@ -582,9 +636,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     floatingTextTargets.forEach(target => {
       const targetLum = sampleControlLuminance(target.host, target.rect());
-      const targetTone = Math.max(0, Math.min(1, (targetLum - 72) / 120));
+      const targetTone = toneFromLum(targetLum);
       const currentTone = textToneState.has(target.name) ? textToneState.get(target.name) : targetTone;
-      const nextTone = currentTone + (targetTone - currentTone) * 0.085;
+      const nextTone = currentTone + (targetTone - currentTone) * 0.12;
       textToneState.set(target.name, nextTone);
       target.host.style.setProperty(target.prop, nextTone.toFixed(4));
     });

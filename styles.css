@@ -540,6 +540,8 @@ button {
     transform var(--motion-medium) var(--ease-luxe),
     width var(--motion-medium) var(--ease-luxe),
     height var(--motion-medium) var(--ease-luxe),
+    color var(--motion-fast) var(--ease-luxe),
+    background var(--motion-fast) var(--ease-luxe),
     border-color var(--motion-fast) var(--ease-luxe),
     box-shadow var(--motion-fast) var(--ease-luxe),
     opacity 0.6s;
@@ -599,17 +601,17 @@ button {
 }
 
 .ARbutton.on-light-surface {
-  --control-fg: rgba(18, 19, 20, 0.9);
-  --control-bg: rgba(255, 255, 255, 0.5);
-  --control-border: rgba(0, 0, 0, 0.14);
-  --control-shadow: rgba(0, 0, 0, 0.16);
+  --control-fg: rgba(255, 250, 240, 0.98);
+  --control-bg: rgba(6, 7, 9, 0.72);
+  --control-border: rgba(255, 255, 255, 0.26);
+  --control-shadow: rgba(0, 0, 0, 0.5);
 }
 
 .ARbutton.on-dark-surface {
-  --control-fg: rgba(255, 250, 240, 0.92);
-  --control-bg: rgba(255, 255, 255, 0.16);
-  --control-border: rgba(255, 255, 255, 0.28);
-  --control-shadow: rgba(0, 0, 0, 0.22);
+  --control-fg: rgba(10, 12, 14, 0.96);
+  --control-bg: rgba(255, 255, 255, 0.38);
+  --control-border: rgba(255, 255, 255, 0.44);
+  --control-shadow: rgba(0, 0, 0, 0.18);
 }
 
 .animated-button {
