@@ -31,8 +31,8 @@ interface RouteNavigateDetail {
 }
 
 const routeNavigateEvent = "portfolio:navigate";
-const routeLeavingDuration = 160;
-const routeEnteringDuration = 620;
+const routeLeavingDuration = 110;
+const routeEnteringDuration = 420;
 
 const assetBasePath = (() => {
   const assetPath = new URL(import.meta.url).pathname;
@@ -733,17 +733,23 @@ function useFloatingControlTone(view: View) {
       control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.12)");
       control.style.setProperty("--control-glint-low", darkSurface ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.055)");
       control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.46)" : "rgba(0, 0, 0, 0.18)");
+      control.style.setProperty("--control-backdrop-blur", "36px");
+      control.style.setProperty("--control-inner-blur", "22px");
       control.style.setProperty(
         "--control-text-shadow",
         darkSurface ? "0 1px 2px rgba(0, 0, 0, 0.28)" : "0 1px 0 rgba(255, 255, 255, 0.38)"
       );
 
       if (compactGlass) {
-        control.style.setProperty("--control-bg", darkSurface ? "rgba(7, 9, 12, 0.28)" : "rgba(255, 255, 255, 0.2)");
+        control.style.setProperty("--control-bg", darkSurface ? "rgba(7, 9, 12, 0.24)" : "rgba(255, 255, 255, 0.16)");
         control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.5)" : "rgba(255, 255, 255, 0.62)");
         control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.22)" : "rgba(255, 255, 255, 0.38)");
         control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.14)");
         control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.36)" : "rgba(0, 0, 0, 0.24)");
+        control.style.setProperty("--control-backdrop-blur", "58px");
+        control.style.setProperty("--control-inner-blur", "34px");
+        control.style.setProperty("--round-backdrop-blur", "64px");
+        control.style.setProperty("--round-inner-blur", "38px");
         control.style.setProperty("--round-glass-sheen", darkSurface ? "rgba(255, 255, 255, 0.16)" : "rgba(255, 255, 255, 0.42)");
         control.style.setProperty("--round-glass-haze", darkSurface ? "rgba(255, 255, 255, 0.055)" : "rgba(255, 255, 255, 0.22)");
         control.style.setProperty("--round-before-hot", darkSurface ? "rgba(255, 255, 255, 0.18)" : "rgba(255, 255, 255, 0.64)");
