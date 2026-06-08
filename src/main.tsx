@@ -743,28 +743,28 @@ function useFloatingControlTone(view: View) {
       );
 
       if (compactGlass) {
-        control.style.setProperty("--control-bg", darkSurface ? "rgba(7, 9, 12, 0.48)" : "rgba(255, 255, 255, 0.22)");
+        control.style.setProperty("--control-bg", darkSurface ? "rgba(8, 11, 15, 0.24)" : "rgba(255, 255, 255, 0.2)");
         control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.62)" : "rgba(255, 255, 255, 0.62)");
         control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.22)" : "rgba(255, 255, 255, 0.38)");
         control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.14)");
-        control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.48)" : "rgba(0, 0, 0, 0.24)");
-        control.style.setProperty("--control-backdrop-blur", "76px");
-        control.style.setProperty("--control-inner-blur", "48px");
-        control.style.setProperty("--control-lens-opacity", darkSurface ? "0.74" : "0.86");
-        control.style.setProperty("--control-frost-opacity", darkSurface ? "0.82" : "0.9");
-        control.style.setProperty("--round-backdrop-blur", "82px");
-        control.style.setProperty("--round-inner-blur", "52px");
-        control.style.setProperty("--round-glass-sheen", darkSurface ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.5)");
-        control.style.setProperty("--round-glass-haze", darkSurface ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.28)");
-        control.style.setProperty("--round-before-hot", darkSurface ? "rgba(255, 255, 255, 0.14)" : "rgba(255, 255, 255, 0.72)");
-        control.style.setProperty("--round-before-soft", darkSurface ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.16)");
-        control.style.setProperty("--round-before-line", darkSurface ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.36)");
-        control.style.setProperty("--round-before-opacity", darkSurface ? "0.36" : "0.76");
-        control.style.setProperty("--round-after-hot", darkSurface ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.46)");
-        control.style.setProperty("--round-after-mid", darkSurface ? "rgba(255, 255, 255, 0.045)" : "rgba(255, 255, 255, 0.28)");
-        control.style.setProperty("--round-after-low", darkSurface ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.2)");
-        control.style.setProperty("--round-after-floor", darkSurface ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.1)");
-        control.style.setProperty("--round-after-opacity", darkSurface ? "0.48" : "0.9");
+        control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.24)");
+        control.style.setProperty("--control-backdrop-blur", "46px");
+        control.style.setProperty("--control-inner-blur", "28px");
+        control.style.setProperty("--control-lens-opacity", darkSurface ? "0.82" : "0.88");
+        control.style.setProperty("--control-frost-opacity", darkSurface ? "0.78" : "0.88");
+        control.style.setProperty("--round-backdrop-blur", "34px");
+        control.style.setProperty("--round-inner-blur", "22px");
+        control.style.setProperty("--round-glass-sheen", darkSurface ? "rgba(255, 255, 255, 0.34)" : "rgba(255, 255, 255, 0.52)");
+        control.style.setProperty("--round-glass-haze", darkSurface ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.26)");
+        control.style.setProperty("--round-before-hot", darkSurface ? "rgba(255, 255, 255, 0.48)" : "rgba(255, 255, 255, 0.72)");
+        control.style.setProperty("--round-before-soft", darkSurface ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.16)");
+        control.style.setProperty("--round-before-line", darkSurface ? "rgba(255, 255, 255, 0.24)" : "rgba(255, 255, 255, 0.36)");
+        control.style.setProperty("--round-before-opacity", darkSurface ? "0.78" : "0.82");
+        control.style.setProperty("--round-after-hot", darkSurface ? "rgba(255, 255, 255, 0.28)" : "rgba(255, 255, 255, 0.46)");
+        control.style.setProperty("--round-after-mid", darkSurface ? "rgba(255, 255, 255, 0.14)" : "rgba(255, 255, 255, 0.28)");
+        control.style.setProperty("--round-after-low", darkSurface ? "rgba(255, 255, 255, 0.09)" : "rgba(255, 255, 255, 0.2)");
+        control.style.setProperty("--round-after-floor", darkSurface ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.1)");
+        control.style.setProperty("--round-after-opacity", darkSurface ? "0.76" : "0.82");
       }
 
       if (control.classList.contains("marker-button")) {
