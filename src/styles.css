@@ -464,15 +464,15 @@ img {
 @keyframes research-tap-halo {
   0% {
     opacity: 0.18;
-    transform: translate3d(4%, 0, 0) scale(0.96);
+    transform: scale(0.96);
   }
   48% {
     opacity: 1;
-    transform: translate3d(4%, 0, 0) scale(1.012);
+    transform: scale(1.012);
   }
   100% {
     opacity: 0.82;
-    transform: translate3d(4%, 0, 0) scale(1);
+    transform: scale(1);
   }
 }
 
@@ -1001,14 +1001,14 @@ h2 {
   z-index: 2;
   pointer-events: none;
   background:
-    radial-gradient(circle at var(--research-light-x) var(--research-light-y), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.055) 24%, transparent 54%),
-    linear-gradient(110deg, transparent 6%, rgba(255, 255, 255, 0.085) 48%, transparent 68%);
+    radial-gradient(circle at var(--research-light-x) var(--research-light-y), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.055) 24%, rgba(255, 255, 255, 0) 54%),
+    linear-gradient(110deg, rgba(255, 255, 255, 0) 12%, rgba(255, 255, 255, 0.075) 50%, rgba(255, 255, 255, 0) 74%);
   opacity: 0;
-  transform: translate3d(-18%, 0, 0);
+  transform: scale(1);
   transform-origin: var(--tap-x) var(--tap-y);
   transition:
     opacity 0.64s var(--ease-luxe),
-    transform 0.96s var(--ease-luxe);
+    transform 0.72s var(--ease-luxe);
 }
 
 .research-card::after {
@@ -1025,8 +1025,8 @@ h2 {
 }
 
 .research-card:hover::before {
-  opacity: 1;
-  transform: translate3d(10%, 0, 0);
+  opacity: 0.82;
+  transform: scale(1.006);
 }
 
 .research-card.is-tapping {
@@ -1039,11 +1039,11 @@ h2 {
 
 .research-card.is-tapping::before {
   opacity: 1;
-  transform: translate3d(4%, 0, 0);
+  transform: scale(1);
   animation: research-tap-halo 0.58s var(--ease-luxe) both;
   background:
-    radial-gradient(circle at var(--tap-x, var(--research-light-x)) var(--tap-y, var(--research-light-y)), rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.075) 24%, transparent 56%),
-    linear-gradient(110deg, transparent 6%, rgba(255, 255, 255, 0.12) 48%, transparent 68%);
+    radial-gradient(circle at var(--tap-x, var(--research-light-x)) var(--tap-y, var(--research-light-y)), rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.075) 24%, rgba(255, 255, 255, 0) 56%),
+    linear-gradient(110deg, rgba(255, 255, 255, 0) 12%, rgba(255, 255, 255, 0.105) 50%, rgba(255, 255, 255, 0) 74%);
 }
 
 .research-copy,
