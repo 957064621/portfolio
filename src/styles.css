@@ -360,37 +360,6 @@ img {
   }
 }
 
-@keyframes route-origin-bloom {
-  0% {
-    opacity: 0;
-    transform: translate3d(-50%, -50%, 0) scale(0.7);
-    filter: blur(12px);
-  }
-  38% {
-    opacity: 0.16;
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(-50%, -50%, 0) scale(1.6);
-    filter: blur(18px);
-  }
-}
-
-@keyframes route-rail-scan {
-  0% {
-    opacity: 0;
-    transform: translate3d(-4%, -50%, 0) scaleX(0.82);
-  }
-  46% {
-    opacity: 0.22;
-    transform: translate3d(0, -50%, 0) scaleX(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(4%, -50%, 0) scaleX(0.88);
-  }
-}
-
 @keyframes line-reveal-enter {
   0% {
     opacity: 0;
@@ -440,11 +409,10 @@ img {
   opacity: 0;
   overflow: hidden;
   background:
-    radial-gradient(circle at var(--route-origin-x) var(--route-origin-y), rgba(255, 255, 255, 0.055), transparent 26%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(0, 0, 0, 0.055) 52%, rgba(255, 255, 255, 0.018)),
-    rgba(0, 0, 0, 0.025);
-  backdrop-filter: blur(2.5px) saturate(1.03);
-  -webkit-backdrop-filter: blur(2.5px) saturate(1.03);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(0, 0, 0, 0.045) 52%, rgba(255, 255, 255, 0.014)),
+    rgba(0, 0, 0, 0.018);
+  backdrop-filter: blur(1.8px) saturate(1.02);
+  -webkit-backdrop-filter: blur(1.8px) saturate(1.02);
   mix-blend-mode: normal;
   will-change: opacity, transform;
 }
@@ -452,6 +420,7 @@ img {
 .route-veil::before,
 .route-veil::after {
   content: "";
+  display: none;
   position: absolute;
   pointer-events: none;
 }
@@ -486,11 +455,11 @@ img {
 }
 
 .route-veil.route-leaving::before {
-  animation: route-origin-bloom 0.28s var(--ease-luxe) both;
+  animation: none;
 }
 
 .route-veil.route-leaving::after {
-  animation: route-rail-scan 0.26s var(--ease-glide) both;
+  animation: none;
 }
 
 .route-veil.route-entering {
@@ -498,11 +467,11 @@ img {
 }
 
 .route-veil.route-entering::before {
-  animation: route-origin-bloom 0.38s var(--ease-luxe) both;
+  animation: none;
 }
 
 .route-veil.route-entering::after {
-  animation: route-rail-scan 0.34s var(--ease-glide) both;
+  animation: none;
 }
 
 .cursor-light {
