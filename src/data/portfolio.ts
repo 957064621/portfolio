@@ -25,6 +25,7 @@ export interface Project {
   coverColor: string;
   pages: PageAsset[];
   actions?: Action[];
+  inlineEmbed?: Action;
 }
 
 const oss = "https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com";
@@ -104,8 +105,8 @@ export const projects: Project[] = [
     legacyPath: "/1.html",
     slug: "low-carbon",
     title: "低碳宠行",
-    category: "Service Design / Low Carbon",
-    summary: "围绕宠物出行与城市低碳行为的视觉化服务系统。",
+    category: "MR Interaction / Service Design",
+    summary: "在碳排放持续增长的背景下，围绕年轻群体“认同低碳但缺少行动动力”的矛盾，完成 PEST 分析、问卷调研、用户画像与旅程图，提炼 6 类机会点，并主导虚拟宠物陪伴、游戏化积分与社交竞争结合的 MR 交互方案。",
     coverBw: image("Cover/01.png"),
     coverColor: image("Cover/06.png"),
     pages: [
@@ -126,8 +127,8 @@ export const projects: Project[] = [
     legacyPath: "/2.html",
     slug: "qintong",
     title: "溱潼会昼",
-    category: "Branding / Cultural Event",
-    summary: "地方文化活动的视觉叙事与传播系统。",
+    category: "Folk Culture / Service System",
+    summary: "针对民俗文化在年轻群体中参与度低、数字触点零散的问题，通过问卷与访谈驱动设计，构建双轨服务系统与触点地图，让地方文化活动从一次性观看转向可参与、可传播的体验。",
     coverBw: image("Cover/02.png"),
     coverColor: image("Cover/07.png"),
     pages: [
@@ -149,8 +150,8 @@ export const projects: Project[] = [
     legacyPath: "/3.html",
     slug: "mychelle",
     title: "My Chelle",
-    category: "Interactive Poster / AR",
-    summary: "面向移动端与 AR 场景的交互视觉项目。",
+    category: "Smart Packaging / Soft-Hardware Interaction",
+    summary: "本科毕设项目。针对智能包装停留于功能堆砌、缺少情感化体验的问题，主导贝壳仿生造型，完成 Arduino 编程与多传感器集成，交付四步护肤提醒与湿度预警的可运行原型。",
     coverBw: image("Cover/03.png"),
     coverColor: image("Cover/08.png"),
     pages: [
@@ -168,7 +169,7 @@ export const projects: Project[] = [
     slug: "subo-vis",
     title: "苏博 VIS 手册",
     category: "VIS / Museum Identity",
-    summary: "博物馆视觉识别系统与交互原型展示。",
+    summary: "围绕博物馆视觉识别系统展开的手册与交互原型，将传统文化语汇、导览信息和数字触点组织成更具秩序感的品牌体验。",
     coverBw: image("Cover/04.png"),
     coverColor: image("Cover/09.png"),
     pages: [
@@ -179,17 +180,18 @@ export const projects: Project[] = [
       { src: image("4/5.png"), alt: "苏博 VIS 手册展示页 05" },
       { src: image("4/6.png"), alt: "苏博 VIS 手册展示页 06" },
       { src: image("4/7.png"), alt: "苏博 VIS 手册展示页 07" },
-      { src: image("4/8.png"), alt: "苏博 VIS 手册展示页 08", actions: [actions.suboPrototype] }
+      { src: image("4/8.png"), alt: "苏博 VIS 手册展示页 08" }
     ],
-    actions: [actions.suboPrototype]
+    actions: [actions.suboPrototype],
+    inlineEmbed: actions.suboPrototype
   },
   {
     id: "05",
     legacyPath: "/5.html",
     slug: "more",
     title: "More",
-    category: "Digital Experiments / Motion",
-    summary: "实验性网页、影像与数字体验合集。",
+    category: "Digital Experiments / Awards",
+    summary: "收录实验性网页、动态影像、课程原型与多个综合奖项、国际奖项相关项目。它们不完全属于同一媒介，但共同指向我对界面、叙事、运动图像和可运行体验的持续测试。",
     coverBw: image("Cover/05.png"),
     coverColor: image("Cover/10.png"),
     pages: [
@@ -204,12 +206,12 @@ export const projects: Project[] = [
     actions: [actions.sansaverseVideo, actions.vinylSite, actions.moreVideoOne, actions.moreVideoTwo]
   },
   {
-    id: "06",
+    id: "RESEARCH",
     legacyPath: "/7.html",
     slug: "china-auto-discourse",
-    title: "全球视野下的中国汽车话语体系研究",
-    category: "Research / Editorial System",
-    summary: "面向全球语境的中国汽车话语体系研究与视觉表达。",
+    title: "全球视野下的中国汽车设计话语体系研究",
+    category: "Strategic Research / Automotive Experience",
+    summary: "中国汽车话语体系白皮书 2.0 项目。与吉利设计合作，负责场景体验研究，提炼汽车设计场景体验在不同时代边界跨越中的演变逻辑与人车关系，输出构建全新汽车使用场景和体验模式的行业白皮书。",
     coverBw: image("1/15.png"),
     coverColor: image("1/15.png"),
     pages: [
@@ -232,7 +234,7 @@ export const detailProjects: Project[] = [
     slug: "mychelle-detail",
     title: "MY CHELLE Detail",
     category: "AR Detail / Mobile Poster",
-    summary: "My Chelle 的移动端详情页与 AR 动态海报入口。",
+    summary: "My Chelle 的移动端详情页与 AR 动态海报入口，用于补充智能护肤盒项目中的互动叙事与移动端体验。",
     coverBw: image("3/5.png"),
     coverColor: image("3/5.png"),
     pages: [
@@ -383,11 +385,35 @@ const luminanceMap: Record<string, number> = {
   "Cover/10.png": 28
 };
 
-export const getImageLuminance = (src: string) => {
+const actionAreaLuminanceMap: Record<string, number> = {
+  "1/5.png": 151,
+  "1/13.png": 10,
+  "2/1.png": 159,
+  "3/1.png": 227,
+  "3/5.png": 250,
+  "4/8.png": 255,
+  "5/2.png": 5,
+  "5/3.png": 133,
+  "5/6.png": 137,
+  "5/7.png": 10,
+  "1/15.png": 102,
+  "iPhone%2014%20Pro%20Max%20-%205.png": 192
+};
+
+const getImagePathKey = (src: string) => {
   try {
-    const pathname = decodeURIComponent(new URL(src).pathname.replace(/^\//, ""));
-    return luminanceMap[pathname] ?? luminanceMap[pathname.split(" ").join("%20")] ?? 90;
+    return decodeURIComponent(new URL(src).pathname.replace(/^\//, ""));
   } catch {
-    return 90;
+    return "";
   }
+};
+
+export const getImageLuminance = (src: string) => {
+  const pathname = getImagePathKey(src);
+  return luminanceMap[pathname] ?? luminanceMap[pathname.split(" ").join("%20")] ?? 90;
+};
+
+export const getActionAreaLuminance = (src: string) => {
+  const pathname = getImagePathKey(src);
+  return actionAreaLuminanceMap[pathname] ?? actionAreaLuminanceMap[pathname.split(" ").join("%20")] ?? getImageLuminance(src);
 };
