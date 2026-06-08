@@ -467,13 +467,23 @@ img {
 @keyframes modal-panel-in {
   0% {
     opacity: 0;
-    transform: translate3d(0, 10px, 0) scale(0.992);
-    filter: blur(10px);
+    transform: translate3d(0, 34px, -220px) scale(0.92);
+    filter: blur(24px) saturate(0.92);
+  }
+  44% {
+    opacity: 0.7;
+    transform: translate3d(0, 10px, -52px) scale(0.982);
+    filter: blur(8px) saturate(1.04);
+  }
+  76% {
+    opacity: 1;
+    transform: translate3d(0, 1px, -8px) scale(0.998);
+    filter: blur(1.8px) saturate(1.04);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
+    filter: blur(0) saturate(1);
   }
 }
 
@@ -481,12 +491,27 @@ img {
   0% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
+    filter: blur(0) saturate(1);
   }
   100% {
     opacity: 0;
-    transform: translate3d(0, 6px, 0) scale(0.994);
-    filter: blur(7px);
+    transform: translate3d(0, 18px, -120px) scale(0.965);
+    filter: blur(12px) saturate(0.96);
+  }
+}
+
+@keyframes modal-glass-focus-in {
+  0% {
+    opacity: 0.18;
+    transform: translate3d(-5%, -7%, 0) scale(1.08);
+  }
+  58% {
+    opacity: 0.82;
+    transform: translate3d(1%, 0, 0) scale(1.015);
+  }
+  100% {
+    opacity: 0.72;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -2445,6 +2470,8 @@ h2 {
   display: grid;
   place-items: center;
   padding: clamp(0.75rem, 3vw, 2rem);
+  perspective: 1400px;
+  perspective-origin: 50% 48%;
   isolation: isolate;
   contain: layout style;
 }
@@ -2497,8 +2524,9 @@ h2 {
   overflow: hidden;
   isolation: isolate;
   backface-visibility: hidden;
+  transform-style: preserve-3d;
   transform-origin: center center;
-  animation: modal-panel-in 0.36s cubic-bezier(0.18, 0.84, 0.22, 1) both;
+  animation: modal-panel-in 0.58s cubic-bezier(0.16, 0.92, 0.18, 1) both;
   will-change: transform, opacity, filter;
   contain: layout paint style;
 }
@@ -2517,6 +2545,8 @@ h2 {
     radial-gradient(ellipse at 18% 0%, rgba(255, 255, 255, 0.14), transparent 38%),
     linear-gradient(118deg, rgba(255, 255, 255, 0.085), transparent 32%, rgba(255, 255, 255, 0.028) 72%, transparent);
   opacity: 0.72;
+  transform-origin: center top;
+  animation: modal-glass-focus-in 0.72s cubic-bezier(0.16, 0.92, 0.18, 1) both;
 }
 
 .media-panel::after {
@@ -2528,7 +2558,11 @@ h2 {
 }
 
 .modal-backdrop.closing .media-panel {
-  animation: modal-panel-out 0.24s var(--ease-glide) both;
+  animation: modal-panel-out 0.26s var(--ease-glide) both;
+}
+
+.modal-backdrop.closing .media-panel::before {
+  animation: none;
 }
 
 .media-toolbar {
