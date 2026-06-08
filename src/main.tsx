@@ -142,6 +142,91 @@ const getModalOrigin = (event?: React.MouseEvent<HTMLElement>) => {
   };
 };
 
+interface EasedCssPointState {
+  currentX: number;
+  currentY: number;
+  targetX: number;
+  targetY: number;
+  raf: number;
+}
+
+const easedCssPointStates = new WeakMap<HTMLElement, Map<string, EasedCssPointState>>();
+
+const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
+
+const getLocalPointerPercent = (element: HTMLElement, clientX: number, clientY: number) => {
+  const rect = element.getBoundingClientRect();
+  return {
+    x: clampPercent(((clientX - rect.left) / rect.width) * 100),
+    y: clampPercent(((clientY - rect.top) / rect.height) * 100)
+  };
+};
+
+const readPercentVar = (element: HTMLElement, variableName: string, fallback: number) => {
+  const inline = Number.parseFloat(element.style.getPropertyValue(variableName));
+  if (Number.isFinite(inline)) return inline;
+
+  const computed = Number.parseFloat(getComputedStyle(element).getPropertyValue(variableName));
+  return Number.isFinite(computed) ? computed : fallback;
+};
+
+const setEasedCssPoint = (
+  element: HTMLElement,
+  xVariable: string,
+  yVariable: string,
+  x: number,
+  y: number,
+  options: { fallbackX?: number; fallbackY?: number; ease?: number } = {}
+) => {
+  const key = `${xVariable}:${yVariable}`;
+  let stateMap = easedCssPointStates.get(element);
+  if (!stateMap) {
+    stateMap = new Map();
+    easedCssPointStates.set(element, stateMap);
+  }
+
+  let state = stateMap.get(key);
+  if (!state) {
+    const fallbackX = options.fallbackX ?? 50;
+    const fallbackY = options.fallbackY ?? 50;
+    state = {
+      currentX: readPercentVar(element, xVariable, fallbackX),
+      currentY: readPercentVar(element, yVariable, fallbackY),
+      targetX: readPercentVar(element, xVariable, fallbackX),
+      targetY: readPercentVar(element, yVariable, fallbackY),
+      raf: 0
+    };
+    stateMap.set(key, state);
+  }
+
+  state.targetX = clampPercent(x);
+  state.targetY = clampPercent(y);
+  const ease = options.ease ?? 0.24;
+
+  const render = () => {
+    if (!state) return;
+    state.currentX += (state.targetX - state.currentX) * ease;
+    state.currentY += (state.targetY - state.currentY) * ease;
+
+    if (Math.abs(state.targetX - state.currentX) < 0.06 && Math.abs(state.targetY - state.currentY) < 0.06) {
+      state.currentX = state.targetX;
+      state.currentY = state.targetY;
+      state.raf = 0;
+    }
+
+    element.style.setProperty(xVariable, `${state.currentX.toFixed(2)}%`);
+    element.style.setProperty(yVariable, `${state.currentY.toFixed(2)}%`);
+
+    if (state.raf) {
+      state.raf = window.requestAnimationFrame(render);
+    }
+  };
+
+  if (!state.raf) {
+    state.raf = window.requestAnimationFrame(render);
+  }
+};
+
 function App() {
   const [route, setRoute] = useState(() => getView(window.location.pathname));
   const [modal, setModal] = useState<ModalState | null>(null);
@@ -500,10 +585,18 @@ function useMagneticControls() {
       let targetY = 0;
       let currentX = 0;
       let currentY = 0;
-      let targetSpotX = 22;
-      let targetSpotY = 18;
-      let currentSpotX = 22;
-      let currentSpotY = 18;
+      const defaultSpotX = readPercentVar(control, "--btn-spot-x", 22);
+      const defaultSpotY = readPercentVar(control, "--btn-spot-y", 18);
+      const defaultTapX = readPercentVar(control, "--tap-x", 50);
+      const defaultTapY = readPercentVar(control, "--tap-y", 50);
+      let targetSpotX = defaultSpotX;
+      let targetSpotY = defaultSpotY;
+      let currentSpotX = defaultSpotX;
+      let currentSpotY = defaultSpotY;
+      let targetTapX = defaultTapX;
+      let targetTapY = defaultTapY;
+      let currentTapX = defaultTapX;
+      let currentTapY = defaultTapY;
       let active = false;
 
       const setSpotFromEvent = (event: MouseEvent) => {
@@ -517,17 +610,23 @@ function useMagneticControls() {
         currentY += (targetY - currentY) * 0.18;
         currentSpotX += (targetSpotX - currentSpotX) * 0.22;
         currentSpotY += (targetSpotY - currentSpotY) * 0.22;
+        currentTapX += (targetTapX - currentTapX) * 0.2;
+        currentTapY += (targetTapY - currentTapY) * 0.2;
         control.style.setProperty("--mag-x", `${currentX.toFixed(2)}px`);
         control.style.setProperty("--mag-y", `${currentY.toFixed(2)}px`);
         control.style.setProperty("--btn-spot-x", `${currentSpotX.toFixed(2)}%`);
         control.style.setProperty("--btn-spot-y", `${currentSpotY.toFixed(2)}%`);
+        control.style.setProperty("--tap-x", `${currentTapX.toFixed(2)}%`);
+        control.style.setProperty("--tap-y", `${currentTapY.toFixed(2)}%`);
 
         if (
           active ||
           Math.abs(currentX) > 0.08 ||
           Math.abs(currentY) > 0.08 ||
           Math.abs(currentSpotX - targetSpotX) > 0.08 ||
-          Math.abs(currentSpotY - targetSpotY) > 0.08
+          Math.abs(currentSpotY - targetSpotY) > 0.08 ||
+          Math.abs(currentTapX - targetTapX) > 0.08 ||
+          Math.abs(currentTapY - targetTapY) > 0.08
         ) {
           raf = requestAnimationFrame(render);
         }
@@ -536,6 +635,8 @@ function useMagneticControls() {
       const onEnter = (event: MouseEvent) => {
         active = true;
         setSpotFromEvent(event);
+        targetTapX = targetSpotX;
+        targetTapY = targetSpotY;
         cancelAnimationFrame(raf);
         raf = requestAnimationFrame(render);
       };
@@ -554,14 +655,18 @@ function useMagneticControls() {
         targetX = Math.max(-10, Math.min(10, x * strength));
         targetY = Math.max(-8, Math.min(8, y * strength));
         setSpotFromEvent(event);
+        targetTapX = targetSpotX;
+        targetTapY = targetSpotY;
       };
 
       const onLeave = () => {
         active = false;
         targetX = 0;
         targetY = 0;
-        targetSpotX = 22;
-        targetSpotY = 18;
+        targetSpotX = defaultSpotX;
+        targetSpotY = defaultSpotY;
+        targetTapX = defaultTapX;
+        targetTapY = defaultTapY;
       };
 
       control.addEventListener("mouseenter", onEnter);
@@ -583,37 +688,82 @@ function useMagneticControls() {
 function useTouchFeedback() {
   useEffect(() => {
     const selector =
-      ".glass-button, .icon-glass, .back-to-top, .next-project button, .marker-button, .media-toolbar button, .work-card, .research-card";
-    let cleanupTimer = 0;
+      ".glass-button, .icon-glass, .back-to-top, .next-project button, .marker-button, .media-toolbar button, .work-card, .research-card, .wechat-id";
+    const glassSelector = ".glass-button, .icon-glass, .back-to-top, .next-project button, .marker-button, .media-toolbar button";
+    const cleanupTimers = new Map<HTMLElement, number>();
+    let activeTarget: HTMLElement | null = null;
 
     const clearTap = (target: HTMLElement) => {
-      window.clearTimeout(cleanupTimer);
-      cleanupTimer = window.setTimeout(() => target.classList.remove("is-tapping"), 120);
+      const currentTimer = cleanupTimers.get(target);
+      if (currentTimer) window.clearTimeout(currentTimer);
+
+      const timer = window.setTimeout(() => {
+        target.classList.remove("is-tapping");
+        cleanupTimers.delete(target);
+      }, 120);
+      cleanupTimers.set(target, timer);
+    };
+
+    const applyLightFromPointer = (target: HTMLElement, event: PointerEvent) => {
+      const point = getLocalPointerPercent(target, event.clientX, event.clientY);
+      setEasedCssPoint(target, "--tap-x", "--tap-y", point.x, point.y, { ease: 0.28 });
+
+      if (target.matches(glassSelector)) {
+        setEasedCssPoint(target, "--btn-spot-x", "--btn-spot-y", point.x, point.y, {
+          fallbackX: readPercentVar(target, "--btn-spot-x", 22),
+          fallbackY: readPercentVar(target, "--btn-spot-y", 18),
+          ease: 0.2
+        });
+      }
+
+      if (target.classList.contains("research-card")) {
+        setEasedCssPoint(target, "--research-light-x", "--research-light-y", point.x, point.y, {
+          fallbackX: 76,
+          fallbackY: 30,
+          ease: 0.18
+        });
+      }
+
+      if (target.classList.contains("work-card")) {
+        const cover = target.querySelector<HTMLElement>(".cover-pair");
+        if (cover) {
+          const coverPoint = getLocalPointerPercent(cover, event.clientX, event.clientY);
+          setEasedCssPoint(cover, "--spot-x", "--spot-y", coverPoint.x, coverPoint.y, { ease: 0.2 });
+          setEasedCssPoint(target, "--tap-x", "--tap-y", coverPoint.x, coverPoint.y, { ease: 0.28 });
+        }
+      }
     };
 
     const onPointerDown = (event: PointerEvent) => {
       const target = (event.target as Element | null)?.closest<HTMLElement>(selector);
       if (!target) return;
 
-      const rect = target.getBoundingClientRect();
-      target.style.setProperty("--tap-x", `${Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)).toFixed(2)}%`);
-      target.style.setProperty("--tap-y", `${Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)).toFixed(2)}%`);
+      activeTarget = target;
+      applyLightFromPointer(target, event);
       target.classList.add("is-tapping");
     };
 
+    const onPointerMove = (event: PointerEvent) => {
+      if (activeTarget) applyLightFromPointer(activeTarget, event);
+    };
+
     const onPointerDone = (event: PointerEvent) => {
-      const target = (event.target as Element | null)?.closest<HTMLElement>(selector);
+      const target = activeTarget ?? (event.target as Element | null)?.closest<HTMLElement>(selector);
+      activeTarget = null;
       if (target) clearTap(target);
     };
 
     document.addEventListener("pointerdown", onPointerDown, { passive: true });
+    document.addEventListener("pointermove", onPointerMove, { passive: true });
     document.addEventListener("pointerup", onPointerDone, { passive: true });
     document.addEventListener("pointercancel", onPointerDone, { passive: true });
     document.addEventListener("pointerleave", onPointerDone, { passive: true });
 
     return () => {
-      window.clearTimeout(cleanupTimer);
+      cleanupTimers.forEach((timer) => window.clearTimeout(timer));
+      cleanupTimers.clear();
       document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerup", onPointerDone);
       document.removeEventListener("pointercancel", onPointerDone);
       document.removeEventListener("pointerleave", onPointerDone);
@@ -1035,6 +1185,15 @@ function HomePage() {
 
 function ResearchFeature({ project }: { project: Project }) {
   const research = siteContent.home.researchFeature;
+  const updateResearchLight = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const point = getLocalPointerPercent(event.currentTarget, event.clientX, event.clientY);
+    setEasedCssPoint(event.currentTarget, "--research-light-x", "--research-light-y", point.x, point.y, {
+      fallbackX: 76,
+      fallbackY: 30,
+      ease: 0.18
+    });
+    setEasedCssPoint(event.currentTarget, "--tap-x", "--tap-y", point.x, point.y, { ease: 0.28 });
+  };
 
   return (
     <section
@@ -1050,6 +1209,8 @@ function ResearchFeature({ project }: { project: Project }) {
       <button
         className="research-card replay-reveal scroll-reveal"
         type="button"
+        onPointerEnter={updateResearchLight}
+        onPointerMove={updateResearchLight}
         onClick={(event) => navigateTo(`/projects/${project.slug}/`, event)}
       >
         <span className="research-copy">
@@ -1203,11 +1364,9 @@ function WorkWall() {
     const cover = event.currentTarget.querySelector<HTMLElement>(".cover-pair");
     if (!cover) return;
 
-    const rect = cover.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 100;
-    const y = ((event.clientY - rect.top) / rect.height) * 100;
-    cover.style.setProperty("--spot-x", `${Math.max(0, Math.min(100, x)).toFixed(2)}%`);
-    cover.style.setProperty("--spot-y", `${Math.max(0, Math.min(100, y)).toFixed(2)}%`);
+    const point = getLocalPointerPercent(cover, event.clientX, event.clientY);
+    setEasedCssPoint(cover, "--spot-x", "--spot-y", point.x, point.y, { ease: 0.2 });
+    setEasedCssPoint(event.currentTarget, "--tap-x", "--tap-y", point.x, point.y, { ease: 0.28 });
   };
 
   return (
@@ -1477,7 +1636,7 @@ function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () 
   const closeTimerRef = useRef<number | null>(null);
   const mediaTimerRef = useRef<number | null>(null);
   const modalMediaKey = modal ? `${modal.action.type}:${modal.action.embedMode ?? "default"}:${modal.action.url}` : "";
-  const isVideoModal = modal ? modal.action.embedMode === "video" || modal.action.type === "video" : false;
+  const rendersVideo = modal ? modal.action.embedMode === "video" || modal.action.type === "video" : false;
 
   useEffect(() => {
     if (mediaTimerRef.current) {
@@ -1487,11 +1646,6 @@ function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () 
 
     if (!modal) {
       setMediaReady(false);
-      return undefined;
-    }
-
-    if (isVideoModal) {
-      setMediaReady(true);
       return undefined;
     }
 
@@ -1507,7 +1661,7 @@ function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () 
         mediaTimerRef.current = null;
       }
     };
-  }, [isVideoModal, modal, modalMediaKey]);
+  }, [modal, modalMediaKey]);
 
   useEffect(() => {
     if (!modal) return undefined;
@@ -1571,18 +1725,15 @@ function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () 
           </div>
         </div>
         <div className={`media-body ${mediaReady ? "is-ready" : "is-waiting"}`} aria-busy={!mediaReady}>
-          {isVideoModal ? (
-            <video src={action.url} controls autoPlay />
-          ) : (
-            <>
-              <div className="media-delay-surface" aria-hidden="true">
-                <span>{action.label}</span>
-              </div>
-              {mediaReady && (
-                <iframe className="media-embed-frame" src={action.url} title={action.label} allowFullScreen />
-              )}
-            </>
-          )}
+          <div className="media-delay-surface" aria-hidden="true">
+            <span>{action.label}</span>
+          </div>
+          {mediaReady &&
+            (rendersVideo ? (
+              <video className="media-embed-frame" src={action.url} controls autoPlay />
+            ) : (
+              <iframe className="media-embed-frame" src={action.url} title={action.label} allowFullScreen />
+            ))}
         </div>
       </div>
     </div>
