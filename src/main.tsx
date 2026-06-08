@@ -23,6 +23,12 @@ type NavigationTriggerEvent = Pick<MouseEvent | React.MouseEvent<HTMLElement>, "
 
 interface ModalState {
   action: Action;
+  origin: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 }
 
 interface RouteNavigateDetail {
@@ -116,6 +122,25 @@ const getExternalFallbackUrl = (action: Action) => {
 };
 
 const isEmbeddable = (action: Action) => action.type === "video" || action.type === "embed";
+
+const getModalOrigin = (event?: React.MouseEvent<HTMLElement>) => {
+  if (!event?.currentTarget) {
+    return {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      width: 80,
+      height: 44
+    };
+  }
+
+  const rect = event.currentTarget.getBoundingClientRect();
+  return {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+    width: rect.width,
+    height: rect.height
+  };
+};
 
 function App() {
   const [route, setRoute] = useState(() => getView(window.location.pathname));
@@ -254,7 +279,7 @@ function App() {
     }
 
     if (isEmbeddable(action)) {
-      setModal({ action });
+      setModal({ action, origin: getModalOrigin(event) });
       return;
     }
 
@@ -1389,26 +1414,74 @@ function NextProject({ project }: { project: Project }) {
 }
 
 function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () => void }) {
+  const [closing, setClosing] = useState(false);
+  const closingRef = useRef(false);
+  const closeTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
     if (!modal) return undefined;
+    closingRef.current = false;
+    setClosing(false);
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") requestClose();
     };
     document.body.classList.add("modal-open");
     window.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.classList.remove("modal-open");
       window.removeEventListener("keydown", onKeyDown);
+      if (closeTimerRef.current) {
+        window.clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
     };
-  }, [modal, onClose]);
+  }, [modal]);
 
   if (!modal) return null;
 
-  const { action } = modal;
+  const { action, origin } = modal;
+  const originDx = origin.x - window.innerWidth / 2;
+  const originDy = origin.y - window.innerHeight / 2;
+  const originScale = Math.max(0.08, Math.min(0.18, origin.width / Math.max(window.innerWidth, 1)));
+  const originWidth = Math.max(42, Math.min(origin.width, 220));
+  const originHeight = Math.max(36, Math.min(origin.height, 78));
+  const modalStyle = {
+    "--modal-origin-x": `${Math.round(origin.x)}px`,
+    "--modal-origin-y": `${Math.round(origin.y)}px`,
+    "--modal-origin-width": `${Math.round(originWidth)}px`,
+    "--modal-origin-height": `${Math.round(originHeight)}px`,
+    "--modal-origin-dx": `${Math.round(originDx)}px`,
+    "--modal-origin-dy": `${Math.round(originDy)}px`,
+    "--modal-origin-dx-start": `${Math.round(originDx * 0.92)}px`,
+    "--modal-origin-dy-start": `${Math.round(originDy * 0.92)}px`,
+    "--modal-origin-dx-mid": `${Math.round(originDx * 0.28)}px`,
+    "--modal-origin-dy-mid": `${Math.round(originDy * 0.28)}px`,
+    "--modal-origin-dx-soft": `${Math.round(originDx * 0.04)}px`,
+    "--modal-origin-dy-soft": `${Math.round(originDy * 0.04)}px`,
+    "--modal-origin-dx-close": `${Math.round(originDx * 0.84)}px`,
+    "--modal-origin-dy-close": `${Math.round(originDy * 0.84)}px`,
+    "--modal-origin-scale": originScale.toFixed(3)
+  } as React.CSSProperties;
+
+  function requestClose() {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setClosing(true);
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null;
+      onClose();
+    }, 260);
+  }
 
   return (
-    <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label={action.label}>
-      <button className="modal-scrim" type="button" aria-label={siteContent.modal.close} onClick={onClose} />
+    <div
+      className={`modal-backdrop ${closing ? "closing" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={action.label}
+      style={modalStyle}
+    >
+      <button className="modal-scrim" type="button" aria-label={siteContent.modal.close} onClick={requestClose} />
       <div className="media-panel">
         <div className="media-toolbar">
           <span>{action.label}</span>
@@ -1420,7 +1493,7 @@ function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () 
               <ExternalLink size={16} />
               {siteContent.modal.openNewTab}
             </button>
-            <button type="button" aria-label={siteContent.modal.close} onClick={onClose}>
+            <button type="button" aria-label={siteContent.modal.close} onClick={requestClose}>
               <X size={18} />
             </button>
           </div>

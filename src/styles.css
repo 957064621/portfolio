@@ -386,6 +386,123 @@ img {
   }
 }
 
+@keyframes modal-scrim-in {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0) saturate(1);
+    -webkit-backdrop-filter: blur(0) saturate(1);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(18px) saturate(1.18);
+    -webkit-backdrop-filter: blur(18px) saturate(1.18);
+  }
+}
+
+@keyframes modal-scrim-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0) saturate(1);
+    -webkit-backdrop-filter: blur(0) saturate(1);
+  }
+}
+
+@keyframes modal-seed-in {
+  0% {
+    opacity: 0.5;
+    transform: translate3d(-50%, -50%, 0) scale(0.92);
+    filter: blur(2px) saturate(1.24);
+  }
+  42% {
+    opacity: 0.28;
+    transform: translate3d(-50%, -50%, 0) scale(1.24);
+    filter: blur(8px) saturate(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(1.9);
+    filter: blur(18px) saturate(1.2);
+  }
+}
+
+@keyframes modal-panel-in {
+  0% {
+    opacity: 0;
+    clip-path: inset(49% 47% round 999px);
+    transform: translate3d(var(--modal-origin-dx-start), var(--modal-origin-dy-start), 0) scale(var(--modal-origin-scale));
+    filter: blur(22px) saturate(0.95);
+  }
+  24% {
+    opacity: 0.16;
+    clip-path: inset(43% 40% round 999px);
+    transform: translate3d(var(--modal-origin-dx-mid), var(--modal-origin-dy-mid), 0) scale(0.42);
+    filter: blur(18px) saturate(1.08);
+  }
+  56% {
+    opacity: 0.78;
+    clip-path: inset(14% 12% round 18px);
+    transform: translate3d(var(--modal-origin-dx-soft), var(--modal-origin-dy-soft), 0) scale(0.92);
+    filter: blur(7px) saturate(1.06);
+  }
+  78% {
+    opacity: 1;
+    clip-path: inset(4% 4% round 12px);
+    transform: translate3d(0, 0, 0) scale(0.992);
+    filter: blur(2px) saturate(1.04);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 round 8px);
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0) saturate(1);
+  }
+}
+
+@keyframes modal-panel-out {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 round 8px);
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0) saturate(1);
+  }
+  100% {
+    opacity: 0;
+    clip-path: inset(46% 44% round 999px);
+    transform: translate3d(var(--modal-origin-dx-close), var(--modal-origin-dy-close), 0) scale(var(--modal-origin-scale));
+    filter: blur(14px) saturate(0.96);
+  }
+}
+
+@keyframes modal-content-in {
+  0%,
+  44% {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  72% {
+    opacity: 0.62;
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes modal-content-out {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
 .page-stage {
   position: relative;
   z-index: 1;
@@ -2207,28 +2324,82 @@ h2 {
   display: grid;
   place-items: center;
   padding: clamp(0.75rem, 3vw, 2rem);
+  perspective: 1400px;
+}
+
+.modal-backdrop::before {
+  content: "";
+  position: fixed;
+  left: var(--modal-origin-x, 50vw);
+  top: var(--modal-origin-y, 50vh);
+  z-index: 1;
+  width: var(--modal-origin-width, 84px);
+  height: var(--modal-origin-height, 44px);
+  border-radius: 999px;
+  pointer-events: none;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.34), transparent 31%, rgba(255, 255, 255, 0.1) 64%, transparent 84%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.055)),
+    rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 10px 34px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.16) inset,
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -12px 22px rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(1.72) brightness(1.08);
+  -webkit-backdrop-filter: blur(18px) saturate(1.72) brightness(1.08);
+  animation: modal-seed-in 0.5s var(--ease-luxe) both;
+}
+
+.modal-backdrop.closing::before {
+  animation: none;
+  opacity: 0;
 }
 
 .modal-scrim {
   position: absolute;
   inset: 0;
   border: 0;
-  background: rgba(0, 0, 0, 0.74);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background:
+    radial-gradient(circle at var(--modal-origin-x, 50vw) var(--modal-origin-y, 50vh), rgba(255, 255, 255, 0.028), transparent 18rem),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.62));
+  backdrop-filter: blur(18px) saturate(1.18);
+  -webkit-backdrop-filter: blur(18px) saturate(1.18);
+  animation: modal-scrim-in 0.42s var(--ease-luxe) both;
+}
+
+.modal-backdrop.closing .modal-scrim {
+  animation: modal-scrim-out 0.24s var(--ease-glide) both;
 }
 
 .media-panel {
   position: relative;
+  z-index: 2;
   width: min(100%, 1160px);
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 8px;
-  background: rgba(5, 5, 5, 0.74);
-  box-shadow: 0 30px 120px rgba(0, 0, 0, 0.64);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.034)),
+    rgba(5, 5, 5, 0.56);
+  box-shadow:
+    0 30px 120px rgba(0, 0, 0, 0.64),
+    0 0 0 1px rgba(255, 255, 255, 0.055) inset,
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(28px) saturate(1.22);
+  -webkit-backdrop-filter: blur(28px) saturate(1.22);
   overflow: hidden;
+  transform-origin: center center;
+  animation: modal-panel-in 0.72s cubic-bezier(0.22, 0.72, 0.18, 1) both;
+  will-change: transform, opacity, filter, clip-path;
+}
+
+.modal-backdrop.closing .media-panel {
+  animation: modal-panel-out 0.24s var(--ease-glide) both;
 }
 
 .media-toolbar {
+  position: relative;
+  z-index: 2;
   min-height: 48px;
   padding: 0.55rem 0.7rem 0.55rem 1rem;
   display: flex;
@@ -2236,6 +2407,7 @@ h2 {
   justify-content: space-between;
   gap: 0.7rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  animation: modal-content-in 0.78s cubic-bezier(0.22, 0.72, 0.18, 1) both;
 }
 
 .media-toolbar > span {
@@ -2261,8 +2433,16 @@ h2 {
 }
 
 .media-body {
+  position: relative;
+  z-index: 1;
   aspect-ratio: 16 / 9;
   background: #000;
+  animation: modal-content-in 0.82s cubic-bezier(0.22, 0.72, 0.18, 1) both;
+}
+
+.modal-backdrop.closing .media-toolbar,
+.modal-backdrop.closing .media-body {
+  animation: modal-content-out 0.18s var(--ease-glide) both;
 }
 
 .media-body iframe,
