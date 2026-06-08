@@ -467,23 +467,19 @@ img {
 @keyframes modal-panel-in {
   0% {
     opacity: 0;
-    transform: translate3d(0, 34px, -220px) scale(0.92);
-    filter: blur(24px) saturate(0.92);
+    transform: translate3d(0, 28px, 0) scale(0.94);
   }
   44% {
-    opacity: 0.7;
-    transform: translate3d(0, 10px, -52px) scale(0.982);
-    filter: blur(8px) saturate(1.04);
+    opacity: 0.74;
+    transform: translate3d(0, 8px, 0) scale(0.986);
   }
   76% {
     opacity: 1;
-    transform: translate3d(0, 1px, -8px) scale(0.998);
-    filter: blur(1.8px) saturate(1.04);
+    transform: translate3d(0, 1px, 0) scale(0.998);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0) saturate(1);
   }
 }
 
@@ -491,12 +487,10 @@ img {
   0% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0) saturate(1);
   }
   100% {
     opacity: 0;
-    transform: translate3d(0, 18px, -120px) scale(0.965);
-    filter: blur(12px) saturate(0.96);
+    transform: translate3d(0, 14px, 0) scale(0.972);
   }
 }
 
@@ -512,6 +506,21 @@ img {
   100% {
     opacity: 0.72;
     transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes modal-focus-haze-in {
+  0% {
+    opacity: 0.9;
+    transform: scale(1.035);
+  }
+  62% {
+    opacity: 0.34;
+    transform: scale(1.008);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
   }
 }
 
@@ -536,8 +545,13 @@ img {
 @keyframes media-embed-reveal {
   0% {
     opacity: 0;
-    filter: blur(14px);
-    transform: scale(1.012);
+    filter: blur(18px);
+    transform: scale(1.018);
+  }
+  58% {
+    opacity: 0.72;
+    filter: blur(5px);
+    transform: scale(1.006);
   }
   100% {
     opacity: 1;
@@ -554,6 +568,17 @@ img {
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes media-delay-surface-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.982);
   }
 }
 
@@ -2524,10 +2549,9 @@ h2 {
   overflow: hidden;
   isolation: isolate;
   backface-visibility: hidden;
-  transform-style: preserve-3d;
   transform-origin: center center;
-  animation: modal-panel-in 0.58s cubic-bezier(0.16, 0.92, 0.18, 1) both;
-  will-change: transform, opacity, filter;
+  animation: modal-panel-in 0.5s cubic-bezier(0.16, 0.92, 0.18, 1) both;
+  will-change: transform, opacity;
   contain: layout paint style;
 }
 
@@ -2551,17 +2575,22 @@ h2 {
 
 .media-panel::after {
   z-index: 3;
-  inset: 0 0 auto;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.1), transparent);
-  opacity: 0.72;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.1), transparent) 0 0 / 100% 1px no-repeat,
+    radial-gradient(ellipse at 50% 12%, rgba(255, 255, 255, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 46%, rgba(255, 255, 255, 0.035));
+  opacity: 0;
+  transform-origin: center center;
+  animation: modal-focus-haze-in 0.56s cubic-bezier(0.16, 0.92, 0.18, 1) both;
 }
 
 .modal-backdrop.closing .media-panel {
   animation: modal-panel-out 0.26s var(--ease-glide) both;
 }
 
-.modal-backdrop.closing .media-panel::before {
+.modal-backdrop.closing .media-panel::before,
+.modal-backdrop.closing .media-panel::after {
   animation: none;
 }
 
@@ -2708,10 +2737,11 @@ h2 {
 .media-delay-surface {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   display: grid;
   place-items: center;
   overflow: hidden;
+  pointer-events: none;
   background:
     radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.085), transparent 12rem),
     linear-gradient(118deg, rgba(255, 255, 255, 0.06), transparent 32%, rgba(255, 255, 255, 0.026) 70%, transparent),
@@ -2720,8 +2750,9 @@ h2 {
   animation: media-delay-surface-in 0.24s var(--ease-luxe) both;
   transform-origin: center center;
   transition:
-    opacity 0.42s cubic-bezier(0.18, 0.84, 0.22, 1),
-    transform 0.42s cubic-bezier(0.18, 0.84, 0.22, 1);
+    opacity 0.62s cubic-bezier(0.18, 0.84, 0.22, 1),
+    transform 0.62s cubic-bezier(0.18, 0.84, 0.22, 1),
+    visibility 0.62s cubic-bezier(0.18, 0.84, 0.22, 1);
 }
 
 .media-delay-surface::before,
@@ -2770,15 +2801,13 @@ h2 {
 .media-embed-frame {
   position: relative;
   z-index: 1;
-  animation: media-embed-reveal 0.42s cubic-bezier(0.18, 0.84, 0.22, 1) both;
+  animation: media-embed-reveal 0.62s cubic-bezier(0.18, 0.84, 0.22, 1) both;
   transform-origin: center center;
   will-change: opacity, filter, transform;
 }
 
 .media-body.is-ready .media-delay-surface {
-  animation-name: none;
-  opacity: 0;
-  transform: scale(0.996);
+  animation: media-delay-surface-out 0.62s cubic-bezier(0.18, 0.84, 0.22, 1) both;
 }
 
 .media-body.is-ready .media-delay-surface::before,
