@@ -1245,8 +1245,10 @@ h2 {
   --control-glint-low: rgba(255, 255, 255, 0.055);
   --control-shadow: rgba(0, 0, 0, 0.18);
   --control-text-shadow: none;
-  --control-backdrop-blur: 34px;
-  --control-inner-blur: 20px;
+  --control-backdrop-blur: 46px;
+  --control-inner-blur: 34px;
+  --control-lens-opacity: 0.74;
+  --control-frost-opacity: 0.78;
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -1255,16 +1257,17 @@ h2 {
   color: var(--control-fg);
   text-shadow: var(--control-text-shadow);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.075) 31%, transparent 58%),
-    linear-gradient(118deg, rgba(255, 255, 255, 0.2), transparent 25%, rgba(255, 255, 255, 0.064) 56%, transparent 76%),
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.095) 31%, transparent 60%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.28), transparent 25%, rgba(255, 255, 255, 0.08) 56%, transparent 76%),
     linear-gradient(180deg, var(--control-glint-top), var(--control-glint-mid) 47%, var(--control-glint-low)),
     var(--control-bg);
   box-shadow:
     0 12px 38px var(--control-shadow),
-    0 0 0 1px rgba(255, 255, 255, 0.14) inset,
-    inset 0 1px 0 rgba(255, 255, 255, 0.62),
-    inset 0 -12px 24px rgba(255, 255, 255, 0.055),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    inset 0 -16px 30px rgba(255, 255, 255, 0.08),
+    inset 0 0 24px rgba(255, 255, 255, 0.055),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.24);
   backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.72) brightness(1.08);
   -webkit-backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.72) brightness(1.08);
   transform: translate3d(var(--mag-x), var(--mag-y), 0) scale(var(--tap-scale));
@@ -1290,11 +1293,12 @@ h2 {
   border-radius: inherit;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.08) 38%, transparent 66%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 38%, rgba(255, 255, 255, 0.08));
-  backdrop-filter: blur(var(--control-inner-blur)) saturate(1.48);
-  -webkit-backdrop-filter: blur(var(--control-inner-blur)) saturate(1.48);
-  opacity: 0.34;
+    radial-gradient(ellipse at 32% 14%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.18) 30%, transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.11) 42%, rgba(255, 255, 255, 0.035) 74%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 42%, rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(var(--control-inner-blur)) saturate(1.86) brightness(1.06);
+  -webkit-backdrop-filter: blur(var(--control-inner-blur)) saturate(1.86) brightness(1.06);
+  opacity: var(--control-lens-opacity);
   transform: scale(1);
   transition:
     opacity var(--motion-fast) var(--ease-luxe),
@@ -1312,11 +1316,12 @@ h2 {
   border-radius: inherit;
   pointer-events: none;
   background:
-    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.28), transparent 46%),
-    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.22), transparent 54%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 42%, rgba(255, 255, 255, 0.06));
-  filter: blur(8px);
-  opacity: 0.46;
+    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.42), transparent 44%),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.34), transparent 56%),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.18), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 42%, rgba(255, 255, 255, 0.08));
+  filter: blur(18px);
+  opacity: var(--control-frost-opacity);
   mix-blend-mode: screen;
   transition: opacity var(--motion-fast) var(--ease-luxe);
 }
@@ -1499,7 +1504,7 @@ h2 {
   --btn-spot-y: 18%;
   --surface-tone: 0;
   --control-fg: rgba(8, 10, 12, 0.96);
-  --control-bg: rgba(255, 255, 255, 0.28);
+  --control-bg: rgba(255, 255, 255, 0.34);
   --control-border: rgba(255, 255, 255, 0.46);
   --control-shadow: rgba(0, 0, 0, 0.18);
   --control-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.38);
@@ -1526,16 +1531,17 @@ h2 {
     linear-gradient(118deg, rgba(255, 255, 255, 0.22), transparent 28%, rgba(255, 255, 255, 0.07) 64%, transparent 80%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0.03)),
     var(--control-bg);
-  backdrop-filter: blur(28px) saturate(1.52) brightness(1.06);
-  -webkit-backdrop-filter: blur(28px) saturate(1.52) brightness(1.06);
+  backdrop-filter: blur(46px) saturate(1.92) brightness(1.08);
+  -webkit-backdrop-filter: blur(46px) saturate(1.92) brightness(1.08);
   cursor: pointer;
   overflow: hidden;
   box-shadow:
-    0 0 18px rgba(255, 255, 255, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.22) inset,
+    0 0 22px rgba(255, 255, 255, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.28) inset,
     0 12px 32px var(--control-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.58),
-    inset 0 -10px 20px rgba(255, 255, 255, 0.055);
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -12px 24px rgba(255, 255, 255, 0.08),
+    inset 0 0 24px rgba(255, 255, 255, 0.06);
   transform: translate3d(var(--mag-x), var(--mag-y), 0) scale(var(--tap-scale));
   transition:
     transform var(--motion-medium) var(--ease-luxe),
@@ -1553,12 +1559,14 @@ h2 {
   z-index: 0;
   border-radius: inherit;
   pointer-events: none;
+  backdrop-filter: blur(30px) saturate(1.72);
+  -webkit-backdrop-filter: blur(30px) saturate(1.72);
   background:
-    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.22), transparent 48%),
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.28), transparent 50%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 44%);
-  filter: blur(3px);
-  opacity: 0.48;
+    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.34), transparent 48%),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.42), transparent 52%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 44%, rgba(255, 255, 255, 0.06));
+  filter: blur(4px);
+  opacity: 0.72;
   mix-blend-mode: screen;
 }
 
@@ -1912,9 +1920,9 @@ h2 {
   --round-after-mid: rgba(255, 255, 255, 0.2);
   --round-after-low: rgba(255, 255, 255, 0.16);
   --round-after-floor: rgba(255, 255, 255, 0.08);
-  --round-after-opacity: 0.68;
-  --round-backdrop-blur: 58px;
-  --round-inner-blur: 34px;
+  --round-after-opacity: 0.86;
+  --round-backdrop-blur: 72px;
+  --round-inner-blur: 46px;
   width: 48px;
   min-width: 48px;
   height: 48px;
@@ -1925,16 +1933,16 @@ h2 {
   line-height: 1;
   overflow: hidden;
   background:
-    radial-gradient(circle at 32% 24%, var(--round-glass-sheen), rgba(255, 255, 255, 0.08) 34%, transparent 58%),
-    radial-gradient(circle at 50% 70%, var(--round-glass-haze), transparent 62%),
+    radial-gradient(circle at 30% 22%, var(--round-glass-sheen), rgba(255, 255, 255, 0.12) 34%, transparent 62%),
+    radial-gradient(circle at 52% 74%, var(--round-glass-haze), rgba(255, 255, 255, 0.06) 36%, transparent 66%),
     linear-gradient(145deg, var(--control-glint-top), rgba(255, 255, 255, 0.07) 46%, var(--control-glint-low)),
     var(--control-bg);
   box-shadow:
-    0 12px 36px var(--control-shadow),
-    0 0 0 1px rgba(255, 255, 255, 0.2) inset,
-    inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    inset 0 -14px 24px rgba(255, 255, 255, 0.075),
-    inset 0 0 22px rgba(255, 255, 255, 0.05);
+    0 16px 44px var(--control-shadow),
+    0 0 0 1px rgba(255, 255, 255, 0.26) inset,
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -16px 28px rgba(255, 255, 255, 0.11),
+    inset 0 0 30px rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(var(--round-backdrop-blur)) saturate(2.05) brightness(1.1);
   -webkit-backdrop-filter: blur(var(--round-backdrop-blur)) saturate(2.05) brightness(1.1);
   will-change: width, transform;
@@ -1943,18 +1951,19 @@ h2 {
 .icon-glass::before,
 .back-to-top::before {
   opacity: var(--round-before-opacity);
-  backdrop-filter: blur(var(--round-inner-blur)) saturate(1.8);
-  -webkit-backdrop-filter: blur(var(--round-inner-blur)) saturate(1.8);
+  backdrop-filter: blur(var(--round-inner-blur)) saturate(2.08) brightness(1.08);
+  -webkit-backdrop-filter: blur(var(--round-inner-blur)) saturate(2.08) brightness(1.08);
   background:
-    radial-gradient(ellipse at 34% 18%, var(--round-before-hot), var(--round-before-soft) 30%, transparent 54%),
-    linear-gradient(140deg, var(--round-before-line), transparent 44%, rgba(255, 255, 255, 0.1));
+    radial-gradient(ellipse at 32% 18%, var(--round-before-hot), var(--round-before-soft) 32%, transparent 58%),
+    radial-gradient(ellipse at 70% 78%, rgba(255, 255, 255, 0.18), transparent 54%),
+    linear-gradient(140deg, var(--round-before-line), transparent 44%, rgba(255, 255, 255, 0.12));
 }
 
 .icon-glass::after,
 .back-to-top::after {
   inset: -10px;
   opacity: var(--round-after-opacity);
-  filter: blur(14px);
+  filter: blur(22px);
   background:
     radial-gradient(circle at var(--tap-x) var(--tap-y), var(--round-after-hot), transparent 45%),
     radial-gradient(circle at 50% 50%, var(--round-after-mid), transparent 58%),
