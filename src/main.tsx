@@ -37,8 +37,8 @@ interface RouteNavigateDetail {
 }
 
 const routeNavigateEvent = "portfolio:navigate";
-const routeLeavingDuration = 110;
-const routeEnteringDuration = 420;
+const routeLeavingDuration = 80;
+const routeEnteringDuration = 340;
 
 const assetBasePath = (() => {
   const assetPath = new URL(import.meta.url).pathname;
@@ -150,6 +150,8 @@ function App() {
   const routeKey = route.view === "project" && route.project ? `project-${route.project.slug}` : route.view;
   const [routePhase, setRoutePhase] = useState<RoutePhase>("idle");
   const routeTimers = useRef<number[]>([]);
+  const modalSourceFrameRef = useRef<HTMLElement | null>(null);
+  const modalSourceControlRef = useRef<HTMLElement | null>(null);
   const clearRouteTimers = () => {
     routeTimers.current.forEach((timer) => window.clearTimeout(timer));
     routeTimers.current = [];
@@ -165,6 +167,34 @@ function App() {
   const finishRouteEntry = () => {
     queueRouteTimer(() => setRoutePhase("idle"), prefersReducedRouteMotion() ? 120 : routeEnteringDuration);
   };
+  const clearModalSourceLock = () => {
+    modalSourceFrameRef.current?.classList.remove("modal-source-frame");
+    modalSourceControlRef.current?.classList.remove("modal-source-control");
+    modalSourceFrameRef.current = null;
+    modalSourceControlRef.current = null;
+  };
+  const lockModalSource = (event?: React.MouseEvent<HTMLElement>) => {
+    clearModalSourceLock();
+    const control = event?.currentTarget instanceof HTMLElement ? event.currentTarget : null;
+    const source = control?.closest<HTMLElement>(".image-frame, .work-card, .research-card") ?? null;
+
+    source?.classList.add("modal-source-frame");
+    control?.classList.add("modal-source-control");
+    modalSourceFrameRef.current = source;
+    modalSourceControlRef.current = control;
+  };
+  const closeModal = () => {
+    clearModalSourceLock();
+    document.body.classList.remove("modal-open");
+    setModal(null);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearModalSourceLock();
+      document.body.classList.remove("modal-open");
+    };
+  }, []);
 
   useEffect(() => {
     const applyRoute = () => {
@@ -279,6 +309,8 @@ function App() {
     }
 
     if (isEmbeddable(action)) {
+      lockModalSource(event);
+      document.body.classList.add("modal-open");
       setModal({ action, origin: getModalOrigin(event) });
       return;
     }
@@ -304,7 +336,7 @@ function App() {
       {route.view === "home" && <HomeFloatingPortfolioButton />}
       {(route.view === "project" || route.view === "full") && <BackToTop />}
       <div className={`route-veil route-${routePhase}`} aria-hidden="true" />
-      <MediaModal modal={modal} onClose={() => setModal(null)} />
+      <MediaModal modal={modal} onClose={closeModal} />
     </>
   );
 }
@@ -456,7 +488,7 @@ function useMagneticControls() {
 
     const controls = Array.from(
       document.querySelectorAll<HTMLElement>(
-        ".magnetic-control, .icon-glass, .back-to-top, .next-project button"
+        ".magnetic-control, .icon-glass, .back-to-top, .next-project button, .media-toolbar button"
       )
     );
 
@@ -512,8 +544,13 @@ function useMagneticControls() {
         const rect = control.getBoundingClientRect();
         const x = event.clientX - (rect.left + rect.width / 2);
         const y = event.clientY - (rect.top + rect.height / 2);
+        const modalControl = control.closest(".media-toolbar");
         const strength =
-          control.classList.contains("icon-glass") || control.classList.contains("back-to-top") ? 0.1 : 0.12;
+          control.classList.contains("icon-glass") || control.classList.contains("back-to-top")
+            ? 0.1
+            : modalControl
+              ? 0.035
+              : 0.12;
         targetX = Math.max(-10, Math.min(10, x * strength));
         targetY = Math.max(-8, Math.min(8, y * strength));
         setSpotFromEvent(event);
@@ -546,7 +583,7 @@ function useMagneticControls() {
 function useTouchFeedback() {
   useEffect(() => {
     const selector =
-      ".glass-button, .icon-glass, .back-to-top, .next-project button, .marker-button, .work-card, .research-card";
+      ".glass-button, .icon-glass, .back-to-top, .next-project button, .marker-button, .media-toolbar button, .work-card, .research-card";
     let cleanupTimer = 0;
 
     const clearTap = (target: HTMLElement) => {
@@ -750,50 +787,68 @@ function useFloatingControlTone(view: View) {
       const darkSurface = tone >= 0.5;
       const compactGlass =
         control.classList.contains("icon-glass") || control.classList.contains("back-to-top");
+      const homeFloating = control.classList.contains("home-floating-portfolio");
       control.style.setProperty("--surface-tone", darkSurface ? "1" : "0");
       control.style.setProperty("--control-fg", darkSurface ? "rgba(255, 250, 240, 0.98)" : "rgba(8, 10, 12, 0.96)");
-      control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.38)" : "rgba(255, 255, 255, 0.14)");
-      control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.34)" : "rgba(255, 255, 255, 0.58)");
-      control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.18)" : "rgba(255, 255, 255, 0.34)");
-      control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.12)");
-      control.style.setProperty("--control-glint-low", darkSurface ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.055)");
+      control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.34)" : "rgba(255, 255, 255, 0.12)");
+      control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.32)" : "rgba(255, 255, 255, 0.42)");
+      control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.11)" : "rgba(255, 255, 255, 0.18)");
+      control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.075)");
+      control.style.setProperty("--control-glint-low", darkSurface ? "rgba(255, 255, 255, 0.022)" : "rgba(255, 255, 255, 0.035)");
       control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.46)" : "rgba(0, 0, 0, 0.18)");
-      control.style.setProperty("--control-backdrop-blur", "48px");
-      control.style.setProperty("--control-inner-blur", "36px");
-      control.style.setProperty("--control-lens-opacity", darkSurface ? "0.64" : "0.78");
-      control.style.setProperty("--control-frost-opacity", darkSurface ? "0.68" : "0.82");
+      control.style.setProperty("--control-backdrop-blur", "18px");
+      control.style.setProperty("--control-inner-blur", "10px");
+      control.style.setProperty("--control-lens-opacity", darkSurface ? "0.42" : "0.46");
+      control.style.setProperty("--control-frost-opacity", darkSurface ? "0.22" : "0.26");
       control.style.setProperty(
         "--control-text-shadow",
-        darkSurface ? "0 1px 2px rgba(0, 0, 0, 0.28)" : "0 1px 0 rgba(255, 255, 255, 0.38)"
+        darkSurface ? "0 1px 2px rgba(0, 0, 0, 0.34)" : "0 1px 0 rgba(255, 255, 255, 0.44)"
       );
 
+      if (homeFloating) {
+        control.style.setProperty("--surface-tone", "1");
+        control.style.setProperty("--control-fg", "rgba(255, 250, 240, 0.98)");
+        control.style.setProperty("--control-bg", "rgba(8, 9, 10, 0.34)");
+        control.style.setProperty("--control-border", "rgba(255, 255, 255, 0.44)");
+        control.style.setProperty("--control-glint-top", "rgba(255, 255, 255, 0.14)");
+        control.style.setProperty("--control-glint-mid", "rgba(255, 255, 255, 0.055)");
+        control.style.setProperty("--control-glint-low", "rgba(255, 255, 255, 0.024)");
+        control.style.setProperty("--control-shadow", "rgba(0, 0, 0, 0.44)");
+        control.style.setProperty("--control-backdrop-blur", "16px");
+        control.style.setProperty("--control-inner-blur", "9px");
+        control.style.setProperty("--control-lens-opacity", "0.38");
+        control.style.setProperty("--control-frost-opacity", "0.2");
+        control.style.setProperty("--control-text-shadow", "0 1px 3px rgba(0, 0, 0, 0.58)");
+        return;
+      }
+
       if (compactGlass) {
-        control.style.setProperty("--control-bg", darkSurface ? "rgba(8, 11, 15, 0.24)" : "rgba(255, 255, 255, 0.2)");
-        control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.62)" : "rgba(255, 255, 255, 0.62)");
-        control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.22)" : "rgba(255, 255, 255, 0.38)");
-        control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.14)");
+        control.style.setProperty("--control-bg", darkSurface ? "rgba(8, 11, 15, 0.28)" : "rgba(255, 255, 255, 0.16)");
+        control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.42)" : "rgba(255, 255, 255, 0.48)");
+        control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.2)");
+        control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.052)" : "rgba(255, 255, 255, 0.078)");
         control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.24)");
-        control.style.setProperty("--control-backdrop-blur", "46px");
-        control.style.setProperty("--control-inner-blur", "28px");
-        control.style.setProperty("--control-lens-opacity", darkSurface ? "0.82" : "0.88");
-        control.style.setProperty("--control-frost-opacity", darkSurface ? "0.78" : "0.88");
-        control.style.setProperty("--round-backdrop-blur", "34px");
-        control.style.setProperty("--round-inner-blur", "22px");
-        control.style.setProperty("--round-glass-sheen", darkSurface ? "rgba(255, 255, 255, 0.34)" : "rgba(255, 255, 255, 0.52)");
-        control.style.setProperty("--round-glass-haze", darkSurface ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.26)");
-        control.style.setProperty("--round-before-hot", darkSurface ? "rgba(255, 255, 255, 0.48)" : "rgba(255, 255, 255, 0.72)");
-        control.style.setProperty("--round-before-soft", darkSurface ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.16)");
-        control.style.setProperty("--round-before-line", darkSurface ? "rgba(255, 255, 255, 0.24)" : "rgba(255, 255, 255, 0.36)");
-        control.style.setProperty("--round-before-opacity", darkSurface ? "0.78" : "0.82");
-        control.style.setProperty("--round-after-hot", darkSurface ? "rgba(255, 255, 255, 0.28)" : "rgba(255, 255, 255, 0.46)");
-        control.style.setProperty("--round-after-mid", darkSurface ? "rgba(255, 255, 255, 0.14)" : "rgba(255, 255, 255, 0.28)");
-        control.style.setProperty("--round-after-low", darkSurface ? "rgba(255, 255, 255, 0.09)" : "rgba(255, 255, 255, 0.2)");
-        control.style.setProperty("--round-after-floor", darkSurface ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.1)");
-        control.style.setProperty("--round-after-opacity", darkSurface ? "0.76" : "0.82");
+        control.style.setProperty("--control-backdrop-blur", "16px");
+        control.style.setProperty("--control-inner-blur", "9px");
+        control.style.setProperty("--control-lens-opacity", darkSurface ? "0.46" : "0.5");
+        control.style.setProperty("--control-frost-opacity", darkSurface ? "0.22" : "0.26");
+        control.style.setProperty("--round-backdrop-blur", "16px");
+        control.style.setProperty("--round-inner-blur", "9px");
+        control.style.setProperty("--round-glass-sheen", darkSurface ? "rgba(255, 255, 255, 0.18)" : "rgba(255, 255, 255, 0.26)");
+        control.style.setProperty("--round-glass-haze", darkSurface ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.1)");
+        control.style.setProperty("--round-before-hot", darkSurface ? "rgba(255, 255, 255, 0.24)" : "rgba(255, 255, 255, 0.34)");
+        control.style.setProperty("--round-before-soft", darkSurface ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.09)");
+        control.style.setProperty("--round-before-line", darkSurface ? "rgba(255, 255, 255, 0.14)" : "rgba(255, 255, 255, 0.2)");
+        control.style.setProperty("--round-before-opacity", darkSurface ? "0.42" : "0.46");
+        control.style.setProperty("--round-after-hot", darkSurface ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.18)");
+        control.style.setProperty("--round-after-mid", darkSurface ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.1)");
+        control.style.setProperty("--round-after-low", darkSurface ? "rgba(255, 255, 255, 0.04)" : "rgba(255, 255, 255, 0.07)");
+        control.style.setProperty("--round-after-floor", darkSurface ? "rgba(255, 255, 255, 0.024)" : "rgba(255, 255, 255, 0.04)");
+        control.style.setProperty("--round-after-opacity", darkSurface ? "0.24" : "0.3");
       }
 
       if (control.classList.contains("marker-button")) {
-        control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.4)" : "rgba(255, 255, 255, 0.28)");
+        control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.36)" : "rgba(255, 255, 255, 0.2)");
         control.style.setProperty("--marker-fill-bg", darkSurface ? "rgba(255, 255, 255, 0.92)" : "rgba(40, 41, 54, 0.96)");
         control.style.setProperty("--marker-icon-fg", darkSurface ? "rgba(14, 15, 18, 0.96)" : "rgba(255, 255, 255, 0.98)");
         control.style.setProperty("--marker-label-hover", darkSurface ? "rgba(14, 15, 18, 0.96)" : "rgba(255, 255, 255, 0.98)");
@@ -801,8 +856,10 @@ function useFloatingControlTone(view: View) {
           "--marker-label-hover-shadow",
           darkSurface ? "0 1px 0 rgba(255, 255, 255, 0.32)" : "0 1px 2px rgba(0, 0, 0, 0.22)"
         );
-        control.style.setProperty("--marker-glow-alpha", darkSurface ? "0.14" : "0.26");
-        control.style.setProperty("--marker-glow-hover-alpha", darkSurface ? "0.22" : "0.34");
+        control.style.setProperty("--marker-backdrop-blur", "18px");
+        control.style.setProperty("--marker-inner-blur", "10px");
+        control.style.setProperty("--marker-glow-alpha", darkSurface ? "0.06" : "0.1");
+        control.style.setProperty("--marker-glow-hover-alpha", darkSurface ? "0.1" : "0.16");
       }
     };
 
@@ -924,7 +981,7 @@ function HomeFloatingPortfolioButton() {
       tabIndex={visible ? 0 : -1}
       onClick={(event) => navigateTo("/full/", event)}
     >
-      {siteContent.home.fullPortfolioButton}
+      <span className="glass-button-label">{siteContent.home.fullPortfolioButton}</span>
     </button>
   );
 }
@@ -1347,7 +1404,7 @@ function GlassButton({
 }) {
   return (
     <button className={`glass-button magnetic-control ${variant}`} type="button" onClick={onClick}>
-      {label}
+      <span className="glass-button-label">{label}</span>
     </button>
   );
 }
@@ -1415,8 +1472,42 @@ function NextProject({ project }: { project: Project }) {
 
 function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () => void }) {
   const [closing, setClosing] = useState(false);
+  const [mediaReady, setMediaReady] = useState(false);
   const closingRef = useRef(false);
   const closeTimerRef = useRef<number | null>(null);
+  const mediaTimerRef = useRef<number | null>(null);
+  const modalMediaKey = modal ? `${modal.action.type}:${modal.action.embedMode ?? "default"}:${modal.action.url}` : "";
+  const isVideoModal = modal ? modal.action.embedMode === "video" || modal.action.type === "video" : false;
+
+  useEffect(() => {
+    if (mediaTimerRef.current) {
+      window.clearTimeout(mediaTimerRef.current);
+      mediaTimerRef.current = null;
+    }
+
+    if (!modal) {
+      setMediaReady(false);
+      return undefined;
+    }
+
+    if (isVideoModal) {
+      setMediaReady(true);
+      return undefined;
+    }
+
+    setMediaReady(false);
+    mediaTimerRef.current = window.setTimeout(() => {
+      mediaTimerRef.current = null;
+      setMediaReady(true);
+    }, 1000);
+
+    return () => {
+      if (mediaTimerRef.current) {
+        window.clearTimeout(mediaTimerRef.current);
+        mediaTimerRef.current = null;
+      }
+    };
+  }, [isVideoModal, modal, modalMediaKey]);
 
   useEffect(() => {
     if (!modal) return undefined;
@@ -1434,34 +1525,16 @@ function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () 
         window.clearTimeout(closeTimerRef.current);
         closeTimerRef.current = null;
       }
+      if (mediaTimerRef.current) {
+        window.clearTimeout(mediaTimerRef.current);
+        mediaTimerRef.current = null;
+      }
     };
   }, [modal]);
 
   if (!modal) return null;
 
-  const { action, origin } = modal;
-  const originDx = origin.x - window.innerWidth / 2;
-  const originDy = origin.y - window.innerHeight / 2;
-  const originScale = Math.max(0.08, Math.min(0.18, origin.width / Math.max(window.innerWidth, 1)));
-  const originWidth = Math.max(42, Math.min(origin.width, 220));
-  const originHeight = Math.max(36, Math.min(origin.height, 78));
-  const modalStyle = {
-    "--modal-origin-x": `${Math.round(origin.x)}px`,
-    "--modal-origin-y": `${Math.round(origin.y)}px`,
-    "--modal-origin-width": `${Math.round(originWidth)}px`,
-    "--modal-origin-height": `${Math.round(originHeight)}px`,
-    "--modal-origin-dx": `${Math.round(originDx)}px`,
-    "--modal-origin-dy": `${Math.round(originDy)}px`,
-    "--modal-origin-dx-start": `${Math.round(originDx * 0.92)}px`,
-    "--modal-origin-dy-start": `${Math.round(originDy * 0.92)}px`,
-    "--modal-origin-dx-mid": `${Math.round(originDx * 0.28)}px`,
-    "--modal-origin-dy-mid": `${Math.round(originDy * 0.28)}px`,
-    "--modal-origin-dx-soft": `${Math.round(originDx * 0.04)}px`,
-    "--modal-origin-dy-soft": `${Math.round(originDy * 0.04)}px`,
-    "--modal-origin-dx-close": `${Math.round(originDx * 0.84)}px`,
-    "--modal-origin-dy-close": `${Math.round(originDy * 0.84)}px`,
-    "--modal-origin-scale": originScale.toFixed(3)
-  } as React.CSSProperties;
+  const { action } = modal;
 
   function requestClose() {
     if (closingRef.current) return;
@@ -1479,7 +1552,6 @@ function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () 
       role="dialog"
       aria-modal="true"
       aria-label={action.label}
-      style={modalStyle}
     >
       <button className="modal-scrim" type="button" aria-label={siteContent.modal.close} onClick={requestClose} />
       <div className="media-panel">
@@ -1498,11 +1570,18 @@ function MediaModal({ modal, onClose }: { modal: ModalState | null; onClose: () 
             </button>
           </div>
         </div>
-        <div className="media-body">
-          {action.embedMode === "video" || action.type === "video" ? (
+        <div className={`media-body ${mediaReady ? "is-ready" : "is-waiting"}`} aria-busy={!mediaReady}>
+          {isVideoModal ? (
             <video src={action.url} controls autoPlay />
           ) : (
-            <iframe src={action.url} title={action.label} allowFullScreen />
+            <>
+              <div className="media-delay-surface" aria-hidden="true">
+                <span>{action.label}</span>
+              </div>
+              {mediaReady && (
+                <iframe className="media-embed-frame" src={action.url} title={action.label} allowFullScreen />
+              )}
+            </>
           )}
         </div>
       </div>
