@@ -45,6 +45,23 @@ const normalizePath = (pathname: string) => {
   return pathname.endsWith("/") || pathname.endsWith(".html") ? pathname : `${pathname}/`;
 };
 
+const scrollToTopInstant = () => {
+  const root = document.documentElement;
+  const forceTop = () => {
+    window.scrollTo(0, 0);
+    root.scrollTop = 0;
+    document.body.scrollTop = 0;
+  };
+
+  root.classList.add("instant-scroll");
+  forceTop();
+  window.requestAnimationFrame(forceTop);
+  window.setTimeout(() => {
+    forceTop();
+    root.classList.remove("instant-scroll");
+  }, 120);
+};
+
 const getView = (pathname: string): { view: View; project?: Project } => {
   const path = normalizePath(stripBasePath(pathname));
   const canonical = routeAliases[path] ?? path;
@@ -67,7 +84,7 @@ const navigateTo = (url: string) => {
 
   window.history.pushState(null, "", withBasePath(url));
   window.dispatchEvent(new PopStateEvent("popstate"));
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  scrollToTopInstant();
 };
 
 const getExternalFallbackUrl = (action: Action) => {
@@ -115,7 +132,7 @@ function App() {
     if (previousRouteKey.current === routeKey) return undefined;
     previousRouteKey.current = routeKey;
     setRouteTransitioning(true);
-    const timer = window.setTimeout(() => setRouteTransitioning(false), 540);
+    const timer = window.setTimeout(() => setRouteTransitioning(false), 720);
     return () => window.clearTimeout(timer);
   }, [routeKey]);
 
