@@ -78,53 +78,6 @@ const getExternalFallbackUrl = (action: Action) => {
 
 const isEmbeddable = (action: Action) => action.type === "video" || action.type === "embed";
 
-const homeNarratives = [
-  {
-    eyebrow: "VIBE CODING AS PORTFOLIO",
-    title: "项目本身",
-    body:
-      "这个网站不只是作品集的容器，也是一件用 vibe coding 方法完成的个人项目。我把页面结构、动效、图像节奏和自适应按钮都当作设计对象，让浏览体验本身回应作品里的交互研究、服务系统与数字媒介实验。",
-    meta: ["React / Vite", "Motion System", "Adaptive Contrast", "Portfolio as Interface"]
-  },
-  {
-    eyebrow: "DESIGN METHOD",
-    title: "工作方式",
-    body:
-      "我的项目通常从场景与人的行为关系出发，再把研究结论转译成可以运行、观看或体验的原型。这里的案例覆盖用户研究、概念设计、MR / AR 交互、视觉系统、服务触点和影像表达。",
-    meta: ["Research", "Prototype", "Interaction", "Visual System"]
-  }
-];
-
-const practiceHighlights = [
-  {
-    title: "AutoPIA 新感官体验",
-    subtitle: "智能座舱年轻化体验设计工作坊 / 保密项目",
-    body:
-      "从年轻人注意力碎片化的痛点出发，构建“场景感知-感官重塑-交互响应”的三层设计方法，将座舱从通勤载体转化为可调节的体验场域。",
-    tags: ["智能座舱", "新感官体验", "隐性交互"]
-  },
-  {
-    title: "国美 x 港科大 x Rokid 沉浸创新课程",
-    subtitle: "传统文化叙事的多感官原型",
-    body:
-      "独立完成文化叙事五感交互流程、Rokid + Unity 交互开发与嗅觉气味设备开发，交付视觉、听觉、嗅觉三通道联动的可运行体验原型。",
-    tags: ["MR 开发", "五感设计", "MCP 工作流"]
-  },
-  {
-    title: "浙大 x 强脑科技人工智能产品设计",
-    subtitle: "智能地垫产品概念",
-    body:
-      "基于强脑科技企业命题设计并开发智能地垫产品，独立完成 App 界面与产品视频，将产品概念、交互界面和展示叙事串联成完整提案。",
-    tags: ["产品设计", "交互界面", "产品视频"]
-  }
-];
-
-const contactItems = [
-  { label: "Email", value: "your-email@example.com" },
-  { label: "WeChat", value: "your-wechat-id" },
-  { label: "Portfolio", value: "YUKO / VIBE CODING PORTFOLIO" }
-];
-
 function App() {
   const [route, setRoute] = useState(() => getView(window.location.pathname));
   const [modal, setModal] = useState<ModalState | null>(null);
@@ -152,10 +105,10 @@ function App() {
   useEffect(() => {
     document.title =
       route.view === "project" && route.project
-        ? `${route.project.title} / YUKO Portfolio`
+        ? `${route.project.title} / ${siteContent.documentTitle.suffix}`
         : route.view === "full"
-          ? "Full Portfolio / YUKO Portfolio"
-          : "YUKO / PORTFOLIO";
+          ? siteContent.documentTitle.full
+          : siteContent.documentTitle.home;
   }, [route]);
 
   useEffect(() => {
@@ -833,15 +786,17 @@ function HomePage() {
 }
 
 function ResearchFeature({ project }: { project: Project }) {
+  const research = siteContent.home.researchFeature;
+
   return (
     <section
       className="home-editorial-section research-feature text-reveal-block module-reveal replay-reveal scroll-reveal"
       aria-labelledby="research-feature-title"
     >
       <div className="section-heading">
-        <p className="eyebrow">INDEPENDENT RESEARCH</p>
+        <p className="eyebrow">{research.eyebrow}</p>
         <h2 id="research-feature-title">
-          <LineRevealText text="研究项目" maxLineLength={18} />
+          <LineRevealText text={research.title} maxLineLength={18} />
         </h2>
       </div>
       <button
@@ -937,6 +892,7 @@ function PracticeSection() {
 
 function ThanksSection() {
   const thanks = siteContent.home.thanks;
+  const contactLabels = thanks.contactLabels;
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const copyWechat = async () => {
@@ -966,12 +922,12 @@ function ThanksSection() {
         </p>
         <div className="contact-list">
           <p>
-            <span>Email</span>
+            <span>{contactLabels.email}</span>
             <strong>{thanks.email}</strong>
           </p>
           <div className="wechat-contact">
             <p className="wechat-row">
-              <span>WeChat</span>
+              <span>{contactLabels.wechat}</span>
               <button className="wechat-id" type="button" onClick={copyWechat} aria-label={thanks.copyLabel}>
                 <strong>{thanks.wechatId}</strong>
               </button>
@@ -985,7 +941,7 @@ function ThanksSection() {
             {thanks.wechatQrSrc ? <img className="wechat-qr" src={thanks.wechatQrSrc} alt={thanks.qrAlt} /> : null}
           </div>
           <p>
-            <span>Portfolio</span>
+            <span>{contactLabels.portfolio}</span>
             <strong>{thanks.portfolioLabel}</strong>
           </p>
         </div>
@@ -1058,8 +1014,10 @@ function FullPortfolioPage({ onAction }: { onAction: (action: Action) => void })
             <LineRevealText text={siteContent.fullPortfolio.summary} maxLineLength={34} />
           </p>
           <div className="full-index-meta" aria-label="portfolio index">
-            <span>{String(fullPortfolioProjects.length).padStart(2, "0")} PROJECTS</span>
-            <span>CONTINUOUS VIEW</span>
+            <span>
+              {String(fullPortfolioProjects.length).padStart(2, "0")} {siteContent.fullPortfolio.projectCountLabel}
+            </span>
+            <span>{siteContent.fullPortfolio.viewModeLabel}</span>
           </div>
         </div>
       </header>
