@@ -690,18 +690,50 @@ function useTouchFeedback() {
     const selector =
       ".glass-button, .icon-glass, .back-to-top, .next-project button, .marker-button, .media-toolbar button, .work-card, .research-card, .wechat-id";
     const glassSelector = ".glass-button, .icon-glass, .back-to-top, .next-project button, .marker-button, .media-toolbar button";
-    const cleanupTimers = new Map<HTMLElement, number>();
+    const releaseTimers = new Map<HTMLElement, number>();
     let activeTarget: HTMLElement | null = null;
 
-    const clearTap = (target: HTMLElement) => {
-      const currentTimer = cleanupTimers.get(target);
-      if (currentTimer) window.clearTimeout(currentTimer);
+    const getReleaseHost = (target: HTMLElement) => {
+      if (target.classList.contains("work-card")) {
+        return target.querySelector<HTMLElement>(".cover-pair") ?? target;
+      }
+      return target;
+    };
 
-      const timer = window.setTimeout(() => {
-        target.classList.remove("is-tapping");
-        cleanupTimers.delete(target);
-      }, 120);
-      cleanupTimers.set(target, timer);
+    const spawnReleaseHalo = (target: HTMLElement, event: PointerEvent) => {
+      const host = getReleaseHost(target);
+      const rect = host.getBoundingClientRect();
+      const point = getLocalPointerPercent(host, event.clientX, event.clientY);
+      const halo = document.createElement("span");
+      const isSurface = target.classList.contains("work-card") || target.classList.contains("research-card");
+      halo.className = isSurface ? "tap-release-burst surface" : "tap-release-burst";
+      halo.style.setProperty("--release-x", `${point.x.toFixed(2)}%`);
+      halo.style.setProperty("--release-y", `${point.y.toFixed(2)}%`);
+      halo.style.left = `${rect.left}px`;
+      halo.style.top = `${rect.top}px`;
+      halo.style.width = `${rect.width}px`;
+      halo.style.height = `${rect.height}px`;
+      halo.style.borderRadius = getComputedStyle(host).borderRadius || "8px";
+      document.body.appendChild(halo);
+
+      const remove = () => halo.remove();
+      halo.addEventListener("animationend", remove, { once: true });
+      window.setTimeout(remove, 700);
+    };
+
+    const releaseTap = (target: HTMLElement, event: PointerEvent) => {
+      target.classList.remove("is-tapping");
+      target.classList.add("is-releasing");
+      spawnReleaseHalo(target, event);
+
+      const currentReleaseTimer = releaseTimers.get(target);
+      if (currentReleaseTimer) window.clearTimeout(currentReleaseTimer);
+
+      const releaseTimer = window.setTimeout(() => {
+        target.classList.remove("is-releasing");
+        releaseTimers.delete(target);
+      }, 520);
+      releaseTimers.set(target, releaseTimer);
     };
 
     const applyLightFromPointer = (target: HTMLElement, event: PointerEvent) => {
@@ -738,8 +770,15 @@ function useTouchFeedback() {
       const target = (event.target as Element | null)?.closest<HTMLElement>(selector);
       if (!target) return;
 
+      const currentReleaseTimer = releaseTimers.get(target);
+      if (currentReleaseTimer) {
+        window.clearTimeout(currentReleaseTimer);
+        releaseTimers.delete(target);
+      }
+
       activeTarget = target;
       applyLightFromPointer(target, event);
+      target.classList.remove("is-releasing");
       target.classList.add("is-tapping");
     };
 
@@ -750,7 +789,7 @@ function useTouchFeedback() {
     const onPointerDone = (event: PointerEvent) => {
       const target = activeTarget ?? (event.target as Element | null)?.closest<HTMLElement>(selector);
       activeTarget = null;
-      if (target) clearTap(target);
+      if (target) releaseTap(target, event);
     };
 
     document.addEventListener("pointerdown", onPointerDown, { passive: true });
@@ -760,8 +799,8 @@ function useTouchFeedback() {
     document.addEventListener("pointerleave", onPointerDone, { passive: true });
 
     return () => {
-      cleanupTimers.forEach((timer) => window.clearTimeout(timer));
-      cleanupTimers.clear();
+      releaseTimers.forEach((timer) => window.clearTimeout(timer));
+      releaseTimers.clear();
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerup", onPointerDone);

@@ -94,6 +94,25 @@ button svg {
   flex: 0 0 auto;
 }
 
+.tap-release-burst {
+  position: fixed;
+  z-index: 80;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--release-x) var(--release-y), rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12) 22%, rgba(255, 255, 255, 0) 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform-origin: var(--release-x) var(--release-y);
+  animation: tap-release-burst 0.62s var(--ease-luxe) both;
+}
+
+.tap-release-burst.surface {
+  background:
+    radial-gradient(circle at var(--release-x) var(--release-y), rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.12) 18%, rgba(255, 255, 255, 0) 52%),
+    linear-gradient(110deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0));
+}
+
 img {
   max-width: 100%;
   display: block;
@@ -446,6 +465,24 @@ img {
   }
 }
 
+@keyframes glass-tap-release {
+  0% {
+    opacity: 0.62;
+    transform: scale(0.92);
+    filter: blur(8px);
+  }
+  46% {
+    opacity: 0.34;
+    transform: scale(1.18);
+    filter: blur(12px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.58);
+    filter: blur(18px);
+  }
+}
+
 @keyframes surface-tap-halo {
   0% {
     opacity: 0.18;
@@ -458,6 +495,42 @@ img {
   100% {
     opacity: 0.82;
     transform: scale(1);
+  }
+}
+
+@keyframes surface-tap-release {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.985);
+    filter: blur(0);
+  }
+  48% {
+    opacity: 0.44;
+    transform: scale(1.03);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+    filter: blur(8px);
+  }
+}
+
+@keyframes tap-release-burst {
+  0% {
+    opacity: 0.82;
+    transform: scale(0.92);
+    filter: blur(8px);
+  }
+  52% {
+    opacity: 0.38;
+    transform: scale(1.08);
+    filter: blur(12px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.28);
+    filter: blur(18px);
   }
 }
 
@@ -1046,6 +1119,13 @@ h2 {
     linear-gradient(110deg, rgba(255, 255, 255, 0) 12%, rgba(255, 255, 255, 0.105) 50%, rgba(255, 255, 255, 0) 74%);
 }
 
+.research-card.is-releasing::before {
+  opacity: 1;
+  animation: surface-tap-release 0.52s var(--ease-luxe) both;
+  background:
+    radial-gradient(circle at var(--tap-x, var(--research-light-x)) var(--tap-y, var(--research-light-y)), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.058) 24%, rgba(255, 255, 255, 0) 58%);
+}
+
 .research-copy,
 .research-cover,
 .research-arrow {
@@ -1402,9 +1482,14 @@ h2 {
 }
 
 .wechat-id.is-tapping::before,
+.wechat-id.is-releasing::before,
 .wechat-id:hover::before,
 .wechat-id:focus-visible::before {
   opacity: 1;
+}
+
+.wechat-id.is-releasing::before {
+  animation: glass-tap-release 0.52s var(--ease-luxe) both;
 }
 
 .wechat-id:hover strong,
@@ -1622,6 +1707,13 @@ h2 {
 .back-to-top.is-tapping::after,
 .next-project button.is-tapping::after {
   animation: glass-tap-halo 0.58s var(--ease-luxe) both;
+}
+
+.glass-button.is-releasing::after,
+.icon-glass.is-releasing::after,
+.back-to-top.is-releasing::after,
+.next-project button.is-releasing::after {
+  animation: glass-tap-release 0.52s var(--ease-luxe) both;
 }
 
 .glass-button.is-tapping::before,
@@ -1965,6 +2057,12 @@ h2 {
     linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 42%);
 }
 
+.marker-button.is-releasing::before {
+  animation: glass-tap-release 0.52s var(--ease-luxe) both;
+  background:
+    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0) 48%);
+}
+
 .marker-button.is-tapping .marker-fill {
   width: 100%;
 }
@@ -2069,6 +2167,7 @@ h2 {
 .cover-pair {
   --spot-x: 50%;
   --spot-y: 50%;
+  --cover-shade-opacity: 0.18;
   position: relative;
   display: block;
   overflow: hidden;
@@ -2093,17 +2192,19 @@ h2 {
   transform: scale(0.98);
   transform-origin: var(--spot-x) var(--spot-y);
   background:
-    radial-gradient(circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08) 18%, transparent 42%),
-    linear-gradient(180deg, transparent 46%, rgba(0, 0, 0, 0.52));
+    radial-gradient(circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08) 18%, rgba(255, 255, 255, 0) 42%);
   transition:
     opacity var(--motion-medium) var(--ease-luxe),
     transform var(--motion-medium) var(--ease-luxe);
 }
 
 .cover-pair::after {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 48%, rgb(0 0 0 / var(--cover-shade-opacity)) 100%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: inherit;
   box-shadow: inset 0 0 34px rgba(255, 255, 255, 0.028);
+  transition: background var(--motion-medium) var(--ease-luxe);
 }
 
 .cover-pair img {
@@ -2131,6 +2232,7 @@ h2 {
 }
 
 .work-card:hover .cover-pair {
+  --cover-shade-opacity: 0.36;
   transform: translateY(-8px) scale(1.01);
   border-color: rgba(255, 255, 255, 0.42);
   box-shadow:
@@ -2139,6 +2241,7 @@ h2 {
 }
 
 .work-card.is-tapping .cover-pair {
+  --cover-shade-opacity: 0.42;
   transform: translateY(-4px) scale(0.985);
   border-color: rgba(255, 255, 255, 0.58);
   box-shadow:
@@ -2150,8 +2253,14 @@ h2 {
   opacity: 1;
   animation: surface-tap-halo 0.58s var(--ease-luxe) both;
   background:
-    radial-gradient(circle at var(--tap-x, var(--spot-x)) var(--tap-y, var(--spot-y)), rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.1) 22%, transparent 48%),
-    linear-gradient(180deg, transparent 44%, rgba(0, 0, 0, 0.5));
+    radial-gradient(circle at var(--tap-x, var(--spot-x)) var(--tap-y, var(--spot-y)), rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.1) 22%, rgba(255, 255, 255, 0) 48%);
+}
+
+.work-card.is-releasing .cover-pair::before {
+  opacity: 1;
+  animation: surface-tap-release 0.52s var(--ease-luxe) both;
+  background:
+    radial-gradient(circle at var(--tap-x, var(--spot-x)) var(--tap-y, var(--spot-y)), rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.07) 24%, rgba(255, 255, 255, 0) 54%);
 }
 
 .work-card.is-tapping .cover-color {
@@ -2761,6 +2870,10 @@ h2 {
 .media-toolbar button:focus-visible::after,
 .media-toolbar button.is-tapping::after {
   opacity: 0.54;
+}
+
+.media-toolbar button.is-releasing::after {
+  animation: glass-tap-release 0.52s var(--ease-luxe) both;
 }
 
 .media-toolbar button.is-tapping {
