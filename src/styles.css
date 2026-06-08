@@ -98,19 +98,20 @@ button svg {
   position: fixed;
   z-index: 80;
   pointer-events: none;
+  border-radius: 999px;
   background:
-    radial-gradient(circle at var(--release-x) var(--release-y), rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12) 22%, rgba(255, 255, 255, 0) 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12) 22%, rgba(255, 255, 255, 0) 64%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 72%);
   mix-blend-mode: screen;
   opacity: 0;
-  transform-origin: var(--release-x) var(--release-y);
-  animation: tap-release-burst 0.62s var(--ease-luxe) both;
+  transform-origin: 50% 50%;
+  animation: tap-release-burst 0.72s var(--ease-luxe) both;
 }
 
 .tap-release-burst.surface {
   background:
-    radial-gradient(circle at var(--release-x) var(--release-y), rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.12) 18%, rgba(255, 255, 255, 0) 52%),
-    linear-gradient(110deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0));
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.12) 18%, rgba(255, 255, 255, 0) 62%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 76%);
 }
 
 img {
@@ -519,17 +520,17 @@ img {
 @keyframes tap-release-burst {
   0% {
     opacity: 0.82;
-    transform: scale(0.92);
+    transform: translate3d(-50%, -50%, 0) scale(0.42);
     filter: blur(8px);
   }
   52% {
     opacity: 0.38;
-    transform: scale(1.08);
+    transform: translate3d(-50%, -50%, 0) scale(0.78);
     filter: blur(12px);
   }
   100% {
     opacity: 0;
-    transform: scale(1.28);
+    transform: translate3d(-50%, -50%, 0) scale(1.18);
     filter: blur(18px);
   }
 }
@@ -1882,7 +1883,7 @@ h2 {
   --control-bg: rgba(255, 255, 255, 0.34);
   --control-border: rgba(255, 255, 255, 0.46);
   --control-shadow: rgba(0, 0, 0, 0.18);
-  --control-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.38);
+  --control-text-shadow: none;
   --marker-size: 3rem;
   --marker-fill-bg: rgba(40, 41, 54, 0.96);
   --marker-icon-fg: rgba(255, 255, 255, 0.98);

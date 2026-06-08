@@ -703,22 +703,21 @@ function useTouchFeedback() {
     const spawnReleaseHalo = (target: HTMLElement, event: PointerEvent) => {
       const host = getReleaseHost(target);
       const rect = host.getBoundingClientRect();
-      const point = getLocalPointerPercent(host, event.clientX, event.clientY);
       const halo = document.createElement("span");
       const isSurface = target.classList.contains("work-card") || target.classList.contains("research-card");
+      const viewportMax = Math.max(window.innerWidth, window.innerHeight);
+      const hostMax = Math.max(rect.width, rect.height);
+      const size = Math.min(Math.max(isSurface ? 420 : 160, hostMax * (isSurface ? 1.18 : 2.6)), viewportMax * 0.92);
       halo.className = isSurface ? "tap-release-burst surface" : "tap-release-burst";
-      halo.style.setProperty("--release-x", `${point.x.toFixed(2)}%`);
-      halo.style.setProperty("--release-y", `${point.y.toFixed(2)}%`);
-      halo.style.left = `${rect.left}px`;
-      halo.style.top = `${rect.top}px`;
-      halo.style.width = `${rect.width}px`;
-      halo.style.height = `${rect.height}px`;
-      halo.style.borderRadius = getComputedStyle(host).borderRadius || "8px";
+      halo.style.left = `${event.clientX}px`;
+      halo.style.top = `${event.clientY}px`;
+      halo.style.width = `${size}px`;
+      halo.style.height = `${size}px`;
       document.body.appendChild(halo);
 
       const remove = () => halo.remove();
       halo.addEventListener("animationend", remove, { once: true });
-      window.setTimeout(remove, 700);
+      window.setTimeout(remove, 820);
     };
 
     const releaseTap = (target: HTMLElement, event: PointerEvent) => {
@@ -991,7 +990,7 @@ function useFloatingControlTone(view: View) {
       control.style.setProperty("--control-frost-opacity", darkSurface ? "0.22" : "0.26");
       control.style.setProperty(
         "--control-text-shadow",
-        darkSurface ? "0 1px 2px rgba(0, 0, 0, 0.34)" : "0 1px 0 rgba(255, 255, 255, 0.44)"
+        darkSurface ? "0 1px 2px rgba(0, 0, 0, 0.34)" : "none"
       );
 
       if (homeFloating) {
@@ -1043,7 +1042,7 @@ function useFloatingControlTone(view: View) {
         control.style.setProperty("--marker-label-hover", darkSurface ? "rgba(14, 15, 18, 0.96)" : "rgba(255, 255, 255, 0.98)");
         control.style.setProperty(
           "--marker-label-hover-shadow",
-          darkSurface ? "0 1px 0 rgba(255, 255, 255, 0.32)" : "0 1px 2px rgba(0, 0, 0, 0.22)"
+          darkSurface ? "none" : "0 1px 2px rgba(0, 0, 0, 0.22)"
         );
         control.style.setProperty("--marker-backdrop-blur", "18px");
         control.style.setProperty("--marker-inner-blur", "10px");
