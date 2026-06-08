@@ -2,7 +2,7 @@
  * 快速修改入口：
  * - 首页文稿、导航、通用按钮、联系信息：改这个文件。
  * - 每个作品页标题、简介、作品按钮文字：改 src/data/projectContent.ts。
- * - 微信二维码：把图片放到 public/wechat-qr.png，然后把下面 thanks.wechatQrSrc 改成 "/wechat-qr.png"。
+ * - 微信二维码：改下面 thanks.wechatQrSrc，可以填 OSS 图片链接或 public 里的本地图片路径。
  */
 
 export const siteContent = {
@@ -90,7 +90,7 @@ export const siteContent = {
       },
       email: "957064621@qq.com",
       wechatId: "Michael_Yuuu",
-      wechatQrSrc: "/wechat-qr.png",
+      wechatQrSrc: "https://yuko-portfolio.oss-cn-hangzhou.aliyuncs.com/1/wechat-qr.png",
       portfolioLabel: "YUKO / VIBE CODING PORTFOLIO"
     }
   },
