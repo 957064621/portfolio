@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { ArrowLeft, ArrowRight, Check, ExternalLink, Home, Play, X } from "lucide-react";
 import {
@@ -17,10 +18,21 @@ import { siteContent } from "./data/siteContent";
 import "./styles.css";
 
 type View = "home" | "project" | "full" | "not-found";
+type RoutePhase = "idle" | "leaving" | "entering";
+type NavigationTriggerEvent = Pick<MouseEvent | React.MouseEvent<HTMLElement>, "clientX" | "clientY">;
 
 interface ModalState {
   action: Action;
 }
+
+interface RouteNavigateDetail {
+  origin: { x: number; y: number };
+  url: string;
+}
+
+const routeNavigateEvent = "portfolio:navigate";
+const routeLeavingDuration = 160;
+const routeEnteringDuration = 620;
 
 const assetBasePath = (() => {
   const assetPath = new URL(import.meta.url).pathname;
@@ -62,6 +74,13 @@ const scrollToTopInstant = () => {
   }, 120);
 };
 
+const setRouteOrigin = (origin?: { x: number; y: number }) => {
+  const x = origin?.x ?? window.innerWidth / 2;
+  const y = origin?.y ?? window.innerHeight / 2;
+  document.documentElement.style.setProperty("--route-origin-x", `${Math.round(x)}px`);
+  document.documentElement.style.setProperty("--route-origin-y", `${Math.round(y)}px`);
+};
+
 const getView = (pathname: string): { view: View; project?: Project } => {
   const path = normalizePath(stripBasePath(pathname));
   const canonical = routeAliases[path] ?? path;
@@ -76,15 +95,18 @@ const getView = (pathname: string): { view: View; project?: Project } => {
   return { view: "not-found" };
 };
 
-const navigateTo = (url: string) => {
+const navigateTo = (url: string, event?: NavigationTriggerEvent) => {
   if (/^https?:\/\//.test(url)) {
     window.open(url, "_blank", "noopener,noreferrer");
     return;
   }
 
-  window.history.pushState(null, "", withBasePath(url));
-  window.dispatchEvent(new PopStateEvent("popstate"));
-  scrollToTopInstant();
+  const origin =
+    event && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)
+      ? { x: event.clientX, y: event.clientY }
+      : { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+  window.dispatchEvent(new CustomEvent<RouteNavigateDetail>(routeNavigateEvent, { detail: { origin, url } }));
 };
 
 const getExternalFallbackUrl = (action: Action) => {
@@ -101,13 +123,74 @@ function App() {
   const [loaderMounted, setLoaderMounted] = useState(true);
   const [loaderHidden, setLoaderHidden] = useState(false);
   const routeKey = route.view === "project" && route.project ? `project-${route.project.slug}` : route.view;
-  const previousRouteKey = useRef(routeKey);
-  const [routeTransitioning, setRouteTransitioning] = useState(false);
+  const [routePhase, setRoutePhase] = useState<RoutePhase>("idle");
+  const routeTimers = useRef<number[]>([]);
+  const clearRouteTimers = () => {
+    routeTimers.current.forEach((timer) => window.clearTimeout(timer));
+    routeTimers.current = [];
+  };
+  const queueRouteTimer = (callback: () => void, delay: number) => {
+    const timer = window.setTimeout(() => {
+      routeTimers.current = routeTimers.current.filter((item) => item !== timer);
+      callback();
+    }, delay);
+    routeTimers.current.push(timer);
+  };
+  const prefersReducedRouteMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finishRouteEntry = () => {
+    queueRouteTimer(() => setRoutePhase("idle"), prefersReducedRouteMotion() ? 120 : routeEnteringDuration);
+  };
 
   useEffect(() => {
-    const applyRoute = () => setRoute(getView(window.location.pathname));
+    const applyRoute = () => {
+      clearRouteTimers();
+      setRouteOrigin();
+      scrollToTopInstant();
+      flushSync(() => {
+        setRoute(getView(window.location.pathname));
+        setRoutePhase("entering");
+      });
+      finishRouteEntry();
+    };
     window.addEventListener("popstate", applyRoute);
     return () => window.removeEventListener("popstate", applyRoute);
+  }, []);
+
+  useEffect(() => {
+    const applyNavigation = (event: Event) => {
+      const detail = (event as CustomEvent<RouteNavigateDetail>).detail;
+      if (!detail?.url) return;
+
+      const targetUrl = withBasePath(detail.url);
+      const targetPath = normalizePath(stripBasePath(new URL(targetUrl, window.location.origin).pathname));
+      const canonicalTarget = routeAliases[targetPath] ?? targetPath;
+      const currentPath = normalizePath(stripBasePath(window.location.pathname));
+      const canonicalCurrent = routeAliases[currentPath] ?? currentPath;
+
+      clearRouteTimers();
+      setRouteOrigin(detail.origin);
+
+      const commitRoute = () => {
+        if (canonicalTarget !== canonicalCurrent) {
+          window.history.pushState(null, "", targetUrl);
+        }
+        scrollToTopInstant();
+        flushSync(() => {
+          setRoute(getView(window.location.pathname));
+          setRoutePhase("entering");
+        });
+        finishRouteEntry();
+      };
+
+      setRoutePhase("leaving");
+      queueRouteTimer(commitRoute, prefersReducedRouteMotion() ? 20 : routeLeavingDuration);
+    };
+
+    window.addEventListener(routeNavigateEvent, applyNavigation);
+    return () => {
+      window.removeEventListener(routeNavigateEvent, applyNavigation);
+      clearRouteTimers();
+    };
   }, []);
 
   useEffect(() => {
@@ -127,14 +210,6 @@ function App() {
           ? siteContent.documentTitle.full
           : siteContent.documentTitle.home;
   }, [route]);
-
-  useEffect(() => {
-    if (previousRouteKey.current === routeKey) return undefined;
-    previousRouteKey.current = routeKey;
-    setRouteTransitioning(true);
-    const timer = window.setTimeout(() => setRouteTransitioning(false), 720);
-    return () => window.clearTimeout(timer);
-  }, [routeKey]);
 
   useEffect(() => {
     const start = performance.now();
@@ -168,12 +243,13 @@ function App() {
   }, []);
 
   useMagneticControls();
+  useTouchFeedback();
   useFloatingControlTone(route.view);
   useScrollReveal(routeKey);
 
-  const handleAction = (action: Action) => {
+  const handleAction = (action: Action, event?: React.MouseEvent<HTMLElement>) => {
     if (action.type === "detail") {
-      navigateTo(action.url);
+      navigateTo(action.url, event);
       return;
     }
 
@@ -182,7 +258,7 @@ function App() {
       return;
     }
 
-    navigateTo(action.url);
+    navigateTo(action.url, event);
   };
 
   return (
@@ -192,7 +268,7 @@ function App() {
       <CursorLight />
       <CompositionGuides />
       {(route.view === "project" || route.view === "full") && <FloatingNav />}
-      <div className="page-stage" key={routeKey}>
+      <div className={`page-stage route-${routePhase}`} key={routeKey}>
         {route.view === "home" && <HomePage />}
         {route.view === "project" && route.project && (
           <ProjectPage project={route.project} onAction={handleAction} />
@@ -202,7 +278,7 @@ function App() {
       </div>
       {route.view === "home" && <HomeFloatingPortfolioButton />}
       {(route.view === "project" || route.view === "full") && <BackToTop />}
-      <div className={`route-veil ${routeTransitioning ? "active" : ""}`} aria-hidden="true" />
+      <div className={`route-veil route-${routePhase}`} aria-hidden="true" />
       <MediaModal modal={modal} onClose={() => setModal(null)} />
     </>
   );
@@ -442,6 +518,47 @@ function useMagneticControls() {
   });
 }
 
+function useTouchFeedback() {
+  useEffect(() => {
+    const selector =
+      ".glass-button, .icon-glass, .back-to-top, .next-project button, .marker-button, .work-card, .research-card";
+    let cleanupTimer = 0;
+
+    const clearTap = (target: HTMLElement) => {
+      window.clearTimeout(cleanupTimer);
+      cleanupTimer = window.setTimeout(() => target.classList.remove("is-tapping"), 120);
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = (event.target as Element | null)?.closest<HTMLElement>(selector);
+      if (!target) return;
+
+      const rect = target.getBoundingClientRect();
+      target.style.setProperty("--tap-x", `${Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)).toFixed(2)}%`);
+      target.style.setProperty("--tap-y", `${Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)).toFixed(2)}%`);
+      target.classList.add("is-tapping");
+    };
+
+    const onPointerDone = (event: PointerEvent) => {
+      const target = (event.target as Element | null)?.closest<HTMLElement>(selector);
+      if (target) clearTap(target);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown, { passive: true });
+    document.addEventListener("pointerup", onPointerDone, { passive: true });
+    document.addEventListener("pointercancel", onPointerDone, { passive: true });
+    document.addEventListener("pointerleave", onPointerDone, { passive: true });
+
+    return () => {
+      window.clearTimeout(cleanupTimer);
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("pointerup", onPointerDone);
+      document.removeEventListener("pointercancel", onPointerDone);
+      document.removeEventListener("pointerleave", onPointerDone);
+    };
+  }, []);
+}
+
 function useFloatingControlTone(view: View) {
   useEffect(() => {
     let raf = 0;
@@ -608,11 +725,11 @@ function useFloatingControlTone(view: View) {
       const darkSurface = tone >= 0.5;
       control.style.setProperty("--surface-tone", darkSurface ? "1" : "0");
       control.style.setProperty("--control-fg", darkSurface ? "rgba(255, 250, 240, 0.98)" : "rgba(8, 10, 12, 0.96)");
-      control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.74)" : "rgba(255, 255, 255, 0.52)");
-      control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.24)" : "rgba(255, 255, 255, 0.46)");
-      control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.18)" : "rgba(255, 255, 255, 0.48)");
-      control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.075)" : "rgba(255, 255, 255, 0.2)");
-      control.style.setProperty("--control-glint-low", darkSurface ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.09)");
+      control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.38)" : "rgba(255, 255, 255, 0.14)");
+      control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.34)" : "rgba(255, 255, 255, 0.58)");
+      control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.18)" : "rgba(255, 255, 255, 0.34)");
+      control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.12)");
+      control.style.setProperty("--control-glint-low", darkSurface ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.055)");
       control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.46)" : "rgba(0, 0, 0, 0.18)");
       control.style.setProperty(
         "--control-text-shadow",
@@ -620,6 +737,7 @@ function useFloatingControlTone(view: View) {
       );
 
       if (control.classList.contains("marker-button")) {
+        control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.4)" : "rgba(255, 255, 255, 0.28)");
         control.style.setProperty("--marker-fill-bg", darkSurface ? "rgba(255, 255, 255, 0.92)" : "rgba(40, 41, 54, 0.96)");
         control.style.setProperty("--marker-icon-fg", darkSurface ? "rgba(14, 15, 18, 0.96)" : "rgba(255, 255, 255, 0.98)");
         control.style.setProperty("--marker-label-hover", darkSurface ? "rgba(14, 15, 18, 0.96)" : "rgba(255, 255, 255, 0.98)");
@@ -748,7 +866,7 @@ function HomeFloatingPortfolioButton() {
       type="button"
       aria-hidden={!visible}
       tabIndex={visible ? 0 : -1}
-      onClick={() => navigateTo("/full/")}
+      onClick={(event) => navigateTo("/full/", event)}
     >
       {siteContent.home.fullPortfolioButton}
     </button>
@@ -819,7 +937,7 @@ function ResearchFeature({ project }: { project: Project }) {
       <button
         className="research-card replay-reveal scroll-reveal"
         type="button"
-        onClick={() => navigateTo(`/projects/${project.slug}/`)}
+        onClick={(event) => navigateTo(`/projects/${project.slug}/`, event)}
       >
         <span className="research-copy">
           <small>{project.category}</small>
@@ -988,7 +1106,7 @@ function WorkWall() {
           type="button"
           onPointerEnter={updateCoverSpot}
           onPointerMove={updateCoverSpot}
-          onClick={() => navigateTo(`/projects/${project.slug}/`)}
+          onClick={(event) => navigateTo(`/projects/${project.slug}/`, event)}
         >
           <span className="work-number">{project.id}</span>
           <span className="cover-pair">
@@ -1005,7 +1123,13 @@ function WorkWall() {
   );
 }
 
-function ProjectPage({ project, onAction }: { project: Project; onAction: (action: Action) => void }) {
+function ProjectPage({
+  project,
+  onAction
+}: {
+  project: Project;
+  onAction: (action: Action, event?: React.MouseEvent<HTMLElement>) => void;
+}) {
   return (
     <main className="site-shell project-shell">
       <ProjectHeader project={project} />
@@ -1016,7 +1140,7 @@ function ProjectPage({ project, onAction }: { project: Project; onAction: (actio
   );
 }
 
-function FullPortfolioPage({ onAction }: { onAction: (action: Action) => void }) {
+function FullPortfolioPage({ onAction }: { onAction: (action: Action, event?: React.MouseEvent<HTMLElement>) => void }) {
   return (
     <main className="site-shell full-shell">
       <header className="full-header full-index-header text-reveal-block scroll-reveal">
@@ -1070,7 +1194,7 @@ function PortfolioFlow({
   onAction
 }: {
   pages: PageAsset[];
-  onAction: (action: Action) => void;
+  onAction: (action: Action, event?: React.MouseEvent<HTMLElement>) => void;
 }) {
   return (
     <div className="portfolio-flow">
@@ -1107,7 +1231,7 @@ function ImageFrame({
   onAction
 }: {
   asset: PageAsset;
-  onAction: (action: Action) => void;
+  onAction: (action: Action, event?: React.MouseEvent<HTMLElement>) => void;
 }) {
   const luminance = getImageLuminance(asset.src);
   const actionLuminance = getActionAreaLuminance(asset.src);
@@ -1124,7 +1248,11 @@ function ImageFrame({
       {asset.actions?.length ? (
         <figcaption className="image-actions">
           {asset.actions.map((action) => (
-            <MarkerButton key={`${action.label}-${action.url}`} action={action} onClick={() => onAction(action)} />
+            <MarkerButton
+              key={`${action.label}-${action.url}`}
+              action={action}
+              onClick={(event) => onAction(action, event)}
+            />
           ))}
         </figcaption>
       ) : null}
@@ -1132,7 +1260,13 @@ function ImageFrame({
   );
 }
 
-function MarkerButton({ action, onClick }: { action: Action; onClick: () => void }) {
+function MarkerButton({
+  action,
+  onClick
+}: {
+  action: Action;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}) {
   const Icon = action.type === "detail" ? ArrowRight : action.type === "external" ? ExternalLink : Play;
 
   return (
@@ -1152,7 +1286,7 @@ function GlassButton({
   variant = "default"
 }: {
   label: string;
-  onClick: () => void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   variant?: "default" | "strong";
 }) {
   return (
@@ -1165,7 +1299,7 @@ function GlassButton({
 function FloatingNav() {
   return (
     <nav className="floating-nav" aria-label={siteContent.navigation.ariaLabel}>
-      <button type="button" className="icon-glass" onClick={() => navigateTo("/")}>
+      <button type="button" className="icon-glass" onClick={(event) => navigateTo("/", event)}>
         <Home size={19} />
         <span>{siteContent.navigation.home}</span>
       </button>
@@ -1192,7 +1326,11 @@ function BackToTop() {
       className={`back-to-top ${visible ? "visible" : ""}`}
       type="button"
       aria-label={siteContent.navigation.backToTop}
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      onClick={(event) => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        event.currentTarget.blur();
+        event.currentTarget.classList.remove("is-tapping");
+      }}
     >
       <ArrowRight size={18} />
       <span>{siteContent.navigation.backToTop}</span>
@@ -1211,7 +1349,7 @@ function NextProject({ project }: { project: Project }) {
   return (
     <section className="next-project">
       <p className="eyebrow">{siteContent.nextProject.eyebrow}</p>
-      <button className="magnetic-control" type="button" onClick={() => navigateTo(`/projects/${next.slug}/`)}>
+      <button className="magnetic-control" type="button" onClick={(event) => navigateTo(`/projects/${next.slug}/`, event)}>
         <span>{next.title}</span>
         <ArrowRight size={18} />
       </button>
@@ -1273,7 +1411,7 @@ function NotFoundPage() {
     <main className="site-shell not-found">
       <p className="eyebrow">{siteContent.notFound.eyebrow}</p>
       <h1>{siteContent.notFound.title}</h1>
-      <GlassButton label={siteContent.notFound.backHome} variant="strong" onClick={() => navigateTo("/")} />
+      <GlassButton label={siteContent.notFound.backHome} variant="strong" onClick={(event) => navigateTo("/", event)} />
     </main>
   );
 }
