@@ -21,8 +21,8 @@ export const siteContent = {
     heroEyebrow: "VIBE CODING PORTFOLIO / 2026",
     heroTitle: "YUKO / PORTFOLIO",
     heroSummary:
-      "一份关于交互体验、服务系统、智能产品与数字媒介实验的作品集。这个网页本身也是我的 vibe coding 项目：用代码、审美判断和持续调试，把作品集从静态展示改造成可以被体验的界面。",
-    directoryButton: "作品目录",
+      "一份关于交互体验、服务系统、智能产品与数字媒介实验的作品集。这里的每个项目都从研究开始，最终落到可以被观看、操作或体验的原型。",
+    directoryButton: "查看作品",
     fullPortfolioButton: "查看完整作品集",
     researchFeature: {
       eyebrow: "INDEPENDENT RESEARCH",
@@ -31,13 +31,6 @@ export const siteContent = {
     selectedEyebrow: "SELECTED WORKS",
     selectedTitle: "目录展墙",
     narratives: [
-      {
-        eyebrow: "VIBE CODING AS PORTFOLIO",
-        title: "项目本身",
-        body:
-          "这个网站不只是作品集的容器，也是一件用 vibe coding 完成的个人作品。我把页面结构、动效、图像节奏和自适应按钮都当作设计对象，让浏览体验本身回应作品里的交互研究、服务系统与数字媒介实验。",
-        meta: ["React / Vite", "Motion System", "Adaptive Contrast", "Portfolio as Interface"]
-      },
       {
         eyebrow: "DESIGN METHOD",
         title: "工作方式",
@@ -62,7 +55,9 @@ export const siteContent = {
           subtitle: "传统文化叙事的多感官原型",
           body:
             "独立完成文化叙事五感交互流程、Rokid + Unity 交互开发与嗅觉气味设备开发，交付视觉、听觉、嗅觉三通道联动的可运行体验原型。",
-          tags: ["MR 开发", "五感设计", "MCP 工作流"]
+          tags: ["MR 开发", "五感设计", "MCP 工作流"],
+          detailUrl: "/projects/rokid-sensaverse/",
+          detailLabel: "查看项目"
         },
         {
           title: "浙大 x 强脑科技人工智能产品设计",
@@ -77,7 +72,7 @@ export const siteContent = {
       eyebrow: "CONTACT / THANK YOU",
       title: "感谢观看",
       body:
-        "感谢观看。这个作品集将持续记录我把研究、交互、影像、原型和代码组织成一个可被体验的系统。",
+        "感谢观看。这个作品集将持续记录我把研究、交互、影像、原型和代码组织成一个可被体验的系统——包括这个用 vibe coding 搭建的网页本身。",
       contactTitle: "联系方式",
       copyLabel: "复制微信号",
       copiedLabel: "已复制",
@@ -98,7 +93,7 @@ export const siteContent = {
     eyebrow: "FULL PORTFOLIO",
     title: "完整作品集",
     summary:
-      "这里保留作品集的连续阅读方式：先进入独立研究项目，再展开五个核心作品。你可以像翻阅画册一样浏览图像，也可以通过按钮进入视频、原型和详情页。",
+      "这里保留作品集的连续阅读方式：先进入独立研究项目，再展开五个核心作品，最后延伸到一个沉浸式 MR 体验。你可以像翻阅画册一样浏览图像，也可以通过按钮进入视频、原型和详情页。",
     projectCountLabel: "PROJECTS",
     viewModeLabel: "CONTINUOUS VIEW"
   },

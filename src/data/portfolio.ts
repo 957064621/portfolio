@@ -206,14 +206,13 @@ export const projects: Project[] = [
     coverColor: image("Cover/10.png"),
     pages: [
       { src: image("5/1.png"), alt: projectText.more.pageAlts[0] },
-      { src: image("5/6.png"), alt: projectText.more.pageAlts[1], actions: [actions.sansaverseVideo] },
-      { src: image("5/7.png"), alt: projectText.more.pageAlts[2], actions: [actions.vinylSite] },
-      { src: image("5/2.png"), alt: projectText.more.pageAlts[3], actions: [actions.moreVideoOne] },
-      { src: image("5/3.png"), alt: projectText.more.pageAlts[4], actions: [actions.moreVideoTwo] },
-      { src: image("5/4.png"), alt: projectText.more.pageAlts[5] },
-      { src: image("5/5.png"), alt: projectText.more.pageAlts[6] }
+      { src: image("5/7.png"), alt: projectText.more.pageAlts[1], actions: [actions.vinylSite] },
+      { src: image("5/2.png"), alt: projectText.more.pageAlts[2], actions: [actions.moreVideoOne] },
+      { src: image("5/3.png"), alt: projectText.more.pageAlts[3], actions: [actions.moreVideoTwo] },
+      { src: image("5/4.png"), alt: projectText.more.pageAlts[4] },
+      { src: image("5/5.png"), alt: projectText.more.pageAlts[5] }
     ],
-    actions: [actions.sansaverseVideo, actions.vinylSite, actions.moreVideoOne, actions.moreVideoTwo]
+    actions: [actions.vinylSite, actions.moreVideoOne, actions.moreVideoTwo]
   },
   {
     id: "0",
@@ -255,15 +254,35 @@ export const detailProjects: Project[] = [
       }
     ],
     actions: [actions.mychelleVideo, actions.arPoster]
+  },
+  {
+    id: "P-02",
+    legacyPath: "/projects/rokid-sensaverse/",
+    slug: "rokid-sensaverse",
+    title: projectText.rokidSensaverse.title,
+    category: projectText.rokidSensaverse.category,
+    summary: projectText.rokidSensaverse.summary,
+    coverBw: image("5/6.png"),
+    coverColor: image("5/6.png"),
+    pages: [
+      {
+        src: image("5/6.png"),
+        alt: projectText.rokidSensaverse.pageAlts[0],
+        actions: [actions.sansaverseVideo]
+      }
+    ],
+    actions: [actions.sansaverseVideo]
   }
 ];
 
 export const allPortfolioProjects = [...projects, ...detailProjects];
 
 const chinaAutoProject = projects.find((project) => project.slug === "china-auto-discourse");
+const rokidSensaverseProject = detailProjects.find((project) => project.slug === "rokid-sensaverse");
 export const fullPortfolioProjects = [
   ...(chinaAutoProject ? [chinaAutoProject] : []),
-  ...projects.filter((project) => project.slug !== "china-auto-discourse")
+  ...projects.filter((project) => project.slug !== "china-auto-discourse"),
+  ...(rokidSensaverseProject ? [rokidSensaverseProject] : [])
 ];
 
 export const homeHeroImages: PageAsset[] = [
@@ -298,7 +317,8 @@ export const routeToProjectSlug: Record<string, string> = {
   "/projects/subo-vis/": "subo-vis",
   "/projects/more/": "more",
   "/projects/china-auto-discourse/": "china-auto-discourse",
-  "/projects/mychelle-detail/": "mychelle-detail"
+  "/projects/mychelle-detail/": "mychelle-detail",
+  "/projects/rokid-sensaverse/": "rokid-sensaverse"
 };
 
 export const routeAliases: Record<string, string> = {
@@ -324,6 +344,8 @@ export const routeAliases: Record<string, string> = {
   "/projects/china-auto-discourse/index.html": "/projects/china-auto-discourse/",
   "/projects/mychelle-detail": "/projects/mychelle-detail/",
   "/projects/mychelle-detail/index.html": "/projects/mychelle-detail/",
+  "/projects/rokid-sensaverse": "/projects/rokid-sensaverse/",
+  "/projects/rokid-sensaverse/index.html": "/projects/rokid-sensaverse/",
   "/full": "/full/",
   "/full/index.html": "/full/",
   "/6.html": "/full/"

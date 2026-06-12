@@ -27,7 +27,7 @@ export const projectContent = {
       title: "低碳宠行",
       category: "MR Interaction / Service Design",
       summary:
-        "在碳排放持续增长的背景下，围绕年轻群体“认同低碳但缺少行动动力”的矛盾，完成 PEST 分析、问卷调研、用户画像与旅程图，提炼 6 类机会点，并主导虚拟宠物陪伴、游戏化积分与社交竞争结合的 MR 交互方案。",
+        "从“认同低碳但缺少行动动力”的矛盾出发，完成 PEST、问卷、用户画像与旅程图，提炼 6 类机会点，并将虚拟宠物陪伴、积分激励与社交竞争转译为一套可体验的 MR 低碳出行方案。",
       pageAlts: [
         "低碳宠行项目首图",
         "低碳宠行展示页 02",
@@ -91,16 +91,22 @@ export const projectContent = {
       title: "More",
       category: "Digital Experiments / Awards",
       summary:
-        "收录实验性网页、动态影像、课程原型与多个综合奖项、国际奖项相关项目。它们不完全属于同一媒介，但共同指向我对界面、叙事、运动图像和可运行体验的持续测试。",
+        "收录实验性网页、动态影像、课程练习与奖项项目。它不是单一媒介分类，而是作品集的实验层：持续测试界面叙事、运动图像和可运行体验的边界。",
       pageAlts: [
         "More 项目集合首图",
-        "Sansaverse 视频入口",
         "Vinyl 网站入口",
         "More 视频展示 01",
         "More 视频展示 02",
         "More 展示页 05",
         "More 展示页 06"
       ]
+    },
+    rokidSensaverse: {
+      title: "SENSAVERSE 感官宇宙",
+      category: "MR / Multisensory Prototype",
+      summary:
+        "国美 x 港科大 x Rokid 沉浸创新课程项目。围绕视觉、听觉与嗅觉的多感官叙事，完成前期调研、产品架构、Rokid 眼镜交互流程与场景设计，将传统文化叙事转译为可运行的 MR 体验原型。",
+      pageAlts: ["SENSAVERSE 感官宇宙课程总览"]
     },
     chinaAutoDiscourse: {
       title: "全球视野下的中国汽车设计话语体系研究",

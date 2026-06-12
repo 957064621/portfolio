@@ -1329,6 +1329,18 @@ h2 {
     background var(--motion-medium) var(--ease-luxe);
 }
 
+.practice-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.practice-item.has-action .practice-aside {
+  align-self: stretch;
+  justify-content: center;
+}
+
 .practice-item::before {
   content: "";
   position: absolute;
@@ -1372,7 +1384,7 @@ h2 {
 }
 
 .practice-item h3 {
-  max-width: 24ch;
+  max-width: 30ch;
   margin: 0 0 0.55rem;
   color: var(--text-light);
   font-size: clamp(1.05rem, 1.65vw, 1.62rem);
@@ -1386,6 +1398,49 @@ h2 {
   color: rgba(255, 250, 240, 0.62);
   font-size: clamp(0.9rem, 1.02vw, 1rem);
   line-height: 1.72;
+}
+
+.practice-go {
+  --mag-x: 0px;
+  --mag-y: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(46px, 3.6vw, 58px);
+  height: clamp(46px, 3.6vw, 58px);
+  margin-top: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 50%;
+  color: rgba(255, 250, 240, 0.86);
+  background: transparent;
+  cursor: pointer;
+  transform: translate3d(var(--mag-x), var(--mag-y), 0);
+  transition:
+    color var(--motion-fast) var(--ease-luxe),
+    border-color var(--motion-medium) var(--ease-luxe),
+    background var(--motion-medium) var(--ease-luxe),
+    transform var(--motion-medium) var(--ease-luxe);
+}
+
+.practice-go svg {
+  transition: transform var(--motion-medium) var(--ease-luxe);
+}
+
+.practice-aside .practice-go {
+  align-self: flex-start;
+  margin-top: 0;
+}
+
+.practice-go:hover,
+.practice-go:focus-visible {
+  color: rgba(255, 250, 240, 0.98);
+  border-color: rgba(255, 255, 255, 0.74);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.practice-go:hover svg,
+.practice-go:focus-visible svg {
+  transform: translate(2px, -2px);
 }
 
 .practice-tags {
@@ -1570,17 +1625,17 @@ h2 {
   --btn-spot-x: 22%;
   --btn-spot-y: 18%;
   --control-fg: rgba(255, 250, 240, 0.96);
-  --control-bg: rgba(255, 255, 255, 0.085);
-  --control-border: rgba(255, 255, 255, 0.32);
-  --control-glint-top: rgba(255, 255, 255, 0.24);
-  --control-glint-mid: rgba(255, 255, 255, 0.075);
-  --control-glint-low: rgba(255, 255, 255, 0.032);
-  --control-shadow: rgba(0, 0, 0, 0.18);
+  --control-bg: rgba(7, 8, 10, 0.26);
+  --control-border: rgba(255, 255, 255, 0.4);
+  --control-glint-top: rgba(255, 255, 255, 0.17);
+  --control-glint-mid: rgba(255, 255, 255, 0.055);
+  --control-glint-low: rgba(255, 255, 255, 0.02);
+  --control-shadow: rgba(0, 0, 0, 0.32);
   --control-text-shadow: none;
-  --control-backdrop-blur: 18px;
-  --control-inner-blur: 10px;
-  --control-lens-opacity: 0.34;
-  --control-frost-opacity: 0.2;
+  --control-backdrop-blur: 3px;
+  --control-inner-blur: 1.5px;
+  --control-lens-opacity: 0.24;
+  --control-frost-opacity: 0.08;
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -1589,19 +1644,19 @@ h2 {
   color: var(--control-fg);
   text-shadow: var(--control-text-shadow);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03) 31%, transparent 60%),
-    linear-gradient(118deg, rgba(255, 255, 255, 0.09), transparent 25%, rgba(255, 255, 255, 0.03) 58%, transparent 78%),
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.024) 31%, transparent 60%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.07), transparent 25%, rgba(255, 255, 255, 0.022) 58%, transparent 78%),
     linear-gradient(180deg, var(--control-glint-top), var(--control-glint-mid) 47%, var(--control-glint-low)),
     var(--control-bg);
   box-shadow:
     0 12px 38px var(--control-shadow),
     0 0 0 1px rgba(255, 255, 255, 0.14) inset,
-    inset 0 1px 0 rgba(255, 255, 255, 0.52),
-    inset 0 -14px 26px rgba(255, 255, 255, 0.055),
-    inset 0 0 20px rgba(255, 255, 255, 0.035),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -12px 22px rgba(255, 255, 255, 0.032),
+    inset 0 0 16px rgba(255, 255, 255, 0.022),
     inset 0 -1px 0 rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.34) brightness(1.02);
-  -webkit-backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.34) brightness(1.02);
+  backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.18) brightness(1.03);
+  -webkit-backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.18) brightness(1.03);
   transform: translate3d(var(--mag-x), var(--mag-y), 0) scale(var(--tap-scale));
   transition:
     transform var(--motion-medium) var(--ease-luxe),
@@ -1625,11 +1680,11 @@ h2 {
   border-radius: inherit;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 32% 14%, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.06) 30%, transparent 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04) 42%, rgba(255, 255, 255, 0.016) 74%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 42%, rgba(255, 255, 255, 0.032));
-  backdrop-filter: blur(var(--control-inner-blur)) saturate(1.3) brightness(1.02);
-  -webkit-backdrop-filter: blur(var(--control-inner-blur)) saturate(1.3) brightness(1.02);
+    radial-gradient(ellipse at 32% 14%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.035) 30%, transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.024) 42%, rgba(255, 255, 255, 0.01) 74%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.045), transparent 42%, rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(var(--control-inner-blur)) saturate(1.16) brightness(1.02);
+  -webkit-backdrop-filter: blur(var(--control-inner-blur)) saturate(1.16) brightness(1.02);
   opacity: var(--control-lens-opacity);
   transform: scale(1);
   transition:
@@ -1648,11 +1703,11 @@ h2 {
   border-radius: inherit;
   pointer-events: none;
   background:
-    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.16), transparent 44%),
-    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.11), transparent 56%),
-    radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.06), transparent 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.052), transparent 42%, rgba(255, 255, 255, 0.032));
-  filter: blur(9px);
+    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.1), transparent 44%),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.07), transparent 56%),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.04), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.032), transparent 42%, rgba(255, 255, 255, 0.018));
+  filter: blur(4px);
   opacity: var(--control-frost-opacity);
   mix-blend-mode: normal;
   transform: scale(0.98);
@@ -1681,31 +1736,37 @@ h2 {
 
 .home-redesign .hero-actions .glass-button {
   --control-fg: rgba(255, 251, 242, 0.98);
-  --control-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.62), 0 0 12px rgba(0, 0, 0, 0.22);
+  --control-bg: rgba(7, 8, 10, 0.28);
+  --control-border: rgba(255, 255, 255, 0.42);
+  --control-glint-top: rgba(255, 255, 255, 0.12);
+  --control-glint-mid: rgba(255, 255, 255, 0.04);
+  --control-glint-low: rgba(255, 255, 255, 0.016);
+  --control-shadow: rgba(0, 0, 0, 0.44);
+  --control-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.68), 0 0 12px rgba(0, 0, 0, 0.24);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.032) 34%, transparent 62%),
-    linear-gradient(118deg, rgba(255, 255, 255, 0.105), transparent 25%, rgba(255, 255, 255, 0.032) 58%, transparent 78%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.056) 47%, rgba(255, 255, 255, 0.026)),
-    rgba(255, 255, 255, 0.06);
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.018) 34%, transparent 62%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.07), transparent 25%, rgba(255, 255, 255, 0.02) 58%, transparent 78%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.034) 47%, rgba(255, 255, 255, 0.014)),
+    var(--control-bg);
   box-shadow:
     0 14px 40px rgba(0, 0, 0, 0.28),
     0 0 0 1px rgba(255, 255, 255, 0.16) inset,
-    inset 0 1px 0 rgba(255, 255, 255, 0.46),
-    inset 0 -14px 26px rgba(255, 255, 255, 0.042),
-    inset 0 0 18px rgba(255, 255, 255, 0.032);
-  backdrop-filter: blur(10px) saturate(1.42) contrast(1.04) brightness(1.04);
-  -webkit-backdrop-filter: blur(10px) saturate(1.42) contrast(1.04) brightness(1.04);
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -12px 22px rgba(255, 255, 255, 0.026),
+    inset 0 0 14px rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(3px) saturate(1.2) contrast(1.02) brightness(1.04);
+  -webkit-backdrop-filter: blur(3px) saturate(1.2) contrast(1.02) brightness(1.04);
 }
 
 .home-redesign .hero-actions .glass-button::before {
-  opacity: 0.34;
-  backdrop-filter: blur(8px) saturate(1.36) contrast(1.03);
-  -webkit-backdrop-filter: blur(8px) saturate(1.36) contrast(1.03);
+  opacity: 0.24;
+  backdrop-filter: blur(1.5px) saturate(1.14) contrast(1.02);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.14) contrast(1.02);
 }
 
 .home-redesign .hero-actions .glass-button::after {
-  opacity: 0.24;
-  filter: blur(8px);
+  opacity: 0.1;
+  filter: blur(2px);
 }
 
 .home-redesign .hero-actions .glass-button .glass-button-label,
@@ -1720,7 +1781,7 @@ h2 {
 .icon-glass:hover::before,
 .back-to-top:hover::before,
 .next-project button:hover::before {
-  opacity: 0.5;
+  opacity: 0.34;
   transform: scale(1.012);
 }
 
@@ -1728,7 +1789,7 @@ h2 {
 .icon-glass:hover::after,
 .back-to-top:hover::after,
 .next-project button:hover::after {
-  opacity: 0.44;
+  opacity: 0.24;
 }
 
 .glass-button.is-tapping,
@@ -1763,10 +1824,10 @@ h2 {
 .icon-glass.is-tapping::before,
 .back-to-top.is-tapping::before,
 .next-project button.is-tapping::before {
-  opacity: 0.78;
+  opacity: 0.52;
   background:
-    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.34), transparent 44%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 42%, rgba(255, 255, 255, 0.075));
+    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.22), transparent 44%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), transparent 42%, rgba(255, 255, 255, 0.045));
 }
 
 .glass-button {
@@ -1790,8 +1851,8 @@ h2 {
 .glass-button.strong {
   color: var(--control-fg);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06) 30%, transparent 56%),
-    linear-gradient(118deg, rgba(255, 255, 255, 0.15), transparent 24%, rgba(255, 255, 255, 0.055) 55%, transparent 74%),
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.032) 30%, transparent 56%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.09), transparent 24%, rgba(255, 255, 255, 0.032) 55%, transparent 74%),
     linear-gradient(180deg, var(--control-glint-top), var(--control-glint-mid) 48%, var(--control-glint-low)),
     var(--control-bg);
 }
@@ -1812,17 +1873,17 @@ h2 {
   letter-spacing: 0;
   text-shadow: var(--control-text-shadow);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.052) 30%, transparent 58%),
-    linear-gradient(118deg, rgba(255, 255, 255, 0.12), transparent 27%, rgba(255, 255, 255, 0.045) 62%, transparent 80%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.055) 48%, rgba(255, 255, 255, 0.024)),
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03) 30%, transparent 58%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.075), transparent 27%, rgba(255, 255, 255, 0.026) 62%, transparent 80%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.086), rgba(255, 255, 255, 0.032) 48%, rgba(255, 255, 255, 0.014)),
     var(--control-bg);
   box-shadow:
     0 16px 44px var(--control-shadow),
     0 0 0 1px rgba(255, 255, 255, 0.18) inset,
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    inset 0 -16px 28px rgba(255, 255, 255, 0.038);
-  backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.18) brightness(1.01);
-  -webkit-backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.18) brightness(1.01);
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -14px 24px rgba(255, 255, 255, 0.024);
+  backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.08) brightness(1.02);
+  -webkit-backdrop-filter: blur(var(--control-backdrop-blur)) saturate(1.08) brightness(1.02);
   transition:
     opacity 0.52s var(--ease-luxe),
     visibility 0.52s var(--ease-luxe),
@@ -1922,7 +1983,7 @@ h2 {
   --btn-spot-y: 18%;
   --surface-tone: 0;
   --control-fg: rgba(8, 10, 12, 0.96);
-  --control-bg: rgba(255, 255, 255, 0.34);
+  --control-bg: rgba(248, 248, 244, 0.42);
   --control-border: rgba(255, 255, 255, 0.46);
   --control-shadow: rgba(0, 0, 0, 0.18);
   --control-text-shadow: none;
@@ -1931,10 +1992,10 @@ h2 {
   --marker-icon-fg: rgba(255, 255, 255, 0.98);
   --marker-label-hover: rgba(255, 255, 255, 0.98);
   --marker-label-hover-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
-  --marker-glow-alpha: 0.14;
-  --marker-glow-hover-alpha: 0.2;
-  --marker-backdrop-blur: 28px;
-  --marker-inner-blur: 18px;
+  --marker-glow-alpha: 0.09;
+  --marker-glow-hover-alpha: 0.14;
+  --marker-backdrop-blur: 4px;
+  --marker-inner-blur: 1.5px;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -1947,21 +2008,21 @@ h2 {
   color: var(--control-fg);
   text-shadow: var(--control-text-shadow);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, calc(var(--marker-glow-alpha) + 0.06)), rgba(255, 255, 255, 0.052) 30%, transparent 52%),
-    linear-gradient(118deg, rgba(255, 255, 255, 0.16), transparent 28%, rgba(255, 255, 255, 0.052) 64%, transparent 80%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.052) 48%, rgba(255, 255, 255, 0.028)),
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, calc(var(--marker-glow-alpha) + 0.08)), rgba(255, 255, 255, 0.06) 30%, transparent 52%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.2), transparent 28%, rgba(255, 255, 255, 0.07) 64%, transparent 80%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08) 48%, rgba(255, 255, 255, 0.032)),
     var(--control-bg);
-  backdrop-filter: blur(var(--marker-backdrop-blur)) saturate(1.55) brightness(1.04);
-  -webkit-backdrop-filter: blur(var(--marker-backdrop-blur)) saturate(1.55) brightness(1.04);
+  backdrop-filter: blur(var(--marker-backdrop-blur)) saturate(1.22) brightness(1.04);
+  -webkit-backdrop-filter: blur(var(--marker-backdrop-blur)) saturate(1.22) brightness(1.04);
   cursor: pointer;
   overflow: hidden;
   box-shadow:
     0 0 18px rgba(255, 255, 255, 0.075),
     0 0 0 1px rgba(255, 255, 255, 0.2) inset,
     0 12px 32px var(--control-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.48),
-    inset 0 -12px 24px rgba(255, 255, 255, 0.055),
-    inset 0 0 20px rgba(255, 255, 255, 0.035);
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -10px 20px rgba(255, 255, 255, 0.034),
+    inset 0 0 16px rgba(255, 255, 255, 0.022);
   transform: translate3d(var(--mag-x), var(--mag-y), 0) scale(var(--tap-scale));
   transition:
     transform var(--motion-medium) var(--ease-luxe),
@@ -1979,14 +2040,14 @@ h2 {
   z-index: 0;
   border-radius: inherit;
   pointer-events: none;
-  backdrop-filter: blur(var(--marker-inner-blur)) saturate(1.42);
-  -webkit-backdrop-filter: blur(var(--marker-inner-blur)) saturate(1.42);
+  backdrop-filter: blur(var(--marker-inner-blur)) saturate(1.18);
+  -webkit-backdrop-filter: blur(var(--marker-inner-blur)) saturate(1.18);
   background:
-    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.2), transparent 48%),
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.24), transparent 52%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.11), transparent 44%, rgba(255, 255, 255, 0.04));
-  filter: blur(3px);
-  opacity: 0.5;
+    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.13), transparent 48%),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.16), transparent 52%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 44%, rgba(255, 255, 255, 0.024));
+  filter: blur(1px);
+  opacity: 0.34;
   mix-blend-mode: normal;
   transform: scale(0.98);
   transform-origin: var(--tap-x) var(--tap-y);
@@ -2062,8 +2123,8 @@ h2 {
 .marker-button:hover {
   border-color: rgba(255, 255, 255, 0.78);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, calc(var(--marker-glow-hover-alpha) + 0.08)), rgba(255, 255, 255, 0.07) 30%, transparent 48%),
-    linear-gradient(118deg, rgba(255, 255, 255, 0.24), transparent 28%, rgba(255, 255, 255, 0.075) 62%, transparent 78%),
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, calc(var(--marker-glow-hover-alpha) + 0.04)), rgba(255, 255, 255, 0.044) 30%, transparent 48%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.15), transparent 28%, rgba(255, 255, 255, 0.048) 62%, transparent 78%),
     var(--control-bg);
   box-shadow:
     0 0 16px rgba(255, 255, 255, 0.075),
@@ -2093,11 +2154,11 @@ h2 {
 }
 
 .marker-button.is-tapping::before {
-  opacity: 0.58;
+  opacity: 0.42;
   animation: glass-tap-halo 0.58s var(--ease-luxe) both;
   background:
-    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.28), transparent 44%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 42%);
+    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.18), transparent 44%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%);
 }
 
 .marker-button.is-releasing::before {
@@ -2363,19 +2424,19 @@ h2 {
 
 .icon-glass,
 .back-to-top {
-  --round-glass-sheen: rgba(255, 255, 255, 0.26);
-  --round-glass-haze: rgba(255, 255, 255, 0.1);
-  --round-before-hot: rgba(255, 255, 255, 0.34);
-  --round-before-soft: rgba(255, 255, 255, 0.09);
-  --round-before-line: rgba(255, 255, 255, 0.2);
-  --round-before-opacity: 0.46;
-  --round-after-hot: rgba(255, 255, 255, 0.18);
-  --round-after-mid: rgba(255, 255, 255, 0.1);
-  --round-after-low: rgba(255, 255, 255, 0.07);
-  --round-after-floor: rgba(255, 255, 255, 0.04);
-  --round-after-opacity: 0.3;
-  --round-backdrop-blur: 16px;
-  --round-inner-blur: 9px;
+  --round-glass-sheen: rgba(255, 255, 255, 0.22);
+  --round-glass-haze: rgba(255, 255, 255, 0.09);
+  --round-before-hot: rgba(255, 255, 255, 0.26);
+  --round-before-soft: rgba(255, 255, 255, 0.07);
+  --round-before-line: rgba(255, 255, 255, 0.16);
+  --round-before-opacity: 0.34;
+  --round-after-hot: rgba(255, 255, 255, 0.11);
+  --round-after-mid: rgba(255, 255, 255, 0.058);
+  --round-after-low: rgba(255, 255, 255, 0.04);
+  --round-after-floor: rgba(255, 255, 255, 0.024);
+  --round-after-opacity: 0.14;
+  --round-backdrop-blur: 3px;
+  --round-inner-blur: 1.5px;
   width: 48px;
   min-width: 48px;
   height: 48px;
@@ -2386,28 +2447,28 @@ h2 {
   line-height: 1;
   overflow: hidden;
   background:
-    radial-gradient(circle at 28% 20%, var(--round-glass-sheen), rgba(255, 255, 255, 0.13) 32%, transparent 64%),
-    radial-gradient(circle at 64% 82%, var(--round-glass-haze), rgba(255, 255, 255, 0.055) 36%, transparent 68%),
-    linear-gradient(142deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.045) 28%, rgba(255, 255, 255, 0.075) 54%, rgba(255, 255, 255, 0.024)),
+    radial-gradient(circle at 28% 20%, var(--round-glass-sheen), rgba(255, 255, 255, 0.12) 32%, transparent 64%),
+    radial-gradient(circle at 64% 82%, var(--round-glass-haze), rgba(255, 255, 255, 0.05) 36%, transparent 68%),
+    linear-gradient(142deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.052) 28%, rgba(255, 255, 255, 0.075) 54%, rgba(255, 255, 255, 0.024)),
     var(--control-bg);
   box-shadow:
     0 16px 42px var(--control-shadow),
     0 0 0 1px rgba(255, 255, 255, 0.24) inset,
     0 0 0 0.5px rgba(255, 255, 255, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.44),
-    inset 0 -16px 30px rgba(255, 255, 255, 0.046),
-    inset 0 0 24px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -14px 24px rgba(255, 255, 255, 0.026),
+    inset 0 0 18px rgba(255, 255, 255, 0.026),
     inset 0 0 10px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(var(--round-backdrop-blur)) saturate(1.34) contrast(1.02) brightness(1.02);
-  -webkit-backdrop-filter: blur(var(--round-backdrop-blur)) saturate(1.34) contrast(1.02) brightness(1.02);
+  backdrop-filter: blur(var(--round-backdrop-blur)) saturate(1.18) contrast(1.01) brightness(1.03);
+  -webkit-backdrop-filter: blur(var(--round-backdrop-blur)) saturate(1.18) contrast(1.01) brightness(1.03);
   will-change: width, transform;
 }
 
 .icon-glass::before,
 .back-to-top::before {
   opacity: var(--round-before-opacity);
-  backdrop-filter: blur(var(--round-inner-blur)) saturate(1.34) contrast(1.02) brightness(1.02);
-  -webkit-backdrop-filter: blur(var(--round-inner-blur)) saturate(1.34) contrast(1.02) brightness(1.02);
+  backdrop-filter: blur(var(--round-inner-blur)) saturate(1.16) contrast(1.01) brightness(1.02);
+  -webkit-backdrop-filter: blur(var(--round-inner-blur)) saturate(1.16) contrast(1.01) brightness(1.02);
   background:
     radial-gradient(ellipse at 30% 16%, var(--round-before-hot), var(--round-before-soft) 32%, transparent 60%),
     radial-gradient(ellipse at 72% 78%, rgba(255, 255, 255, 0.22), transparent 55%),
@@ -2418,12 +2479,12 @@ h2 {
 .back-to-top::after {
   inset: -10px;
   opacity: var(--round-after-opacity);
-  filter: blur(12px);
+  filter: blur(4px);
   background:
     radial-gradient(circle at var(--tap-x) var(--tap-y), var(--round-after-hot), transparent 45%),
     radial-gradient(circle at 50% 50%, var(--round-after-mid), transparent 58%),
     linear-gradient(180deg, var(--round-after-low), transparent 42%, var(--round-after-floor)),
-    repeating-conic-gradient(from 18deg, rgba(255, 255, 255, 0.065) 0deg 8deg, transparent 8deg 18deg);
+    repeating-conic-gradient(from 18deg, rgba(255, 255, 255, 0.036) 0deg 8deg, transparent 8deg 18deg);
   mix-blend-mode: normal;
 }
 
@@ -2839,15 +2900,15 @@ h2 {
   border-radius: 999px;
   color: var(--text-light);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.055) 38%, transparent 62%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04)),
-    rgba(255, 255, 255, 0.07);
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04) 38%, transparent 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.032)),
+    rgba(7, 8, 10, 0.26);
   box-shadow:
-    0 10px 24px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -8px 16px rgba(255, 255, 255, 0.035);
-  backdrop-filter: blur(14px) saturate(1.22);
-  -webkit-backdrop-filter: blur(14px) saturate(1.22);
+    0 10px 24px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -8px 16px rgba(255, 255, 255, 0.022);
+  backdrop-filter: blur(3px) saturate(1.12);
+  -webkit-backdrop-filter: blur(3px) saturate(1.12);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -2871,9 +2932,9 @@ h2 {
 
 .media-toolbar button::before {
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.08) 34%, transparent 62%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.13), transparent 42%, rgba(255, 255, 255, 0.04));
-  opacity: 0.56;
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.044) 34%, transparent 62%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.082), transparent 42%, rgba(255, 255, 255, 0.026));
+  opacity: 0.34;
   transition:
     opacity var(--motion-fast) var(--ease-luxe),
     transform var(--motion-fast) var(--ease-luxe);
@@ -2882,10 +2943,10 @@ h2 {
 .media-toolbar button::after {
   inset: -8px;
   background:
-    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.1) 18%, transparent 46%),
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.16), transparent 54%);
-  filter: blur(10px);
-  opacity: 0.28;
+    radial-gradient(circle at var(--tap-x) var(--tap-y), rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06) 18%, transparent 46%),
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.1), transparent 54%);
+  filter: blur(4px);
+  opacity: 0.14;
   transition: opacity var(--motion-fast) var(--ease-luxe);
 }
 
@@ -2898,21 +2959,21 @@ h2 {
 .media-toolbar button:focus-visible {
   border-color: rgba(255, 255, 255, 0.42);
   background:
-    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.075) 38%, transparent 62%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.052)),
-    rgba(255, 255, 255, 0.095);
+    radial-gradient(circle at var(--btn-spot-x) var(--btn-spot-y), rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.055) 38%, transparent 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    rgba(7, 8, 10, 0.34);
 }
 
 .media-toolbar button:hover::before,
 .media-toolbar button:focus-visible::before {
-  opacity: 0.72;
+  opacity: 0.46;
   transform: scale(1.015);
 }
 
 .media-toolbar button:hover::after,
 .media-toolbar button:focus-visible::after,
 .media-toolbar button.is-tapping::after {
-  opacity: 0.54;
+  opacity: 0.32;
 }
 
 .media-toolbar button.is-releasing::after {
@@ -3063,6 +3124,15 @@ h2 {
     grid-template-columns: minmax(40px, 0.1fr) minmax(0, 1fr);
   }
 
+  .practice-item.has-action .practice-aside {
+    align-self: start;
+    justify-content: flex-start;
+  }
+
+  .practice-aside {
+    grid-column: 2;
+  }
+
   .practice-tags {
     grid-column: 2;
     justify-content: flex-start;
@@ -3140,6 +3210,10 @@ h2 {
     grid-template-columns: 1fr;
     gap: 0.72rem;
     padding: 1rem 0;
+  }
+
+  .practice-aside {
+    grid-column: auto;
   }
 
   .practice-tags {
@@ -3264,13 +3338,16 @@ h2 {
   }
 
   .line-reveal-inner {
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-break: loose;
+    text-wrap: pretty;
   }
 
   .hero-copy h1 .line-reveal-inner {
     overflow-wrap: normal;
     word-break: normal;
+    text-wrap: balance;
   }
 
   .project-header h1,
@@ -3279,8 +3356,19 @@ h2 {
     max-width: 100%;
     font-size: clamp(1.9rem, 10.8vw, 4.05rem);
     line-height: 1.06;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-break: loose;
+    text-wrap: balance;
+  }
+
+  .project-header p:last-child .line-reveal-inner,
+  .full-header p:last-child .line-reveal-inner,
+  .full-index-copy p .line-reveal-inner {
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-break: loose;
+    text-wrap: pretty;
   }
 
   .full-project .project-header h1 {
@@ -3391,8 +3479,8 @@ h2 {
     min-height: 32px;
     padding: 0 0.52rem;
     font-size: 0.82rem;
-    backdrop-filter: blur(10px) saturate(1.12);
-    -webkit-backdrop-filter: blur(10px) saturate(1.12);
+    backdrop-filter: blur(3px) saturate(1.1);
+    -webkit-backdrop-filter: blur(3px) saturate(1.1);
   }
 
   .media-toolbar button:last-child {

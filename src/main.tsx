@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { ArrowLeft, ArrowRight, Check, ExternalLink, Home, Play, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Check, ExternalLink, Home, Play, X } from "lucide-react";
 import {
   Action,
   PageAsset,
@@ -530,24 +530,32 @@ function useScrollReveal(revealKey: string) {
       return undefined;
     }
 
+    // Hysteresis: reveal once 16% of the block is in view, but only clear the
+    // entrance state once the block has *fully* left the viewport (ratio 0),
+    // not the instant it dips back below 16%. The reveal transform nudges the
+    // element by ~20px; with a single shared threshold that nudge can push the
+    // element back and forth across the line, re-firing the observer forever
+    // (the "flicker"). The gap between the 16% enter line and the 0% exit line
+    // is far larger than the transform, so the element settles instead.
+    const revealRatio = 0.16;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const target = entry.target as HTMLElement;
           const shouldReplay = target.classList.contains("replay-reveal");
 
-          if (entry.isIntersecting) {
+          if (entry.intersectionRatio >= revealRatio) {
             target.classList.add("is-visible");
             if (!shouldReplay) observer.unobserve(target);
             return;
           }
 
-          if (shouldReplay) {
+          if (shouldReplay && !entry.isIntersecting) {
             target.classList.remove("is-visible");
           }
         });
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.16 }
+      { rootMargin: "0px 0px -10% 0px", threshold: [0, revealRatio] }
     );
 
     targets.forEach((target) => observer.observe(target));
@@ -976,78 +984,98 @@ function useFloatingControlTone(view: View) {
       const compactGlass =
         control.classList.contains("icon-glass") || control.classList.contains("back-to-top");
       const homeFloating = control.classList.contains("home-floating-portfolio");
-      control.style.setProperty("--surface-tone", darkSurface ? "1" : "0");
-      control.style.setProperty("--control-fg", darkSurface ? "rgba(255, 250, 240, 0.98)" : "rgba(8, 10, 12, 0.96)");
-      control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.34)" : "rgba(255, 255, 255, 0.12)");
-      control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.32)" : "rgba(255, 255, 255, 0.42)");
-      control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.11)" : "rgba(255, 255, 255, 0.18)");
-      control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.075)");
-      control.style.setProperty("--control-glint-low", darkSurface ? "rgba(255, 255, 255, 0.022)" : "rgba(255, 255, 255, 0.035)");
-      control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.46)" : "rgba(0, 0, 0, 0.18)");
-      control.style.setProperty("--control-backdrop-blur", "18px");
-      control.style.setProperty("--control-inner-blur", "10px");
-      control.style.setProperty("--control-lens-opacity", darkSurface ? "0.42" : "0.46");
-      control.style.setProperty("--control-frost-opacity", darkSurface ? "0.22" : "0.26");
+      const fixedDarkGlass = homeFloating || Boolean(control.closest(".hero-actions"));
+      const useDarkControl = fixedDarkGlass || darkSurface;
+      control.style.setProperty("--surface-tone", useDarkControl ? "1" : "0");
+      control.style.setProperty(
+        "--control-fg",
+        useDarkControl ? "rgba(255, 250, 240, 0.98)" : "rgba(6, 7, 9, 0.98)"
+      );
+      control.style.setProperty(
+        "--control-bg",
+        useDarkControl ? "rgba(7, 8, 10, 0.3)" : "rgba(248, 248, 244, 0.42)"
+      );
+      control.style.setProperty(
+        "--control-border",
+        useDarkControl ? "rgba(255, 255, 255, 0.42)" : "rgba(255, 255, 255, 0.72)"
+      );
+      control.style.setProperty(
+        "--control-glint-top",
+        useDarkControl ? "rgba(255, 255, 255, 0.17)" : "rgba(255, 255, 255, 0.32)"
+      );
+      control.style.setProperty(
+        "--control-glint-mid",
+        useDarkControl ? "rgba(255, 255, 255, 0.055)" : "rgba(255, 255, 255, 0.13)"
+      );
+      control.style.setProperty(
+        "--control-glint-low",
+        useDarkControl ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.045)"
+      );
+      control.style.setProperty("--control-shadow", useDarkControl ? "rgba(0, 0, 0, 0.42)" : "rgba(0, 0, 0, 0.24)");
+      control.style.setProperty("--control-backdrop-blur", "3px");
+      control.style.setProperty("--control-inner-blur", "1.5px");
+      control.style.setProperty("--control-lens-opacity", useDarkControl ? "0.28" : "0.36");
+      control.style.setProperty("--control-frost-opacity", useDarkControl ? "0.08" : "0.1");
       control.style.setProperty(
         "--control-text-shadow",
-        darkSurface ? "0 1px 2px rgba(0, 0, 0, 0.34)" : "none"
+        useDarkControl ? "0 1px 2px rgba(0, 0, 0, 0.42)" : "0 1px 0 rgba(255, 255, 255, 0.28)"
       );
 
-      if (homeFloating) {
+      if (fixedDarkGlass) {
         control.style.setProperty("--surface-tone", "1");
         control.style.setProperty("--control-fg", "rgba(255, 250, 240, 0.98)");
-        control.style.setProperty("--control-bg", "rgba(8, 9, 10, 0.34)");
-        control.style.setProperty("--control-border", "rgba(255, 255, 255, 0.44)");
-        control.style.setProperty("--control-glint-top", "rgba(255, 255, 255, 0.14)");
-        control.style.setProperty("--control-glint-mid", "rgba(255, 255, 255, 0.055)");
-        control.style.setProperty("--control-glint-low", "rgba(255, 255, 255, 0.024)");
+        control.style.setProperty("--control-bg", "rgba(7, 8, 10, 0.3)");
+        control.style.setProperty("--control-border", "rgba(255, 255, 255, 0.42)");
+        control.style.setProperty("--control-glint-top", "rgba(255, 255, 255, 0.18)");
+        control.style.setProperty("--control-glint-mid", "rgba(255, 255, 255, 0.058)");
+        control.style.setProperty("--control-glint-low", "rgba(255, 255, 255, 0.02)");
         control.style.setProperty("--control-shadow", "rgba(0, 0, 0, 0.44)");
-        control.style.setProperty("--control-backdrop-blur", "16px");
-        control.style.setProperty("--control-inner-blur", "9px");
-        control.style.setProperty("--control-lens-opacity", "0.38");
-        control.style.setProperty("--control-frost-opacity", "0.2");
-        control.style.setProperty("--control-text-shadow", "0 1px 3px rgba(0, 0, 0, 0.58)");
+        control.style.setProperty("--control-backdrop-blur", "3px");
+        control.style.setProperty("--control-inner-blur", "1.5px");
+        control.style.setProperty("--control-lens-opacity", "0.3");
+        control.style.setProperty("--control-frost-opacity", "0.08");
+        control.style.setProperty("--control-text-shadow", "0 1px 3px rgba(0, 0, 0, 0.66)");
         return;
       }
 
       if (compactGlass) {
-        control.style.setProperty("--control-bg", darkSurface ? "rgba(8, 11, 15, 0.28)" : "rgba(255, 255, 255, 0.16)");
-        control.style.setProperty("--control-border", darkSurface ? "rgba(255, 255, 255, 0.42)" : "rgba(255, 255, 255, 0.48)");
-        control.style.setProperty("--control-glint-top", darkSurface ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.2)");
-        control.style.setProperty("--control-glint-mid", darkSurface ? "rgba(255, 255, 255, 0.052)" : "rgba(255, 255, 255, 0.078)");
-        control.style.setProperty("--control-shadow", darkSurface ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.24)");
-        control.style.setProperty("--control-backdrop-blur", "16px");
-        control.style.setProperty("--control-inner-blur", "9px");
-        control.style.setProperty("--control-lens-opacity", darkSurface ? "0.46" : "0.5");
-        control.style.setProperty("--control-frost-opacity", darkSurface ? "0.22" : "0.26");
-        control.style.setProperty("--round-backdrop-blur", "16px");
-        control.style.setProperty("--round-inner-blur", "9px");
-        control.style.setProperty("--round-glass-sheen", darkSurface ? "rgba(255, 255, 255, 0.18)" : "rgba(255, 255, 255, 0.26)");
-        control.style.setProperty("--round-glass-haze", darkSurface ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.1)");
-        control.style.setProperty("--round-before-hot", darkSurface ? "rgba(255, 255, 255, 0.24)" : "rgba(255, 255, 255, 0.34)");
-        control.style.setProperty("--round-before-soft", darkSurface ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.09)");
-        control.style.setProperty("--round-before-line", darkSurface ? "rgba(255, 255, 255, 0.14)" : "rgba(255, 255, 255, 0.2)");
-        control.style.setProperty("--round-before-opacity", darkSurface ? "0.42" : "0.46");
-        control.style.setProperty("--round-after-hot", darkSurface ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.18)");
-        control.style.setProperty("--round-after-mid", darkSurface ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.1)");
-        control.style.setProperty("--round-after-low", darkSurface ? "rgba(255, 255, 255, 0.04)" : "rgba(255, 255, 255, 0.07)");
-        control.style.setProperty("--round-after-floor", darkSurface ? "rgba(255, 255, 255, 0.024)" : "rgba(255, 255, 255, 0.04)");
-        control.style.setProperty("--round-after-opacity", darkSurface ? "0.24" : "0.3");
+        control.style.setProperty("--control-bg", useDarkControl ? "rgba(7, 8, 10, 0.29)" : "rgba(248, 248, 244, 0.44)");
+        control.style.setProperty("--control-border", useDarkControl ? "rgba(255, 255, 255, 0.46)" : "rgba(255, 255, 255, 0.72)");
+        control.style.setProperty("--control-glint-top", useDarkControl ? "rgba(255, 255, 255, 0.18)" : "rgba(255, 255, 255, 0.36)");
+        control.style.setProperty("--control-glint-mid", useDarkControl ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.14)");
+        control.style.setProperty("--control-shadow", useDarkControl ? "rgba(0, 0, 0, 0.44)" : "rgba(0, 0, 0, 0.25)");
+        control.style.setProperty("--control-backdrop-blur", "3px");
+        control.style.setProperty("--control-inner-blur", "1.5px");
+        control.style.setProperty("--control-lens-opacity", useDarkControl ? "0.3" : "0.4");
+        control.style.setProperty("--control-frost-opacity", useDarkControl ? "0.08" : "0.1");
+        control.style.setProperty("--round-backdrop-blur", "3px");
+        control.style.setProperty("--round-inner-blur", "1.5px");
+        control.style.setProperty("--round-glass-sheen", useDarkControl ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.38)");
+        control.style.setProperty("--round-glass-haze", useDarkControl ? "rgba(255, 255, 255, 0.07)" : "rgba(255, 255, 255, 0.17)");
+        control.style.setProperty("--round-before-hot", useDarkControl ? "rgba(255, 255, 255, 0.24)" : "rgba(255, 255, 255, 0.44)");
+        control.style.setProperty("--round-before-soft", useDarkControl ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.12)");
+        control.style.setProperty("--round-before-line", useDarkControl ? "rgba(255, 255, 255, 0.14)" : "rgba(255, 255, 255, 0.24)");
+        control.style.setProperty("--round-before-opacity", useDarkControl ? "0.3" : "0.42");
+        control.style.setProperty("--round-after-hot", useDarkControl ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.18)");
+        control.style.setProperty("--round-after-mid", useDarkControl ? "rgba(255, 255, 255, 0.055)" : "rgba(255, 255, 255, 0.1)");
+        control.style.setProperty("--round-after-low", useDarkControl ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.06)");
+        control.style.setProperty("--round-after-floor", useDarkControl ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.036)");
+        control.style.setProperty("--round-after-opacity", useDarkControl ? "0.14" : "0.22");
       }
 
       if (control.classList.contains("marker-button")) {
-        control.style.setProperty("--control-bg", darkSurface ? "rgba(6, 7, 9, 0.36)" : "rgba(255, 255, 255, 0.2)");
-        control.style.setProperty("--marker-fill-bg", darkSurface ? "rgba(255, 255, 255, 0.92)" : "rgba(40, 41, 54, 0.96)");
-        control.style.setProperty("--marker-icon-fg", darkSurface ? "rgba(14, 15, 18, 0.96)" : "rgba(255, 255, 255, 0.98)");
-        control.style.setProperty("--marker-label-hover", darkSurface ? "rgba(14, 15, 18, 0.96)" : "rgba(255, 255, 255, 0.98)");
+        control.style.setProperty("--control-bg", useDarkControl ? "rgba(7, 8, 10, 0.32)" : "rgba(248, 248, 244, 0.44)");
+        control.style.setProperty("--marker-fill-bg", useDarkControl ? "rgba(255, 255, 255, 0.94)" : "rgba(32, 33, 42, 0.96)");
+        control.style.setProperty("--marker-icon-fg", useDarkControl ? "rgba(13, 14, 17, 0.96)" : "rgba(255, 255, 255, 0.98)");
+        control.style.setProperty("--marker-label-hover", useDarkControl ? "rgba(13, 14, 17, 0.96)" : "rgba(255, 255, 255, 0.98)");
         control.style.setProperty(
           "--marker-label-hover-shadow",
-          darkSurface ? "none" : "0 1px 2px rgba(0, 0, 0, 0.22)"
+          useDarkControl ? "none" : "0 1px 2px rgba(0, 0, 0, 0.26)"
         );
-        control.style.setProperty("--marker-backdrop-blur", "18px");
-        control.style.setProperty("--marker-inner-blur", "10px");
-        control.style.setProperty("--marker-glow-alpha", darkSurface ? "0.06" : "0.1");
-        control.style.setProperty("--marker-glow-hover-alpha", darkSurface ? "0.1" : "0.16");
+        control.style.setProperty("--marker-backdrop-blur", "4px");
+        control.style.setProperty("--marker-inner-blur", "1.5px");
+        control.style.setProperty("--marker-glow-alpha", useDarkControl ? "0.065" : "0.13");
+        control.style.setProperty("--marker-glow-hover-alpha", useDarkControl ? "0.1" : "0.18");
       }
     };
 
@@ -1190,7 +1218,7 @@ function HomePage() {
             <LineRevealText text={home.heroSummary} className="auto-line-reveal" />
           </p>
           <div className="hero-actions">
-            <GlassButton label={home.directoryButton} onClick={() => scrollToId("selected-works")} />
+            <GlassButton label={home.directoryButton} onClick={() => scrollToId("works-start")} />
           </div>
         </div>
       </section>
@@ -1236,6 +1264,7 @@ function ResearchFeature({ project }: { project: Project }) {
   return (
     <section
       className="home-editorial-section research-feature text-reveal-block module-reveal replay-reveal scroll-reveal"
+      id="works-start"
       aria-labelledby="research-feature-title"
     >
       <div className="section-heading">
@@ -1313,25 +1342,45 @@ function PracticeSection() {
         </h2>
       </div>
       <div className="practice-list">
-        {practice.items.map((item, index) => (
-          <article className="practice-item text-reveal-block module-reveal replay-reveal scroll-reveal" key={item.title}>
-            <span className="practice-index">{String(index + 1).padStart(2, "0")}</span>
-            <div className="practice-main">
-              <p className="practice-kicker">{item.subtitle}</p>
-              <h3>
-                <LineRevealText text={item.title} maxLineLength={18} />
-              </h3>
-              <small>
-                <LineRevealText text={item.body} maxLineLength={34} />
-              </small>
-            </div>
-            <div className="practice-tags" aria-label={`${item.title} keywords`}>
-              {item.tags.map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
-          </article>
-        ))}
+        {practice.items.map((item, index) => {
+          const detailUrl = "detailUrl" in item ? item.detailUrl : undefined;
+          const detailLabel = "detailLabel" in item ? item.detailLabel : "查看项目";
+
+          return (
+            <article
+              className={`practice-item text-reveal-block module-reveal replay-reveal scroll-reveal${detailUrl ? " has-action" : ""}`}
+              key={item.title}
+            >
+              <span className="practice-index">{String(index + 1).padStart(2, "0")}</span>
+              <div className="practice-main">
+                <p className="practice-kicker">{item.subtitle}</p>
+                <h3>
+                  <LineRevealText text={item.title} maxLineLength={28} />
+                </h3>
+                <small>
+                  <LineRevealText text={item.body} maxLineLength={34} />
+                </small>
+              </div>
+              <div className="practice-aside">
+                <div className="practice-tags" aria-label={`${item.title} keywords`}>
+                  {item.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
+                {detailUrl ? (
+                  <button
+                    className="practice-go magnetic-control"
+                    type="button"
+                    aria-label={detailLabel}
+                    onClick={(event) => navigateTo(detailUrl, event)}
+                  >
+                    <ArrowUpRight size={24} strokeWidth={1.5} />
+                  </button>
+                ) : null}
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

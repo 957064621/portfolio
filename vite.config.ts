@@ -20,7 +20,8 @@ const htmlInputs = {
   mychelleDetail: resolve(__dirname, "projects/mychelle-detail/index.html"),
   suboVis: resolve(__dirname, "projects/subo-vis/index.html"),
   more: resolve(__dirname, "projects/more/index.html"),
-  chinaAutoDiscourse: resolve(__dirname, "projects/china-auto-discourse/index.html")
+  chinaAutoDiscourse: resolve(__dirname, "projects/china-auto-discourse/index.html"),
+  rokidSensaverse: resolve(__dirname, "projects/rokid-sensaverse/index.html")
 };
 
 export default defineConfig({
