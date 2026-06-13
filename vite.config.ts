@@ -28,6 +28,8 @@ export default defineConfig({
   base: "./",
   plugins: [react()],
   build: {
+    cssTarget: ["chrome111", "edge111", "firefox103", "safari15.4"],
+    cssMinify: false,
     rollupOptions: {
       input: htmlInputs
     }
