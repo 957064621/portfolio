@@ -6,6 +6,7 @@ import {
   Action,
   PageAsset,
   Project,
+  ProjectBrief,
   getActionAreaLuminance,
   allPortfolioProjects,
   fullPortfolioProjects,
@@ -1360,6 +1361,7 @@ function PracticeSection() {
                 <small>
                   <LineRevealText text={item.body} maxLineLength={34} />
                 </small>
+                {"briefs" in item && item.briefs ? <ProjectBriefs briefs={item.briefs} compact /> : null}
               </div>
               <div className="practice-aside">
                 <div className="practice-tags" aria-label={`${item.title} keywords`}>
@@ -1541,10 +1543,26 @@ function ProjectHeader({ project, compact = false }: { project: Project; compact
       <h1>
         <LineRevealText text={project.title} maxLineLength={18} />
       </h1>
-      <p>
+      <p className="project-summary">
         <LineRevealText text={project.summary} />
       </p>
+      <ProjectBriefs briefs={project.briefs} />
     </header>
+  );
+}
+
+function ProjectBriefs({ briefs, compact = false }: { briefs?: readonly ProjectBrief[]; compact?: boolean }) {
+  if (!briefs?.length) return null;
+
+  return (
+    <div className={compact ? "project-briefs compact" : "project-briefs"}>
+      {briefs.map((brief, index) => (
+        <article className="project-brief" key={`${brief.label}-${index}`}>
+          <span>{brief.label}</span>
+          <p>{brief.body}</p>
+        </article>
+      ))}
+    </div>
   );
 }
 

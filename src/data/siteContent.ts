@@ -48,7 +48,25 @@ export const siteContent = {
           subtitle: "智能座舱年轻化体验设计工作坊 / 保密项目",
           body:
             "从年轻人注意力碎片化的痛点出发，构建“场景感知-感官重塑-交互响应”的三层设计方法，将座舱从通勤载体转化为可调节的体验场域。",
-          tags: ["智能座舱", "新感官体验", "隐性交互"]
+          tags: ["智能座舱", "新感官体验", "隐性交互"],
+          briefs: [
+            {
+              label: "BRIEF",
+              body: "智能座舱年轻化体验工作坊。把座舱变成可调节的体验场域。"
+            },
+            {
+              label: "METHOD",
+              body: "围绕场景感知、感官重塑和交互响应组织方案。把用户状态与座舱反馈连接起来。"
+            },
+            {
+              label: "ACTION",
+              body: "梳理场景和体验的内在逻辑关系，构建完整的座舱体验方案，并尝试构建可运行的交互原型。"
+            },
+            {
+              label: "REFLECTION",
+              body: "理解汽车体验设计的表达边界。"
+            }
+          ]
         },
         {
           title: "国美 x 港科大 x Rokid 沉浸创新课程",
@@ -56,6 +74,24 @@ export const siteContent = {
           body:
             "独立完成文化叙事五感交互流程、Rokid + Unity 交互开发与嗅觉气味设备开发，交付视觉、听觉、嗅觉三通道联动的可运行体验原型。",
           tags: ["MR 开发", "五感设计", "MCP 工作流"],
+          briefs: [
+            {
+              label: "BRIEF",
+              body: "基于 Rokid 的多感官 MR 原型。用视觉、听觉和嗅觉重构文化叙事。"
+            },
+            {
+              label: "METHOD",
+              body: "通过前期的调研和学习，搭建五感交互流程。完成 Unity 开发与气味设备联动。"
+            },
+            {
+              label: "ACTION",
+              body: "完成 MR 交互流程与 Unity 原型。并联动嗅觉设备，做出可运行体验。"
+            },
+            {
+              label: "REFLECTION",
+              body: "沉淀 MR 原型与 MCP 工作流。也熟悉了多设备协同的节奏。"
+            }
+          ],
           detailUrl: "/projects/rokid-sensaverse/",
           detailLabel: "查看项目"
         },
@@ -64,7 +100,25 @@ export const siteContent = {
           subtitle: "智能地垫产品概念",
           body:
             "基于强脑科技企业命题设计并开发智能地垫产品，独立完成 App 界面与产品视频，将产品概念、交互界面和展示叙事串联成完整提案。",
-          tags: ["产品设计", "交互界面", "产品视频"]
+          tags: ["产品设计", "交互界面", "产品视频"],
+          briefs: [
+            {
+              label: "BRIEF",
+              body: "基于强脑科技命题的智能地垫概念。聚焦 AI 硬件的使用场景表达。"
+            },
+            {
+              label: "METHOD",
+              body: "搭建产品原型和界面原型。用界面流程和影像串联产品价值。"
+            },
+            {
+              label: "ACTION",
+              body: "完成 App 界面、产品概念和展示视频。用界面与影像把产品讲清楚。"
+            },
+            {
+              label: "REFLECTION",
+              body: "训练企业命题下的快速收敛。也强化了产品叙事和展示能力。"
+            }
+          ]
         }
       ]
     },

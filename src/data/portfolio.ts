@@ -21,6 +21,11 @@ export interface PageAsset {
   actions?: Action[];
 }
 
+export interface ProjectBrief {
+  label: string;
+  body: string;
+}
+
 export interface Project {
   id: string;
   legacyPath: string;
@@ -28,6 +33,7 @@ export interface Project {
   title: string;
   category: string;
   summary: string;
+  briefs?: readonly ProjectBrief[];
   coverBw: string;
   coverColor: string;
   pages: PageAsset[];
@@ -117,6 +123,7 @@ export const projects: Project[] = [
     title: projectText.lowCarbon.title,
     category: projectText.lowCarbon.category,
     summary: projectText.lowCarbon.summary,
+    briefs: projectText.lowCarbon.briefs,
     coverBw: image("Cover/01.png"),
     coverColor: image("Cover/06.png"),
     pages: [
@@ -139,6 +146,7 @@ export const projects: Project[] = [
     title: projectText.qintong.title,
     category: projectText.qintong.category,
     summary: projectText.qintong.summary,
+    briefs: projectText.qintong.briefs,
     coverBw: image("Cover/02.png"),
     coverColor: image("Cover/07.png"),
     pages: [
@@ -162,6 +170,7 @@ export const projects: Project[] = [
     title: projectText.mychelle.title,
     category: projectText.mychelle.category,
     summary: projectText.mychelle.summary,
+    briefs: projectText.mychelle.briefs,
     coverBw: image("Cover/03.png"),
     coverColor: image("Cover/08.png"),
     pages: [
@@ -180,6 +189,7 @@ export const projects: Project[] = [
     title: projectText.suboVis.title,
     category: projectText.suboVis.category,
     summary: projectText.suboVis.summary,
+    briefs: projectText.suboVis.briefs,
     coverBw: image("Cover/04.png"),
     coverColor: image("Cover/09.png"),
     pages: [
@@ -202,6 +212,7 @@ export const projects: Project[] = [
     title: projectText.more.title,
     category: projectText.more.category,
     summary: projectText.more.summary,
+    briefs: projectText.more.briefs,
     coverBw: image("Cover/05.png"),
     coverColor: image("Cover/10.png"),
     pages: [
@@ -221,6 +232,7 @@ export const projects: Project[] = [
     title: projectText.chinaAutoDiscourse.title,
     category: projectText.chinaAutoDiscourse.category,
     summary: projectText.chinaAutoDiscourse.summary,
+    briefs: projectText.chinaAutoDiscourse.briefs,
     coverBw: image("1/15.png"),
     coverColor: image("1/15.png"),
     pages: [
@@ -244,6 +256,7 @@ export const detailProjects: Project[] = [
     title: projectText.mychelleDetail.title,
     category: projectText.mychelleDetail.category,
     summary: projectText.mychelleDetail.summary,
+    briefs: projectText.mychelleDetail.briefs,
     coverBw: image("3/5.png"),
     coverColor: image("3/5.png"),
     pages: [
@@ -262,6 +275,7 @@ export const detailProjects: Project[] = [
     title: projectText.rokidSensaverse.title,
     category: projectText.rokidSensaverse.category,
     summary: projectText.rokidSensaverse.summary,
+    briefs: projectText.rokidSensaverse.briefs,
     coverBw: image("5/6.png"),
     coverColor: image("5/6.png"),
     pages: [

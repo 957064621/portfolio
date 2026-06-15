@@ -912,6 +912,7 @@ h2 {
 .text-reveal-block.scroll-reveal .eyebrow,
 .text-reveal-block.scroll-reveal .editorial-tags,
 .text-reveal-block.scroll-reveal .practice-tags,
+.text-reveal-block.scroll-reveal .project-briefs,
 .text-reveal-block.scroll-reveal .contact-list {
   opacity: 0;
   transform: translate3d(0, 10px, 0);
@@ -924,6 +925,7 @@ h2 {
 
 .text-reveal-block.scroll-reveal .editorial-tags,
 .text-reveal-block.scroll-reveal .practice-tags,
+.text-reveal-block.scroll-reveal .project-briefs,
 .text-reveal-block.scroll-reveal .contact-list {
   transition-delay: 0.18s;
 }
@@ -953,6 +955,7 @@ h2 {
 .text-reveal-block.scroll-reveal.is-visible .eyebrow,
 .text-reveal-block.scroll-reveal.is-visible .editorial-tags,
 .text-reveal-block.scroll-reveal.is-visible .practice-tags,
+.text-reveal-block.scroll-reveal.is-visible .project-briefs,
 .text-reveal-block.scroll-reveal.is-visible .contact-list {
   opacity: 1;
   transform: translate3d(0, 0, 0);
@@ -2624,12 +2627,66 @@ h2 {
   line-height: 1.04;
 }
 
-.project-header p:last-child,
+.project-header .project-summary,
 .full-header p:last-child {
   max-width: 620px;
   color: var(--text-muted);
   font-size: clamp(1rem, 1.4vw, 1.2rem);
   line-height: 1.65;
+}
+
+.project-briefs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+  max-width: 1120px;
+  margin-top: clamp(1.35rem, 2.8vw, 2.5rem);
+}
+
+.project-briefs.compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.58rem;
+  max-width: 100%;
+  margin-top: 0.95rem;
+}
+
+.project-brief {
+  min-width: 0;
+  padding: clamp(0.78rem, 1.2vw, 1rem) clamp(0.76rem, 1.15vw, 0.96rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    rgba(255, 255, 255, 0.018);
+}
+
+.project-brief span {
+  display: block;
+  margin-bottom: 0.52rem;
+  color: rgba(255, 250, 240, 0.46);
+  font-family: var(--font-en);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.project-brief p {
+  margin: 0;
+  color: rgba(255, 250, 240, 0.58);
+  font-size: clamp(0.82rem, 0.92vw, 0.94rem);
+  line-height: 1.68;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+.project-briefs.compact .project-brief {
+  padding: 0.68rem 0.72rem;
+}
+
+.project-briefs.compact .project-brief p {
+  font-size: 0.8rem;
+  line-height: 1.56;
 }
 
 .portfolio-flow {
@@ -3120,6 +3177,14 @@ h2 {
     grid-template-columns: 1fr;
   }
 
+  .project-briefs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-briefs.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .practice-item {
     grid-template-columns: minmax(40px, 0.1fr) minmax(0, 1fr);
   }
@@ -3362,7 +3427,7 @@ h2 {
     text-wrap: balance;
   }
 
-  .project-header p:last-child .line-reveal-inner,
+  .project-header .project-summary .line-reveal-inner,
   .full-header p:last-child .line-reveal-inner,
   .full-index-copy p .line-reveal-inner {
     overflow-wrap: break-word;
@@ -3375,10 +3440,31 @@ h2 {
     font-size: clamp(1.72rem, 9.6vw, 3.45rem);
   }
 
-  .project-header p:last-child,
+  .project-header .project-summary,
   .full-header p:last-child {
     max-width: 100%;
     font-size: clamp(0.92rem, 3.8vw, 1.04rem);
+    line-height: 1.58;
+  }
+
+  .project-briefs,
+  .project-briefs.compact {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.58rem;
+    margin-top: 1.15rem;
+  }
+
+  .project-brief {
+    padding: 0.72rem 0.74rem;
+  }
+
+  .project-brief span {
+    margin-bottom: 0.38rem;
+  }
+
+  .project-brief p,
+  .project-briefs.compact .project-brief p {
+    font-size: 0.82rem;
     line-height: 1.58;
   }
 
