@@ -1200,7 +1200,7 @@ h2 {
   position: absolute;
   inset: auto;
   z-index: 50;
-  width: 28rem;
+  width: var(--lamp-core-width, 28rem);
   height: 9rem;
   transform: translateY(-50%);
   border-radius: 999px;
@@ -3655,56 +3655,21 @@ h2 {
   }
 
   .lamp-stage {
-    transform: scaleY(1.12);
+    transform: scaleY(1.25);
   }
 
-  .lamp-beam {
-    height: 12rem;
-    transform: translateY(-1.82rem);
-    transform-origin: center top;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 0.42rem, rgba(0, 0, 0, 0.9) 28%, rgba(0, 0, 0, 0.42) 54%, transparent 82%);
-    mask-image: linear-gradient(to bottom, transparent 0, #000 0.42rem, rgba(0, 0, 0, 0.9) 28%, rgba(0, 0, 0, 0.42) 54%, transparent 82%);
+  .lamp-beam-left {
+    right: 50%;
   }
 
-  .lamp-cut-bottom {
-    display: none;
-  }
-
-  .lamp-ground {
-    height: 13.5rem;
-    transform: translateY(0.15rem) scaleX(1.5);
-    filter: blur(3.1rem);
-  }
-
-  .lamp-beam-left,
   .lamp-beam-right {
-    width: 28rem;
-    max-width: 86vw;
-  }
-
-  .lamp-core {
-    width: min(24rem, 72vw);
-    height: 7.5rem;
+    left: 50%;
   }
 
   .lamp-strip {
-    width: min(22rem, 72vw);
-    max-width: 72vw;
-    height: 1px;
-    transform: translateY(-7.05rem);
     box-shadow:
       0 0 7px rgba(255, 255, 255, 0.28),
       0 0 15px rgba(255, 255, 255, 0.09);
-  }
-
-  .lamp-mask {
-    height: 12.25rem;
-    transform: translateY(-16.85rem);
-    background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 72%, rgba(3, 3, 3, 0.86) 88%, rgba(3, 3, 3, 0) 100%);
-  }
-
-  .lamp-core-soft {
-    max-width: 54vw;
   }
 
   .home-lamp-copy {
@@ -3851,10 +3816,13 @@ h2 {
     margin-left: calc(var(--safe-x) * -1);
     padding: 0 var(--safe-x) 0.7rem;
     overflow-x: auto;
+    overflow-y: hidden;
     overscroll-behavior-x: contain;
+    overscroll-behavior-y: none;
     scroll-padding-inline: var(--safe-x);
     scroll-snap-type: x proximity;
     scrollbar-width: none;
+    touch-action: pan-x;
   }
 
   .work-wall::-webkit-scrollbar {
@@ -3864,6 +3832,7 @@ h2 {
   .work-card {
     flex: 0 0 clamp(138px, 42vw, 186px);
     scroll-snap-align: start;
+    touch-action: pan-x;
   }
 
   .cover-pair {
@@ -4249,21 +4218,7 @@ h2 {
   }
 
   .lamp-content {
-    transform: translateY(clamp(-15.8rem, -32dvh, -11.7rem));
-  }
-
-  .lamp-beam {
-    height: 10.5rem;
-  }
-
-  .lamp-core {
-    width: min(20rem, 70vw);
-    height: 6.5rem;
-  }
-
-  .lamp-mask {
-    height: 10.5rem;
-    transform: translateY(-15.6rem);
+    transform: translateY(clamp(-18rem, -34dvh, -13rem));
   }
 
   .home-lamp-title {
