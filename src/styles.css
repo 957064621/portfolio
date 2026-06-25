@@ -1644,6 +1644,9 @@ h2 {
   color: rgba(255, 250, 240, 0.76);
   font-size: clamp(1rem, 1.35vw, 1.28rem);
   line-height: 1.85;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
 }
 
 .editorial-tags {
@@ -3076,8 +3079,6 @@ h2 {
   color: rgba(255, 250, 240, 0.58);
   font-size: clamp(0.82rem, 0.92vw, 0.94rem);
   line-height: 1.68;
-  overflow-wrap: break-word;
-  text-wrap: pretty;
 }
 
 .project-briefs.compact .project-brief {
@@ -4328,4 +4329,10 @@ h2 {
   .lamp-strip {
     animation: none !important;
   }
+}
+
+
+/* 让感谢观看区域支持换行 */
+.thanks-panel > p {
+  white-space: pre-line;
 }

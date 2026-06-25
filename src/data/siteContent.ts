@@ -125,7 +125,7 @@ export const siteContent = {
       eyebrow: "CONTACT / THANK YOU",
       title: "感谢观看",
       body:
-        "感谢观看。这个作品集将持续记录我把研究、交互、影像、原型和代码组织成一个可被体验的系统；“光影档案”只是它的视觉语言，也包括这个用 vibe coding 搭建的网页本身。",
+        "感谢观看。\n这个作品集将持续记录我把研究、交互、影像、原型和代码组织成一个可被体验的系统，也包括这个用 vibe coding 搭建的网页本身。",
       contactTitle: "联系方式",
       copyLabel: "复制微信号",
       copiedLabel: "已复制",

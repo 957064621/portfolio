@@ -470,38 +470,49 @@ const splitLongRevealPiece = (piece: string, maxLineLength: number) => {
 };
 
 const splitRevealText = (text: string, maxLineLength = 36) => {
-  const trimmed = text.replace(/\s+/g, " ").trim();
-  if (!trimmed) return [];
+  // 支持 \n 作为显式换行
+  const paragraphs = text.split(/\n+/);
+  const result: string[] = [];
 
-  const pieces = trimmed
-    .split(/(?<=[\u3002\uff01\uff1f\uff1b\uff0c\u3001.!?;,])\s*/)
-    .map((piece) => piece.trim())
-    .filter(Boolean);
+  paragraphs.forEach((paragraph, pi) => {
+    const trimmed = paragraph.replace(/\s+/g, " ").trim();
+    if (!trimmed) return;
 
-  const lines: string[] = [];
-  let current = "";
+    // 段落之间添加空行
+    if (pi > 0 && result.length) result.push("");
 
-  pieces.forEach((piece) => {
-    if (textVisualLength(piece) > maxLineLength * 1.42) {
-      if (current) {
-        lines.push(current);
-        current = "";
+    const pieces = trimmed
+      .split(/(?<=[。！？；，、.!?;,])\s*/)
+      .map((piece) => piece.trim())
+      .filter(Boolean);
+
+    const lines: string[] = [];
+    let current = "";
+
+    pieces.forEach((piece) => {
+      if (textVisualLength(piece) > maxLineLength * 1.42) {
+        if (current) {
+          lines.push(current);
+          current = "";
+        }
+        lines.push(...splitLongRevealPiece(piece, maxLineLength));
+        return;
       }
-      lines.push(...splitLongRevealPiece(piece, maxLineLength));
-      return;
-    }
 
-    const next = `${current}${piece}`;
-    if (current && textVisualLength(next) > maxLineLength) {
-      lines.push(current);
-      current = piece;
-      return;
-    }
-    current = next;
+      const next = `${current}${piece}`;
+      if (current && textVisualLength(next) > maxLineLength) {
+        lines.push(current);
+        current = piece;
+        return;
+      }
+      current = next;
+    });
+
+    if (current) lines.push(current);
+    result.push(...(lines.length ? lines : [trimmed]));
   });
 
-  if (current) lines.push(current);
-  return lines.length ? lines : [trimmed];
+  return result.length ? result : [text];
 };
 
 function LineRevealText({
