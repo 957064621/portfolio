@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
+import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, ExternalLink, Home, Play, X } from "lucide-react";
 import {
   Action,
@@ -16,6 +17,7 @@ import {
   routeToProjectSlug
 } from "./data/portfolio";
 import { siteContent } from "./data/siteContent";
+import { LampContainer } from "./components/ui/lamp";
 import "./styles.css";
 
 type View = "home" | "project" | "full" | "not-found";
@@ -383,6 +385,13 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    document.body.classList.toggle("site-ready", !loaderMounted);
+    return () => {
+      document.body.classList.remove("site-ready");
+    };
+  }, [loaderMounted]);
+
   useMagneticControls();
   useTouchFeedback();
   useFloatingControlTone(route.view);
@@ -412,7 +421,7 @@ function App() {
       <CompositionGuides />
       {(route.view === "project" || route.view === "full") && <FloatingNav />}
       <div className={`page-stage route-${routePhase}`} key={routeKey}>
-        {route.view === "home" && <HomePage />}
+        {route.view === "home" && <HomePage ready={!loaderMounted} />}
         {route.view === "project" && route.project && (
           <ProjectPage project={route.project} onAction={handleAction} />
         )}
@@ -1198,34 +1207,66 @@ function HomeFloatingPortfolioButton() {
       tabIndex={visible ? 0 : -1}
       onClick={(event) => navigateTo("/full/", event)}
     >
+      <span className="home-floating-portfolio-edge" aria-hidden="true" />
       <span className="glass-button-label">{siteContent.home.fullPortfolioButton}</span>
     </button>
   );
 }
 
-function HomePage() {
+function HomePage({ ready }: { ready: boolean }) {
   const home = siteContent.home;
   const researchProject = projects.find((project) => project.slug === "china-auto-discourse");
 
   return (
     <main className="site-shell home home-redesign">
-      <section className="hero-section hero-section-simple" aria-labelledby="hero-title">
-        <div className="hero-copy">
-          <p className="eyebrow">{home.heroEyebrow}</p>
-          <h1 id="hero-title">
-            <LineRevealText text={home.heroTitle} className="auto-line-reveal" maxLineLength={18} />
-          </h1>
-          <p className="hero-summary">
-            <LineRevealText text={home.heroSummary} className="auto-line-reveal" />
-          </p>
-          <div className="hero-actions">
-            <GlassButton label={home.directoryButton} onClick={() => scrollToId("works-start")} />
+      <section className="home-lamp-section" aria-labelledby="hero-title">
+        <LampContainer className="home-lamp-container" ready={ready}>
+          <div className="home-lamp-copy">
+            <motion.h1
+              id="hero-title"
+              className="home-lamp-title"
+              initial={{ opacity: 0, y: 100 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+              transition={{ duration: 1, delay: 0.2, ease: "easeInOut" }}
+            >
+              {home.heroTitle}
+            </motion.h1>
+            <motion.p
+              className="home-lamp-summary"
+              initial={{ opacity: 0, y: 24 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+              transition={{ duration: 0.8, delay: 0.38, ease: "easeInOut" }}
+            >
+              {home.heroSummary}
+            </motion.p>
+            <motion.div
+              className="home-lamp-actions"
+              initial={{ opacity: 0, y: 18 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: "easeInOut" }}
+            >
+              <button
+                className="home-scroll-cue"
+                type="button"
+                aria-label="向下浏览作品"
+                onClick={() => scrollToId("work-method")}
+              >
+                <span className="home-scroll-cue-label">Scroll</span>
+                <span className="home-scroll-cue-track" aria-hidden="true">
+                  <span className="home-scroll-cue-flow" />
+                </span>
+              </button>
+            </motion.div>
           </div>
-        </div>
+        </LampContainer>
       </section>
 
-      {home.narratives.map((section) => (
-        <HomeEditorialSection key={section.title} section={section} />
+      {home.narratives.map((section, index) => (
+        <HomeEditorialSection
+          key={section.title}
+          id={index === 0 ? "work-method" : undefined}
+          section={section}
+        />
       ))}
 
       {researchProject && <ResearchFeature project={researchProject} />}
@@ -1302,12 +1343,17 @@ function ResearchFeature({ project }: { project: Project }) {
 }
 
 function HomeEditorialSection({
+  id,
   section
 }: {
+  id?: string;
   section: { eyebrow: string; title: string; body: string; meta: string[] };
 }) {
   return (
-    <section className="home-editorial-section text-reveal-block module-reveal replay-reveal scroll-reveal">
+    <section
+      className="home-editorial-section text-reveal-block module-reveal replay-reveal scroll-reveal"
+      id={id}
+    >
       <div className="section-heading">
         <p className="eyebrow">{section.eyebrow}</p>
         <h2>

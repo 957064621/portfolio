@@ -7,7 +7,7 @@
 
 export const siteContent = {
   documentTitle: {
-    home: "YUKO / PORTFOLIO",
+    home: "YUKO PORTFOLIO",
     full: "Full Portfolio / YUKO Portfolio",
     suffix: "YUKO Portfolio"
   },
@@ -19,10 +19,9 @@ export const siteContent = {
   },
   home: {
     heroEyebrow: "VIBE CODING PORTFOLIO / 2026",
-    heroTitle: "YUKO / PORTFOLIO",
+    heroTitle: "YUKO PORTFOLIO",
     heroSummary:
       "一份关于交互体验、服务系统、智能产品与数字媒介实验的作品集。这里的每个项目都从研究开始，最终落到可以被观看、操作或体验的原型。",
-    directoryButton: "查看作品",
     fullPortfolioButton: "查看完整作品集",
     researchFeature: {
       eyebrow: "INDEPENDENT RESEARCH",
