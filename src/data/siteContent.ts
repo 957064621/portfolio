@@ -21,7 +21,7 @@ export const siteContent = {
     heroEyebrow: "VIBE CODING PORTFOLIO / 2026",
     heroTitle: "YUKO PORTFOLIO",
     heroSummary:
-      "一份关于交互体验、服务系统、智能产品与数字媒介实验的作品集。这里的每个项目都从研究开始，最终落到可以被观看、操作或体验的原型。",
+      "一份关于交互体验、服务系统、智能产品与数字媒介实验的作品集。页面以“光影档案”为视觉主题，让每个项目像被光照亮的研究记录一样，在界面、影像与原型之间逐步显影。",
     fullPortfolioButton: "查看完整作品集",
     researchFeature: {
       eyebrow: "INDEPENDENT RESEARCH",
@@ -125,7 +125,7 @@ export const siteContent = {
       eyebrow: "CONTACT / THANK YOU",
       title: "感谢观看",
       body:
-        "感谢观看。这个作品集将持续记录我把研究、交互、影像、原型和代码组织成一个可被体验的系统——包括这个用 vibe coding 搭建的网页本身。",
+        "感谢观看。这个作品集将持续记录我把研究、交互、影像、原型和代码组织成一个可被体验的系统；“光影档案”只是它的视觉语言，也包括这个用 vibe coding 搭建的网页本身。",
       contactTitle: "联系方式",
       copyLabel: "复制微信号",
       copiedLabel: "已复制",
@@ -146,7 +146,7 @@ export const siteContent = {
     eyebrow: "FULL PORTFOLIO",
     title: "完整作品集",
     summary:
-      "这里保留作品集的连续阅读方式：先进入独立研究项目，再展开五个核心作品，最后延伸到一个沉浸式 MR 体验。你可以像翻阅画册一样浏览图像，也可以通过按钮进入视频、原型和详情页。",
+      "这里保留作品集的连续阅读方式，并延续“光影档案”的视觉主题：先进入独立研究项目，再展开五个核心作品，最后延伸到一个沉浸式 MR 体验。你可以像翻阅一份展陈记录一样浏览图像，也可以通过按钮进入视频、原型和详情页。",
     projectCountLabel: "PROJECTS",
     viewModeLabel: "CONTINUOUS VIEW"
   },
