@@ -901,7 +901,7 @@ img {
 .cursor-light {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   pointer-events: none;
   opacity: 0.86;
   mix-blend-mode: screen;
@@ -1103,7 +1103,7 @@ h2 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: var(--bg);
+  background: transparent;
   z-index: 0;
 }
 
@@ -1252,7 +1252,7 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translateY(-22rem);
+  transform: translateY(-19.75rem);
   padding: 0 1.25rem;
   text-align: center;
 }
@@ -3627,7 +3627,7 @@ h2 {
   }
 
   .composition-guides {
-    opacity: 0.58;
+    display: none;
   }
 
   .hero-section {
@@ -3660,10 +3660,10 @@ h2 {
 
   .lamp-beam {
     height: 12rem;
-    transform: translateY(-2rem);
+    transform: translateY(-1.82rem);
     transform-origin: center top;
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.9) 28%, rgba(0, 0, 0, 0.42) 54%, transparent 82%);
-    mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.9) 28%, rgba(0, 0, 0, 0.42) 54%, transparent 82%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 0.42rem, rgba(0, 0, 0, 0.9) 28%, rgba(0, 0, 0, 0.42) 54%, transparent 82%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 0.42rem, rgba(0, 0, 0, 0.9) 28%, rgba(0, 0, 0, 0.42) 54%, transparent 82%);
   }
 
   .lamp-cut-bottom {
@@ -3689,6 +3689,7 @@ h2 {
 
   .lamp-strip {
     width: min(22rem, 72vw);
+    max-width: 72vw;
     height: 1px;
     transform: translateY(-7.05rem);
     box-shadow:
