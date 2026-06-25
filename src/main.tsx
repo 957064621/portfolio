@@ -1515,7 +1515,6 @@ function WorkWall() {
           onPointerMove={updateCoverSpot}
           onClick={(event) => navigateTo(`/projects/${project.slug}/`, event)}
         >
-          <span className="work-number">{project.id}</span>
           <span className="cover-pair">
             <img className="cover-bw" src={project.coverBw} alt="" aria-hidden="true" />
             <img className="cover-color" src={project.coverColor} alt="" aria-hidden="true" />
