@@ -102,7 +102,7 @@ export const projectContent = {
       briefs: [
         {
           label: "BRIEF",
-          body: "智能护肤盒。包装变成提醒和状态入口。"
+          body: "智能护肤盒。智能包装大多停留在功能堆砌，包装变成提醒和状态入口。"
         },
         {
           label: "METHOD",
@@ -224,7 +224,7 @@ export const projectContent = {
       briefs: [
         {
           label: "BRIEF",
-          body: "吉利设计合作。汽车从交通工具到智能空间的体验演变。"
+          body: "吉利设计合作。中国新能源汽车在全球崛起，但缺少从设计话语层面梳理人车关系演变的研究。"
         },
         {
           label: "METHOD",

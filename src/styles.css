@@ -3054,12 +3054,48 @@ h2 {
 }
 
 .project-brief {
+  position: relative;
+  isolation: isolate;
   min-width: 0;
+  overflow: hidden;
   padding: clamp(0.78rem, 1.2vw, 1rem) clamp(0.76rem, 1.15vw, 0.96rem);
   border-top: 1px solid rgba(255, 255, 255, 0.18);
+  outline: none;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
     rgba(255, 255, 255, 0.018);
+  transform: translate3d(0, 0, 0);
+  transition:
+    border-color 0.44s var(--ease-luxe),
+    background 0.54s var(--ease-luxe),
+    box-shadow 0.54s var(--ease-luxe),
+    transform 0.54s var(--ease-luxe);
+}
+
+.project-brief::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 24% 0%, rgba(255, 255, 255, 0.16), transparent 34%),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.12), transparent 46%, rgba(255, 255, 255, 0.055));
+  transform: translate3d(-10px, 0, 0);
+  transition:
+    opacity 0.52s var(--ease-luxe),
+    transform 0.72s var(--ease-luxe);
+}
+
+.project-brief::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.08));
+  transition: width 0.58s var(--ease-luxe);
 }
 
 .project-brief span {
@@ -3072,6 +3108,7 @@ h2 {
   letter-spacing: 0.16em;
   line-height: 1.35;
   text-transform: uppercase;
+  transition: color 0.42s var(--ease-luxe);
 }
 
 .project-brief p {
@@ -3079,6 +3116,42 @@ h2 {
   color: rgba(255, 250, 240, 0.58);
   font-size: clamp(0.82rem, 0.92vw, 0.94rem);
   line-height: 1.68;
+  transition: color 0.42s var(--ease-luxe);
+}
+
+.project-header .project-brief:hover {
+  border-top-color: rgba(255, 255, 255, 0.46);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.082), rgba(255, 255, 255, 0.022)),
+    rgba(255, 255, 255, 0.032);
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+  transform: translate3d(0, -7px, 0);
+}
+
+.project-header .project-brief:hover::before {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.project-header .project-brief:hover::after {
+  width: 100%;
+}
+
+.project-header .project-brief:hover span {
+  color: rgba(255, 250, 240, 0.72);
+}
+
+.project-header .project-brief:hover p {
+  color: rgba(255, 250, 240, 0.86);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .project-header .project-brief:hover {
+    box-shadow: none;
+    transform: none;
+  }
 }
 
 .project-briefs.compact .project-brief {
