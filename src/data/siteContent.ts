@@ -34,7 +34,7 @@ export const siteContent = {
         eyebrow: "DESIGN METHOD",
         title: "工作方式",
         body:
-          "我的项目通常从场景与人的关系出发，通过全流程的用户研究，将结论转译成可以运行、观看或体验的原型。这里的案例覆盖用户研究、概念设计、MR / AR 交互、视觉系统、服务触点和影像表达。",
+          "我的项目通常从场景与人的关系出发，通过全流程的用户研究，将结论转译成可以运行、观看或体验的原型。案例覆盖策略研究、用户行为研究、服务系统设计、产品与硬件原型等。",
         meta: ["Research", "Prototype", "Interaction", "Visual System"]
       }
     ],
